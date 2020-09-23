@@ -78,4 +78,14 @@ namespace BSMath
     {
         return a + t * (b - a);
     }
+
+    [[nodiscard]] constexpr float Rad2Deg(float rad) noexcept
+    {
+        return rad * (360.0f / (Pi * 2.0f));
+    }
+
+    [[nodiscard]] constexpr float Deg2Rad(float deg) noexcept
+    {
+        return deg * ((Pi * 2.0f) / 360.0f);
+    }
 }
