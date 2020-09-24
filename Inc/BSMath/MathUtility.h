@@ -1,12 +1,12 @@
 #pragma once
 
 #include <cmath>
-#include  <limits>
+#include "SSE.h"
 
 namespace BSMath
 {
     constexpr float Pi = 3.141592654f;
-    constexpr float Epsilon = std::numeric_limits<float>::epsilon();
+    constexpr float Epsilon = 1.192092896e-07F;
 
     template <class T1, class T2>
     [[nodiscard]] constexpr decltype(auto) Min(T1 lhs, T2 rhs) noexcept
@@ -39,39 +39,39 @@ namespace BSMath
     }
 
     template <class T>
-    [[nodiscard]] constexpr T Abs(T x) noexcept
+    [[nodiscard]] constexpr T Abs(T n) noexcept
     {
-        return x >= static_cast<T>(0) ? x : -x;
+        return n >= static_cast<T>(0) ? n : -n;
     }
 
     template <class T>
-    [[nodiscard]] constexpr T Sign(T x) noexcept
+    [[nodiscard]] constexpr T Sign(T n) noexcept
     {
-        return x >= static_cast<T>(0) ? static_cast<T>(1) : static_cast<T>(-1);
+        return n >= static_cast<T>(0) ? static_cast<T>(1) : static_cast<T>(-1);
     }
 
-    [[nodiscard]] inline float Cos(float x) noexcept { return std::cos(x); }
-    [[nodiscard]] inline float Sin(float x) noexcept { return std::sin(x); }
-    [[nodiscard]] inline float Tan(float x) noexcept { return std::tan(x); }
+    [[nodiscard]] inline float Cos(float n) noexcept { return std::cos(n); }
+    [[nodiscard]] inline float Sin(float n) noexcept { return std::sin(n); }
+    [[nodiscard]] inline float Tan(float n) noexcept { return std::tan(n); }
 
-    [[nodiscard]] inline float ACos(float x) noexcept { return std::acos(x); }
-    [[nodiscard]] inline float ASin(float x) noexcept { return std::asin(x); }
-    [[nodiscard]] inline float ATan(float x) noexcept { return std::atan(x); }
-    [[nodiscard]] inline float ATan2(float y, float x) noexcept { return std::atan2(y, x); }
+    [[nodiscard]] inline float ACos(float n) noexcept { return std::acos(n); }
+    [[nodiscard]] inline float ASin(float n) noexcept { return std::asin(n); }
+    [[nodiscard]] inline float ATan(float n) noexcept { return std::atan(n); }
+    [[nodiscard]] inline float ATan2(float y, float n) noexcept { return std::atan2(y, n); }
 
     [[nodiscard]] constexpr bool IsNearlyEqual(float lhs, float rhs, float tolerance = Epsilon) noexcept
     {
         return Abs(lhs - rhs) <= tolerance;
     }
 
-    [[nodiscard]] constexpr bool IsNearlyZero(float x, float tolerance = Epsilon) noexcept
+    [[nodiscard]] constexpr bool IsNearlyZero(float n, float tolerance = Epsilon) noexcept
     {
-        return Abs(x) <= tolerance;
+        return Abs(n) <= tolerance;
     }
 
-    [[nodiscard]] constexpr float Normalized(float x, float min, float max) noexcept
+    [[nodiscard]] constexpr float Normalized(float n, float min, float max) noexcept
     {
-        return (x - min) / (max - min);
+        return (n - min) / (max - min);
     }
 
     [[nodiscard]] constexpr float Lerp(float a, float b, float t) noexcept
@@ -79,13 +79,46 @@ namespace BSMath
         return a + t * (b - a);
     }
 
+    template <class T>
+    [[nodiscard]] constexpr float Square(T n) { return n * n; }
+
     [[nodiscard]] constexpr float Rad2Deg(float rad) noexcept
     {
-        return rad * (360.0f / (Pi * 2.0f));
+        return rad * (180.0f / Pi);
     }
 
     [[nodiscard]] constexpr float Deg2Rad(float deg) noexcept
     {
-        return deg * ((Pi * 2.0f) / 360.0f);
+        return deg * (Pi / 180.0f);
+    }
+
+    [[nodiscard]] inline float Sqrt(float n) noexcept
+    {
+        return n * SSE::InvSqrt(n);
+    }
+
+    [[nodiscard]] inline float InvSqrt(float n) noexcept
+    {
+        return SSE::InvSqrt(n);
+    }
+
+    [[nodiscard]] inline int Trunc(float n) noexcept
+    {
+        return SSE::Trunc(n);
+    }
+
+    [[nodiscard]] inline int Floor(float n) noexcept
+    {
+        return SSE::Floor(n);
+    }
+
+    [[nodiscard]] inline int Round(float n) noexcept
+    {
+        return SSE::Round(n);
+    }
+
+    [[nodiscard]] inline int Ceil(float n) noexcept
+    {
+        return SSE::Ceil(n);
     }
 }
