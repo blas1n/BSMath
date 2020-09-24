@@ -12,7 +12,11 @@ target_include_directories(${CMAKE_PROJECT_NAME} INTERFACE "include")
 
 file(GLOB_RECURSE TEST_FILES "Tests/*.cpp")
 add_executable(Tests ${TEST_FILES})
-set_target_properties(Tests PROPERTIES CXX_STANDARD 17)
+set_target_properties(Tests
+	PROPERTIES
+	CXX_STANDARD 17
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Binaries/Tests
+)
 
 find_package(GTest REQUIRED)
 enable_testing()
