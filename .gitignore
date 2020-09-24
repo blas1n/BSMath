@@ -1,2 +1,4 @@
 .vs
 [Bb]inaries
+CMakeFiles
+CMakeCache.txt
