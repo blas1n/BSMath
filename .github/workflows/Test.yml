@@ -8,7 +8,6 @@ on:
 
 env:
   BUILD_TYPE: Release
-  BUILD_DIR: Binaries
 
 jobs:
   build:
@@ -20,7 +19,7 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory $BUILD_DIR
     - name: Build
-      working-directory: ./$BUILD_DIR
-      run: cmake .. && cmake --build . --config $BUILD_TYPE
+      working-directory: ./Binaries
+      run: cmake .. && cmake --build . --config Binaries
     - name: Run Test
       run: /home/runner/work/github_actions_gtest_example/github_actions_gtest_example/build/test/github_actions_gtest_example.test
