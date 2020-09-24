@@ -2,7 +2,7 @@ file(GLOB_RECURSE TEST_FILES "*.cpp")
 add_executable(Tests ${TEST_FILES})
 
 set (CMAKE_CXX_STANDARD 17)
-set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Binaries/Tests)
+set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Binaries)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	find_package (Threads REQUIRED)

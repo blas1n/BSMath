@@ -8,6 +8,7 @@ on:
 
 env:
   BUILD_TYPE: Release
+  BUILD_DIR: Binaries
 
 jobs:
   build:
@@ -17,8 +18,8 @@ jobs:
       run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
     - uses: actions/checkout@v2
     - name: Create Build Environment
-      run: cmake -E make_directory Binaries/Tests
+      run: cmake -E make_directory $BUILD_DIR
     - name: Build
-      run: cmake . && cmake --build ./Binaries/Tests --config $BUILD_TYPE
+      run: cmake . && cmake --build .$BUILD_DIR --config $BUILD_TYPE
     - name: Run Test
       run: /home/runner/work/github_actions_gtest_example/github_actions_gtest_example/build/test/github_actions_gtest_example.test
