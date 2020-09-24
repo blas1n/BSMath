@@ -18,8 +18,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Create Build Environment
       run: cmake -E make_directory Binaries/Tests
+    - name: Load Cache
+      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE
     - name: Build
       working-directory: ./Binaries/Tests
-      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE && cmake --build . --config $BUILD_TYPE
+      run: cmake --build . --config $BUILD_TYPE
     - name: Run Test
       run: /home/runner/work/github_actions_gtest_example/github_actions_gtest_example/build/test/github_actions_gtest_example.test
