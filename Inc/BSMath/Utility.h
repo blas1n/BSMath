@@ -9,31 +9,31 @@ namespace BSMath
     constexpr float Epsilon = 1.192092896e-07F;
 
     template <class T1, class T2>
-    [[nodiscard]] constexpr decltype(auto) Min(T1 lhs, T2 rhs) noexcept
+    [[nodiscard]] constexpr auto Min(T1 lhs, T2 rhs) noexcept
     {
         return lhs < rhs ? lhs : rhs;
     }
 
     template <class T1, class T2, class... Ts>
-    [[nodiscard]] constexpr decltype(auto) Min(T1 x1, T2 x2, Ts... xs) noexcept
+    [[nodiscard]] constexpr auto Min(T1 x1, T2 x2, Ts... xs) noexcept
     {
         return Min(Min(x1, x2), xs...);
     }
 
     template <class T1, class T2>
-    [[nodiscard]] constexpr decltype(auto) Max(T1 lhs, T2 rhs) noexcept
+    [[nodiscard]] constexpr auto Max(T1 lhs, T2 rhs) noexcept
     {
         return lhs > rhs ? lhs : rhs;
     }
 
     template <class T1, class T2, class... Ts>
-    [[nodiscard]] constexpr decltype(auto) Max(T1 x1, T2 x2, Ts... xs) noexcept
+    [[nodiscard]] constexpr auto Max(T1 x1, T2 x2, Ts... xs) noexcept
     {
         return Max(Max(x1, x2), xs...);
     }
 
     template <class T, class U, class V>
-    [[nodiscard]] constexpr decltype(auto) Clamp(T v, U min, V max) noexcept
+    [[nodiscard]] constexpr auto Clamp(T v, U min, V max) noexcept
     {
         return Max(Min(v, max), min);
     }
