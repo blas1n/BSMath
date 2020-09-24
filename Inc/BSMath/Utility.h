@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cmath>
 #include "SSE.h"
 
 namespace BSMath
