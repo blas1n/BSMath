@@ -115,7 +115,7 @@ namespace BSMath
 
     [[nodiscard]] inline float Sqrt(float n, size_t iterationNum = 2) noexcept
     {
-        return IsNearlyZero(n) ? 0.0f : n * SSE::InvSqrt(n, iterationNum);
+        return IsNearlyZero(n) ? 0.0f : n * InvSqrt(n, iterationNum);
     }
 
     [[nodiscard]] inline int Trunc(float n) noexcept
