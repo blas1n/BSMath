@@ -1,6 +1,5 @@
 #pragma once
 
-#include "SSE.h"
 #include <emmintrin.h>
 
 namespace BSMath
