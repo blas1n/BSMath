@@ -79,9 +79,6 @@ namespace BSMath
         return a + t * (b - a);
     }
 
-    template <class T>
-    [[nodiscard]] constexpr float Square(T n) { return n * n; }
-
     [[nodiscard]] constexpr float Rad2Deg(float rad) noexcept
     {
         return rad * (180.0f / Pi);
@@ -92,14 +89,17 @@ namespace BSMath
         return deg * (Pi / 180.0f);
     }
 
-    [[nodiscard]] inline float Sqrt(float n) noexcept
+    template <class T>
+    [[nodiscard]] constexpr float Square(T n) { return n * n; }
+
+    [[nodiscard]] inline float Sqrt(float n, size_t iterationNum = 2) noexcept
     {
-        return n * SSE::InvSqrt(n);
+        return IsNearlyZero(n) ? 0.0f : n * SSE::InvSqrt(n, iterationNum);
     }
 
-    [[nodiscard]] inline float InvSqrt(float n) noexcept
+    [[nodiscard]] inline float InvSqrt(float n, size_t iterationNum = 2) noexcept
     {
-        return SSE::InvSqrt(n);
+        return SSE::InvSqrt(n, iterationNum);
     }
 
     [[nodiscard]] inline int Trunc(float n) noexcept
@@ -107,9 +107,9 @@ namespace BSMath
         return SSE::Trunc(n);
     }
 
-    [[nodiscard]] inline int Floor(float n) noexcept
+    [[nodiscard]] inline int Ceil(float n) noexcept
     {
-        return SSE::Floor(n);
+        return SSE::Ceil(n);
     }
 
     [[nodiscard]] inline int Round(float n) noexcept
@@ -117,8 +117,8 @@ namespace BSMath
         return SSE::Round(n);
     }
 
-    [[nodiscard]] inline int Ceil(float n) noexcept
+    [[nodiscard]] inline int Floor(float n) noexcept
     {
-        return SSE::Ceil(n);
+        return SSE::Floor(n);
     }
 }

@@ -24,7 +24,7 @@ namespace BSMath::SSE
 		return -(_mm_cvt_ss2si(_mm_set_ss(-0.5f - (n + n))) >> 1);
 	}
 
-	[[nodiscard]] static float InvSqrt(float n, size_t iterationNum = 2) noexcept
+	[[nodiscard]] static float InvSqrt(float n, size_t iterationNum) noexcept
 	{
 		const __m128 oneHalf = _mm_set_ss(0.5f);
 
