@@ -22,5 +22,5 @@ jobs:
       working-directory: ./Binaries
       run: cmake .. && cmake --build . --config $Build_TYPE
     - name: Run Test
-      working-directory: ./Binaries/Tests/Tests
-      run: ls
+      working-directory: ./Binaries/Tests
+      run: ./Tests
