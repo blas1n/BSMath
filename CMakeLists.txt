@@ -7,6 +7,9 @@ project (BSMath
 	HOMEPAGE_URL "https://github.com/blAs1N/BSMath"
 )
 
+set (CMAKE_CXX_STANDARD 17)
+set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Binaries)
+
 add_library(BSMath INTERFACE)
 target_include_directories(${CMAKE_PROJECT_NAME} INTERFACE "Inc/")
 
