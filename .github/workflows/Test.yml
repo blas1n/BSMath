@@ -19,6 +19,6 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory Binaries/Tests
     - name: Build
-      run: rm -f CMakeCache.txt && cd Binaries/Tests && cmake --build . --config $BUILD_TYPE
+      run: cmake . && cmake --build ./Binaries/Tests --config $BUILD_TYPE
     - name: Run Test
       run: /home/runner/work/github_actions_gtest_example/github_actions_gtest_example/build/test/github_actions_gtest_example.test
