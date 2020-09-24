@@ -7,20 +7,7 @@ project (BSMath
 	HOMEPAGE_URL "https://github.com/blAs1N/BSMath"
 )
 
-add_library(${CMAKE_PROJECT_NAME} INTERFACE)
-target_include_directories(${CMAKE_PROJECT_NAME} INTERFACE "include")
+add_library(BSMath INTERFACE)
+target_include_directories(${CMAKE_PROJECT_NAME} INTERFACE "Inc/")
 
-file(GLOB_RECURSE TEST_FILES "Tests/*.cpp")
-add_executable(Tests ${TEST_FILES})
-set_target_properties(Tests
-	PROPERTIES
-	CXX_STANDARD 17
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Binaries/Tests
-)
-
-find_package(GTest REQUIRED)
-enable_testing()
-add_test(NAME "Tests" COMMAND Tests)
-
-target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc)
-target_link_libraries(Tests PRIVATE ${CMAKE_PROJECT_NAME} GTest::GTest)
+add_subdirectory(Tests)
