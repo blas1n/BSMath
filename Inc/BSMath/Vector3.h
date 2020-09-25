@@ -1,5 +1,6 @@
 #pragma once
 
+#include <emmintrin.h>
 #include "Utility.h"
 
 namespace BSMath
@@ -42,12 +43,15 @@ namespace BSMath
 			x = inX; y = inY; z = inZ;
 		}
 
-		inline float GetLength() const noexcept
+		inline float Length() const noexcept
 		{
-			return Sqrt(GetLengthSquared());
+			return Sqrt(LengthSquared());
 		}
 
-		float GetLengthSquared() const noexcept;
+		float LengthSquared() const noexcept
+		{
+			return Dot(*this, *this);
+		}
 
 		inline Vector3 GetNormal() const noexcept
 		{
@@ -64,11 +68,11 @@ namespace BSMath
 
 		static float DistanceSquared(const Vector3& lhs, const Vector3& rhs);
 
-		float GetMin() const noexcept;
-		float GetMax() const noexcept;
+		constexpr float GetMin() const noexcept { return Min(x, Min(y, z));	}
+		constexpr float GetMax() const noexcept { return Max(x, Max(y, z)); }
 
-		static inline  bool operator==(const Vector3& lhs, const Vector3& rhs);
-		inline bool operator!=(const Vector3& lhs, const Vector3& rhs) { return !(lhs == rhs); }
+		bool operator==(const Vector3& other);
+		inline bool operator!=(const Vector3& other) { return !(*this == other); }
 
 		Vector3 oeprator-() const noexcept;
 
@@ -79,7 +83,7 @@ namespace BSMath
 		Vector3& operator*=(float scaler) noexcept;
 		
 		Vector3& operator/=(const Vector3& other) noexcept;
-		Vector3& operator-=(float scaler) noexcept;
+		Vector3& operator/=(float divisor) noexcept;
 
 		Vector3& operator^=(const Vector3& other) noexcept;
 		
@@ -131,9 +135,112 @@ namespace BSMath
 		static inline float Dot(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs | rhs; }
 		static inline Vector3 Cross(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs ^ rhs; }
 
+	private:
+		void Load(const __m128& simd)
+		{
+			float ret[4];
+			_mm_store_ps(ret, vec);
+			x = ret[0]; y = ret[1]; z = ret[2];
+		}
+
 	public:
 		float x;
 		float y;
 		float z;
 	};
+
+	bool Vector3::Normalize() noexcept
+	{
+		const float lengthSquared = LengthSquared();
+		if (IsNearlyZero(lengthSquared))
+			return false;
+
+		__m128 vec = _mm_set_ps(0.0f, z, y, x);
+		const __m128 size = _mm_set_ps1(InvSqrt(lengthSquared));
+		vec = _mm_mul_ps(vec, size);
+		Load(vec);
+		return true;
+	}
+
+	bool Vector3::operator==(const Vector3& other)
+	{
+		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
+		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
+		return _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) == 7;
+	}
+
+	Vector3 Vector3::oeprator-() const noexcept
+	{
+		__m128 zero = _mm_setzero_ps();
+		__m128 vec = _mm_set_ps(0.0f, z, y, x);
+
+		Vector3 ret;
+		ret.Load(_mm_sub_ps(zero, vec));
+		return ret;
+	}
+
+	Vector3& Vector3::operator+=(const Vector3& other) noexcept
+	{
+		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
+		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
+		Load(_mm_add_ps(lhs, rhs));
+		return *this;
+	}
+
+	Vector3& Vector3::operator-=(const Vector3& other) noexcept
+	{
+		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
+		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
+		Load(_mm_sub_ps(lhs, rhs));
+		return *this;
+	}
+
+	Vector3& Vector3::operator*=(const Vector3& other) noexcept
+	{
+		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
+		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
+		Load(_mm_mul_ps(lhs, rhs));
+		return *this;
+	}
+
+	Vector3& Vector3::operator*=(float scaler) noexcept
+	{
+		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
+		const __m128 rhs = _mm_set_ps1(scaler);
+		Load(_mm_mul_ps(lhs, rhs));
+		return *this;
+	}
+
+	Vector3& Vector3::operator/=(const Vector3& other) noexcept
+	{
+		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
+		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
+		Load(_mm_div_ps(lhs, rhs));
+		return *this;
+	}
+
+	Vector3& Vector3::operator/=(float divisor) noexcept
+	{
+		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
+		const __m128 rhs = _mm_set_ps1(divisor);
+		Load(_mm_div_ps(lhs, rhs));
+		return *this;
+	}
+
+	Vector3& Vector3::operator^=(const Vector3& other) noexcept
+	{
+		const __m128 a_yzx = _mm_set_ps(0.0f, y, z, x);
+		const __m128 a_zxy = _mm_set_ps(0.0f, z, x, y);
+		const __m128 b_zxy = _mm_set_ps(0.0f, z, x, y);
+		const __m128 b_yzx = _mm_set_ps(0.0f, y, z, x);
+
+		Load(_mm_sub_ps(_mm_mul_ps(a_yzx, b_zxy), _mm_mul_ps(a_zxy, b_yzx)));
+		return *this;
+	}
+
+	float Vector3::operator|(const Vector3& lhs, const Vector3& rhs) noexcept
+	{
+		Vector3 mul = lhs * rhs;
+		return mul.x + mul.y + mul.z;
+	}
 }
