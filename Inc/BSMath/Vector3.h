@@ -270,4 +270,77 @@ namespace BSMath
 
 	inline float Vector3::Dot(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs | rhs; }
 	inline Vector3 Vector3::Cross(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs ^ rhs; }
+
+	template <>
+	[[nodiscard]] auto Min<Vector3>(const Vector3& lhs, const Vector3& rhs) noexcept
+	{
+		const __m128 lhsSimd = _mm_set_ps(0.0f, lhs.z, lhs.y, lhs.x);
+		const __m128 rhsSimd = _mm_set_ps(0.0f, rhs.z, rhs.y, rhs.x);
+		return Vector3{ _mm_min_ps(lhsSimd, rhsSimd) };
+	}
+
+	template <>
+	[[nodiscard]] auto Max<Vector3>(const Vector3& lhs, const Vector3& rhs) noexcept
+	{
+		const __m128 lhsSimd = _mm_set_ps(0.0f, lhs.z, lhs.y, lhs.x);
+		const __m128 rhsSimd = _mm_set_ps(0.0f, rhs.z, rhs.y, rhs.x);
+		return Vector3{ _mm_max_ps(lhsSimd, rhsSimd) };
+	}
+
+	template <>
+	[[nodiscard]] auto Clamp<Vector3>(const Vector3& n, const Vector3& min, const Vector3& max) noexcept
+	{
+		const __m128 minSimd = _mm_set_ps(0.0f, min.z, min.y, min.x);
+		const __m128 maxSimd = _mm_set_ps(0.0f, max.z, max.y, max.x);
+
+		__m128 ret = _mm_set_ps(0.0f, n.z, n.y, n.x);
+		ret = _mm_max_ps(ret, _mm_min_ps(minSimd, maxSimd));
+		ret = _mm_min_ps(ret, _mm_max_ps(minSimd, maxSimd));
+		return Vector3{ ret };
+	}
+
+	template <>
+	[[nodiscard]] Vector3 Abs<Vector3>(const Vector3& n) noexcept
+	{
+		const __m128 signMask = _mm_set_ps1(-0.0f);
+		const __m128 simd = _mm_set_ps(0.0f, n.z, n.y, n.x);
+		return Vector3{ _mm_andnot_ps(signMask, simd) };
+	}
+
+	template <>
+	[[nodiscard]] Vector3 Sign<Vector3>(const Vector3& n) noexcept
+	{
+		const __m128 signMask = _mm_set_ps1(-0.0f);
+		const __m128 simd = _mm_set_ps(0.0f, n.z, n.y, n.x);
+		return Vector3{ _mm_and_ps(signMask, simd) };
+	}
+
+	namespace Detail
+	{
+		[[nodiscard]] bool IsLessEpsilon(const __m128& vec, const Vector3& epsilon)
+		{
+			const __m128 tolerance = _mm_set_ps(0.0f, epsilon.z, epsilon.y, epsilon.x);
+			return _mm_movemask_ps(_mm_cmple_ps(vec, tolerance)) == 15;
+		}
+	}
+
+	[[nodiscard]] bool IsNearlyEqual(const Vector3& lhs, const Vector3& rhs, const Vector3& tolerance = Vector3{ Epsilon }) noexcept
+	{
+		__m128 vec = _mm_set_ps(0.0f, lhs.z, lhs.y, lhs.x);
+		vec = _mm_sub_ps(vec, _mm_set_ps(0.0f, rhs.z, rhs.y, rhs.x));
+		return Detail::IsLessEpsilon(vec, tolerance);
+	}
+
+	[[nodiscard]] inline bool IsNearlyZero(const Vector3& vec, const Vector3& tolerance = Vector3{ Epsilon }) noexcept
+	{
+		return Detail::IsLessEpsilon(_mm_set_ps(0.0f, vec.z, vec.y, vec.x), tolerance);
+	}
+
+	[[nodiscard]] Vector3 GetRangePct(const Vector3& vec, const Vector3& min, const Vector3& max) noexcept
+	{
+		const __m128 vecSimd = _mm_set_ps(0.0f, vec.z, vec.y, vec.x);
+		const __m128 minSimd = _mm_set_ps(0.0f, min.z, min.y, min.x);
+		const __m128 maxSimd = _mm_set_ps(0.0f, max.z, max.y, max.x);
+		return Vector3{ _mm_div_ps(_mm_sub_ps(vecSimd, minSimd), _mm_sub_ps(maxSimd, minSimd)) };
+	}
 }
