@@ -49,9 +49,9 @@ namespace BSMath
 		EXPECT_NEAR(Sign(-10.0f), -1.0f, Epsilon);
 	}
 
-	TEST(Utility, Normalized)
+	TEST(Utility, GetRangePct)
 	{
-		EXPECT_NEAR(Normalized(5, 0, 10), 0.5f, Epsilon);
+		EXPECT_NEAR(GetRangePct(5, 0, 10), 0.5f, Epsilon);
 	}
 
 	TEST(Utility, Lerp)

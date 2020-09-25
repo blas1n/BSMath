@@ -68,7 +68,7 @@ namespace BSMath
         return Abs(n) <= tolerance;
     }
 
-    [[nodiscard]] constexpr float Normalized(float n, float min, float max) noexcept
+    [[nodiscard]] constexpr float GetRangePct(float n, float min, float max) noexcept
     {
         return (n - min) / (max - min);
     }
