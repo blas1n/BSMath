@@ -9,5 +9,5 @@ find_package(GTest REQUIRED)
 enable_testing()
 add_test(NAME "Tests" COMMAND Tests)
 
-target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc)
-target_link_libraries(Tests PRIVATE BSMath GTest::GTest)
+include_directories(${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIRS})
+link_libraries(BSMath GTest::GTest)
