@@ -48,10 +48,7 @@ namespace BSMath
 			return Sqrt(LengthSquared());
 		}
 
-		float LengthSquared() const noexcept
-		{
-			return Dot(*this, *this);
-		}
+		float LengthSquared() const noexcept;
 
 		inline Vector3 GetNormal() const noexcept
 		{
@@ -148,6 +145,14 @@ namespace BSMath
 		float y;
 		float z;
 	};
+
+	float Vector3::LengthSquared() const noexcept
+	{
+		const __m128 vec = _mm_set_ps(0.0f, z, y, x);
+		Vector3 ret;
+		ret.Load(_mm_mul_ps(vec, vec));
+		return ret.x + ret.y + ret.z;
+	}
 
 	bool Vector3::Normalize() noexcept
 	{
