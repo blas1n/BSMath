@@ -1,13 +1,14 @@
-file(GLOB_RECURSE TEST_FILES "*.cpp")
-add_executable(Tests ${TEST_FILES})
-
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	find_package (Threads REQUIRED)
 endif ()
 
-find_package(GTest REQUIRED)
 enable_testing()
-add_test(NAME "Tests" COMMAND Tests)
+find_package(GTest REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIRS})
-link_libraries(BSMath GTest::GTest)
+file(GLOB_RECURSE TEST_FILES "*.cpp")
+add_executable(Tests ${TEST_FILES})
+
+target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIRS})
+target_link_libraries(Tests PRIVATE BSMath GTest::GTest)
+
+add_test(AllTests Tests)
