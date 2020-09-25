@@ -43,14 +43,14 @@ namespace BSMath
 			x = inX; y = inY; z = inZ;
 		}
 
-		inline float Length() const noexcept
+		[[nodiscard]] inline float Length() const noexcept
 		{
 			return Sqrt(LengthSquared());
 		}
 
-		float LengthSquared() const noexcept;
+		[[nodiscard]] float LengthSquared() const noexcept;
 
-		inline Vector3 GetNormal() const noexcept
+		[[nodiscard]] inline Vector3 GetNormal() const noexcept
 		{
 			Vector3 ret = *this;
 			return ret.Normalize() ? ret : Zero;
@@ -58,18 +58,18 @@ namespace BSMath
 
 		bool Normalize() noexcept;
 
-		static inline float Distance(const Vector3& lhs, const Vector3& rhs)
+		[[nodiscard]] static inline float Distance(const Vector3& lhs, const Vector3& rhs)
 		{
 			return Sqrt(DistanceSquared(lhs, rhs));
 		}
 
-		static float DistanceSquared(const Vector3& lhs, const Vector3& rhs);
+		[[nodiscard]] static float DistanceSquared(const Vector3& lhs, const Vector3& rhs);
 
-		constexpr float GetMin() const noexcept { return Min(x, Min(y, z));	}
-		constexpr float GetMax() const noexcept { return Max(x, Max(y, z)); }
+		[[nodiscard]] constexpr float GetMin() const noexcept { return Min(x, Min(y, z));	}
+		[[nodiscard]] constexpr float GetMax() const noexcept { return Max(x, Max(y, z)); }
 
-		bool operator==(const Vector3& other);
-		inline bool operator!=(const Vector3& other) { return !(*this == other); }
+		[[nodiscard]] bool operator==(const Vector3& other) const noexcept;
+		[[nodiscard]] inline bool operator!=(const Vector3& other) const noexcept { return !(*this == other); }
 
 		Vector3 oeprator-() const noexcept;
 
@@ -84,53 +84,11 @@ namespace BSMath
 
 		Vector3& operator^=(const Vector3& other) noexcept;
 		
-		constexpr float& operator[](size_t idx) noexcept { return (&x)[idx]; }
-		constexpr float operator[](size_t idx) const noexcept { return (&x)[idx]; }
+		[[nodiscard]] constexpr float& operator[](size_t idx) noexcept { return (&x)[idx]; }
+		[[nodiscard]] constexpr float operator[](size_t idx) const noexcept { return (&x)[idx]; }
 
-		static inline Vector3 operator+(const Vector3& lhs, const Vector3& rhs) noexcept
-		{
-			return Vector3{ lhs } += rhs;
-		}
-
-		static inline Vector3 operator-(const Vector3& lhs, const Vector3& rhs) noexcept
-		{
-			return Vector3{ lhs } -= rhs;
-		}
-
-		static inline Vector3 operator*(const Vector3& lhs, const Vector3& rhs) noexcept
-		{
-			return Vector3{ lhs } *= rhs;
-		}
-
-		static inline Vector3 operator*(const Vector3& vec, float scaler) noexcept
-		{
-			return Vector3{ vec } += scaler;
-		}
-
-		static inline Vector3 operator*(float scaler, const Vector3& vec) noexcept
-		{
-			return Vector3{ vec } *= scaler;
-		}
-
-		static inline Vector3 operator/(const Vector3& lhs, const Vector3& rhs) noexcept
-		{
-			return Vector3{ lhs } /= rhs;
-		}
-
-		static inline Vector3 operator/(const Vector3& vec, float divisor) noexcept
-		{
-			return Vector3{ vec } += divisor;
-		}
-
-		static float operator|(const Vector3& lhs, const Vector3& rhs) noexcept;
-		
-		static inline Vector3 operator^(const Vector3& lhs, const Vector3& rhs) noexcept
-		{
-			return Vector3{ lhs } ^= rhs;
-		}
-
-		static inline float Dot(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs | rhs; }
-		static inline Vector3 Cross(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs ^ rhs; }
+		[[nodiscard]] static float Dot(const Vector3& lhs, const Vector3& rhs) noexcept;
+		[[nodiscard]] static Vector3 Cross(const Vector3& lhs, const Vector3& rhs) noexcept;
 
 	private:
 		void Load(const __m128& simd)
@@ -167,7 +125,7 @@ namespace BSMath
 		return true;
 	}
 
-	bool Vector3::operator==(const Vector3& other)
+	bool Vector3::operator==(const Vector3& other) const noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
@@ -243,9 +201,52 @@ namespace BSMath
 		return *this;
 	}
 
-	float Vector3::operator|(const Vector3& lhs, const Vector3& rhs) noexcept
+	[[nodiscard]] inline Vector3 operator+(const Vector3& lhs, const Vector3& rhs) noexcept
+	{
+		return Vector3{ lhs } += rhs;
+	}
+
+	[[nodiscard]] inline Vector3 operator-(const Vector3& lhs, const Vector3& rhs) noexcept
+	{
+		return Vector3{ lhs } -= rhs;
+	}
+
+	[[nodiscard]] inline Vector3 operator*(const Vector3& lhs, const Vector3& rhs) noexcept
+	{
+		return Vector3{ lhs } *= rhs;
+	}
+
+	[[nodiscard]] inline Vector3 operator*(const Vector3& vec, float scaler) noexcept
+	{
+		return Vector3{ vec } *= scaler;
+	}
+
+	[[nodiscard]] inline Vector3 operator*(float scaler, const Vector3& vec) noexcept
+	{
+		return Vector3{ vec } *= scaler;
+	}
+
+	[[nodiscard]] inline Vector3 operator/(const Vector3& lhs, const Vector3& rhs) noexcept
+	{
+		return Vector3{ lhs } /= rhs;
+	}
+
+	[[nodiscard]] inline Vector3 operator/(const Vector3& vec, float divisor) noexcept
+	{
+		return Vector3{ vec } /= divisor;
+	}
+
+	[[nodiscard]] float operator|(const Vector3& lhs, const Vector3& rhs) noexcept
 	{
 		Vector3 mul = lhs * rhs;
 		return mul.x + mul.y + mul.z;
 	}
+
+	[[nodiscard]] inline Vector3 operator^(const Vector3& lhs, const Vector3& rhs) noexcept
+	{
+		return Vector3{ lhs } ^= rhs;
+	}
+
+	inline float Vector3::Dot(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs | rhs; }
+	inline Vector3 Vector3::Cross(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs ^ rhs; }
 }
