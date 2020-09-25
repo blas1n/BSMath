@@ -71,7 +71,7 @@ namespace BSMath
 		[[nodiscard]] bool operator==(const Vector3& other) const noexcept;
 		[[nodiscard]] inline bool operator!=(const Vector3& other) const noexcept { return !(*this == other); }
 
-		Vector3 oeprator-() const noexcept;
+		Vector3 operator-() const noexcept;
 
 		Vector3& operator+=(const Vector3& other) noexcept;
 		Vector3& operator-=(const Vector3& other) noexcept;
@@ -94,7 +94,7 @@ namespace BSMath
 		void Load(const __m128& simd)
 		{
 			float ret[4];
-			_mm_store_ps(ret, vec);
+			_mm_store_ps(ret, simd);
 			x = ret[0]; y = ret[1]; z = ret[2];
 		}
 
@@ -132,7 +132,7 @@ namespace BSMath
 		return _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) == 7;
 	}
 
-	Vector3 Vector3::oeprator-() const noexcept
+	[[nodiscard]] Vector3 Vector3::operator-() const noexcept
 	{
 		__m128 zero = _mm_setzero_ps();
 		__m128 vec = _mm_set_ps(0.0f, z, y, x);
