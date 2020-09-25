@@ -60,6 +60,13 @@ namespace BSMath
 		explicit constexpr Vector3(float inX, float inY, float inZ)
 			: x(inX), y(inY), z(inZ) {}
 
+		explicit Vector3(const __m128& simd)
+		{
+			float ret[4];
+			_mm_store_ps(ret, simd);
+			x = ret[0]; y = ret[1]; z = ret[2];
+		}
+
 		explicit Vector3(const struct Vector2& vec2, float inZ = 0.0f);
 		explicit Vector3(const struct Vector4& vec4);
 
@@ -118,14 +125,6 @@ namespace BSMath
 		[[nodiscard]] static float Dot(const Vector3& lhs, const Vector3& rhs) noexcept;
 		[[nodiscard]] static Vector3 Cross(const Vector3& lhs, const Vector3& rhs) noexcept;
 
-	private:
-		void Load(const __m128& simd)
-		{
-			float ret[4];
-			_mm_store_ps(ret, simd);
-			x = ret[0]; y = ret[1]; z = ret[2];
-		}
-
 	public:
 		float x;
 		float y;
@@ -135,8 +134,7 @@ namespace BSMath
 	float Vector3::LengthSquared() const noexcept
 	{
 		const __m128 vec = _mm_set_ps(0.0f, z, y, x);
-		Vector3 ret;
-		ret.Load(_mm_mul_ps(vec, vec));
+		Vector3 ret{ _mm_mul_ps(vec, vec) };
 		return ret.x + ret.y + ret.z;
 	}
 
@@ -148,8 +146,7 @@ namespace BSMath
 
 		__m128 vec = _mm_set_ps(0.0f, z, y, x);
 		const __m128 size = _mm_set_ps1(InvSqrt(lengthSquared));
-		vec = _mm_mul_ps(vec, size);
-		Load(vec);
+		*this = Vector3{ _mm_mul_ps(vec, size) };
 		return true;
 	}
 
@@ -164,58 +161,49 @@ namespace BSMath
 	{
 		__m128 zero = _mm_setzero_ps();
 		__m128 vec = _mm_set_ps(0.0f, z, y, x);
-
-		Vector3 ret;
-		ret.Load(_mm_sub_ps(zero, vec));
-		return ret;
+		return Vector3{ _mm_sub_ps(zero, vec) };
 	}
 
 	Vector3& Vector3::operator+=(const Vector3& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
-		Load(_mm_add_ps(lhs, rhs));
-		return *this;
+		return *this = Vector3{ _mm_add_ps(lhs, rhs) };
 	}
 
 	Vector3& Vector3::operator-=(const Vector3& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
-		Load(_mm_sub_ps(lhs, rhs));
-		return *this;
+		return *this = Vector3{ _mm_sub_ps(lhs, rhs) };
 	}
 
 	Vector3& Vector3::operator*=(const Vector3& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
-		Load(_mm_mul_ps(lhs, rhs));
-		return *this;
+		return *this = Vector3{ _mm_mul_ps(lhs, rhs) };
 	}
 
 	Vector3& Vector3::operator*=(float scaler) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps1(scaler);
-		Load(_mm_mul_ps(lhs, rhs));
-		return *this;
+		return *this = Vector3{ _mm_mul_ps(lhs, rhs) };
 	}
 
 	Vector3& Vector3::operator/=(const Vector3& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
-		Load(_mm_div_ps(lhs, rhs));
-		return *this;
+		return *this = Vector3{ _mm_div_ps(lhs, rhs) };
 	}
 
 	Vector3& Vector3::operator/=(float divisor) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps1(divisor);
-		Load(_mm_div_ps(lhs, rhs));
-		return *this;
+		return *this = Vector3{ _mm_div_ps(lhs, rhs) };
 	}
 
 	Vector3& Vector3::operator^=(const Vector3& other) noexcept
@@ -225,7 +213,7 @@ namespace BSMath
 		const __m128 b_zxy = _mm_set_ps(0.0f, z, x, y);
 		const __m128 b_yzx = _mm_set_ps(0.0f, y, z, x);
 
-		Load(_mm_sub_ps(_mm_mul_ps(a_yzx, b_zxy), _mm_mul_ps(a_zxy, b_yzx)));
+		*this = Vector3{ _mm_sub_ps(_mm_mul_ps(a_yzx, b_zxy), _mm_mul_ps(a_zxy, b_yzx)) };
 		return *this;
 	}
 
