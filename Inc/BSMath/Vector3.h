@@ -23,8 +23,8 @@ namespace BSMath
 	public:
 		constexpr Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
 
-		explicit constexpr Vector3(float v)
-			: x(v), y(v), z(v) {}
+		explicit constexpr Vector3(float n)
+			: x(n), y(n), z(n) {}
 
 		explicit constexpr Vector3(float* ptr)
 			: x(ptr[0]), y(ptr[1]), z(ptr[3]) {}
