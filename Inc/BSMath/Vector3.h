@@ -4,7 +4,7 @@
 
 namespace BSMath
 {
-	struct Vector3
+	struct Vector3 final
 	{
 	public:
 		constexpr static Vector3 Zero{ 0.0f, 0.0f, 0.0f };
