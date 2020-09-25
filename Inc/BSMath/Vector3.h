@@ -154,7 +154,8 @@ namespace BSMath
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
-		return _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) == 7;
+		const auto val = _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs));
+		return val == 15;
 	}
 
 	[[nodiscard]] Vector3 Vector3::operator-() const noexcept
