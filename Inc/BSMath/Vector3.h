@@ -275,6 +275,11 @@ namespace BSMath
 		return Vector3{ lhs } ^= rhs;
 	}
 
+	inline float Vector3::DistanceSquared(const Vector3& lhs, const Vector3& rhs)
+	{
+		return (lhs - rhs).LengthSquared();
+	}
+
 	inline float Vector3::Dot(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs | rhs; }
 	inline Vector3 Vector3::Cross(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs ^ rhs; }
 }
