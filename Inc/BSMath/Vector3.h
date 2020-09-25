@@ -7,18 +7,46 @@ namespace BSMath
 {
 	struct Vector3 final
 	{
-	public:
-		constexpr static Vector3 Zero{ 0.0f, 0.0f, 0.0f };
-		constexpr static Vector3 One{ 1.0f, 1.0f, 1.0f };
+	public: // Templates
+		[[nodiscard]] constexpr static Vector3 Zero() noexcept
+		{
+			return Vector3{ 0.0f };
+		}
 
-		constexpr static Vector3 Left{ -1.0f, 0.0f, 0.0f };
-		constexpr static Vector3 Right{ 1.0f, 0.0f, 0.0f };
-		
-		constexpr static Vector3 Up{ 0.0f, 1.0f, 0.0f };
-		constexpr static Vector3 Down{ 0.0f, -1.0f, 0.0f };
-		
-		constexpr static Vector3 Forward{ 0.0f, 0.0f, 1.0f };
-		constexpr static Vector3 Backward{ 0.0f, 0.0f, -1.0f };
+		[[nodiscard]] constexpr static Vector3 One() noexcept
+		{
+			return Vector3{ 1.0f };
+		}
+		[[nodiscard]] constexpr static Vector3 Right() noexcept
+		{
+			return Vector3{ 1.0f, 0.0f, 0.0f };
+		}
+
+		[[nodiscard]] constexpr static Vector3 Left() noexcept
+		{
+			return Vector3{ -1.0f, 0.0f, 0.0f };
+		}
+
+		[[nodiscard]] constexpr static Vector3 Up() noexcept
+		{
+			return Vector3{ 0.0f, 1.0f, 0.0f };
+		}
+
+		[[nodiscard]] constexpr static Vector3 Down() noexcept
+		{
+			return Vector3{ 0.0f, -1.0f, 0.0f };
+		}
+
+		[[nodiscard]] constexpr static Vector3 Forward() noexcept
+		{
+			return Vector3{ 0.0f, 0.0f, 1.0f };
+		}
+
+		[[nodiscard]] constexpr static Vector3 Backward() noexcept
+		{
+			return Vector3{ 0.0f, 0.0f, -1.0f };
+		}
+
 
 	public:
 		constexpr Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
@@ -53,7 +81,7 @@ namespace BSMath
 		[[nodiscard]] inline Vector3 GetNormal() const noexcept
 		{
 			Vector3 ret = *this;
-			return ret.Normalize() ? ret : Zero;
+			return ret.Normalize() ? ret : Zero();
 		}
 
 		bool Normalize() noexcept;
