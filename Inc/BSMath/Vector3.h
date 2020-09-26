@@ -287,13 +287,9 @@ namespace BSMath
 	template <>
 	[[nodiscard]] auto Clamp<Vector3>(const Vector3& n, const Vector3& min, const Vector3& max) noexcept
 	{
-		const __m128 minSimd = _mm_set_ps(0.0f, min.z, min.y, min.x);
-		const __m128 maxSimd = _mm_set_ps(0.0f, max.z, max.y, max.x);
-
-		__m128 ret = _mm_set_ps(0.0f, n.z, n.y, n.x);
-		ret = _mm_max_ps(ret, _mm_min_ps(minSimd, maxSimd));
-		ret = _mm_min_ps(ret, _mm_max_ps(minSimd, maxSimd));
-		return Vector3{ ret };
+		Vector3 realMin = Min(min, max);
+		Vector3 realMax = Max(min, max);
+		return Max(min, Min(max, n));
 	}
 
 	template <>
