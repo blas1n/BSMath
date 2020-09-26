@@ -160,8 +160,8 @@ namespace BSMath
 
 	[[nodiscard]] Vector3 Vector3::operator-() const noexcept
 	{
-		__m128 zero = _mm_setzero_ps();
-		__m128 vec = _mm_set_ps(0.0f, z, y, x);
+		const __m128 zero = _mm_setzero_ps();
+		const __m128 vec = _mm_set_ps(0.0f, z, y, x);
 		return Vector3{ _mm_sub_ps(zero, vec) };
 	}
 
