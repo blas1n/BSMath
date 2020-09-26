@@ -311,9 +311,11 @@ namespace BSMath
 	template <>
 	[[nodiscard]] Vector3 Sign<Vector3>(const Vector3& n) noexcept
 	{
-		const __m128 signMask = _mm_set_ps1(-0.0f);
+		const __m128 zero = _mm_setzero_ps();
 		const __m128 simd = _mm_set_ps(0.0f, n.z, n.y, n.x);
-		return Vector3{ _mm_and_ps(signMask, simd) };
+		const __m128 positive = _mm_and_ps(_mm_cmpgt_ps(simd, zero), _mm_set1_ps(1.0f));
+		const __m128 negative = _mm_and_ps(_mm_cmplt_ps(simd, zero), _mm_set1_ps(-1.0f));
+		return Vector3{ _mm_or_ps(positive, negative) };
 	}
 
 	namespace Detail
