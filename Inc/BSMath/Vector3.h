@@ -186,11 +186,9 @@ namespace BSMath
 		return *this = Vector3{ _mm_mul_ps(lhs, rhs) };
 	}
 
-	Vector3& Vector3::operator*=(float scaler) noexcept
+	inline Vector3& Vector3::operator*=(float scaler) noexcept
 	{
-		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
-		const __m128 rhs = _mm_set_ps1(scaler);
-		return *this = Vector3{ _mm_mul_ps(lhs, rhs) };
+		return *this *= Vector3{ scaler };
 	}
 
 	Vector3& Vector3::operator/=(const Vector3& other) noexcept
@@ -200,11 +198,9 @@ namespace BSMath
 		return *this = Vector3{ _mm_div_ps(lhs, rhs) };
 	}
 
-	Vector3& Vector3::operator/=(float divisor) noexcept
+	inline Vector3& Vector3::operator/=(float divisor) noexcept
 	{
-		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
-		const __m128 rhs = _mm_set_ps1(divisor);
-		return *this = Vector3{ _mm_div_ps(lhs, rhs) };
+		return *this /= Vector3{ divisor };
 	}
 
 	Vector3& Vector3::operator^=(const Vector3& other) noexcept
