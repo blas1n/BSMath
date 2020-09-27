@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "BSMath/IntPoint.h"
-#include "BSMath/Utility.h"
 
 namespace BSMath
 {
