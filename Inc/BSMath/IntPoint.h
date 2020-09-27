@@ -110,7 +110,7 @@ namespace BSMath
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, 0.0f, static_cast<float>(y), static_cast<float>(x));
 		const __m128 rhs = _mm_set_ps(0.0f, 0.0f, static_cast<float>(other.y), static_cast<float>(other.x));
-		return *this = IntPoint{ _mm_castps_si128(_mm_div_ps(lhs, rhs)) };
+		return *this = IntPoint{ _mm_cvtps_epi32(_mm_div_ps(lhs, rhs)) };
 	}
 
 	IntPoint& IntPoint::operator/=(int divisor) noexcept
