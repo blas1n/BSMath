@@ -68,7 +68,7 @@ namespace BSMath
 		const __m128i lhs = _mm_set_epi32(0, 0, y, x);
 		const __m128i rhs = _mm_set_epi32(0, 0, other.y, other.x);
 		const auto val = _mm_movemask_epi8((_mm_cmpeq_epi32(lhs, rhs)));
-		return val == 0xFF;
+		return val == 0xFFFF;
 	}
 
 	[[nodiscard]] IntPoint IntPoint::operator-() const noexcept
