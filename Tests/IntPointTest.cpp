@@ -54,6 +54,9 @@ namespace BSMath
 		vec /= IntPoint{ 2, 3 };
 		target.Set(5, 2);
 		EXPECT_EQ(vec, target);
+
+		target = IntPoint::One() * 2;
+		EXPECT_EQ(vec | target, 14);
 	}
 
 	TEST(IntPointTest, Global)
@@ -66,7 +69,7 @@ namespace BSMath
 		EXPECT_EQ(result, target);
 
 		result = Max(lhs, rhs);
-		target = IntPoint{ 5 };
+		target = IntPoint::One() * 5;
 		EXPECT_EQ(result, target);
 
 		result.Set(1, 6);
