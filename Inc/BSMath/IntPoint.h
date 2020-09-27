@@ -2,6 +2,7 @@
 
 #include <cstdalign>
 #include <emmintrin.h>
+#include "Random.h"
 #include "Utility.h"
 
 namespace BSMath
@@ -238,4 +239,31 @@ namespace BSMath
 		const __m128i negative = _mm_and_si128(_mm_cmplt_epi32(simd, zero), _mm_set1_epi32(-1));
 		return IntPoint{ _mm_or_si128(positive, negative) };
 	}
+
+	// Random
+	class UniformIntPointDistribution : public std::uniform_int_distribution<int>
+	{
+		using Super = std::uniform_int_distribution<int>;
+
+	public:
+		using result_type = IntPoint;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			const int x = Super::operator()(engine);
+			const int y = Super::operator()(engine);
+			return IntPoint{ x, y };
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
+		{
+			const int x = Super::operator()(engine, param);
+			const int y = Super::operator()(engine, param);
+			return IntPoint{ x, y };
+		}
+	};
+
+	using UniformIntPointRandom = Random<IntPoint, std::mt19937, UniformIntPointDistribution>;
 }

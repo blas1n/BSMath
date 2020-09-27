@@ -311,4 +311,56 @@ namespace BSMath
 	{
 		return a + t * (b - a);
 	}
+
+	// Random
+	class UniformVector2Distribution : public std::uniform_real_distribution<float>
+	{
+		using Super = std::uniform_real_distribution<float>;
+
+	public:
+		using result_type = Vector2;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			const float x = Super::operator()(engine);
+			const float y = Super::operator()(engine);
+			return Vector2{ x, y };
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
+		{
+			const float x = Super::operator()(engine, param);
+			const float y = Super::operator()(engine, param);
+			return Vector2{ x, y };
+		}
+	};
+
+	class NormalVector2Distribution : public std::normal_distribution<float>
+	{
+		using Super = std::normal_distribution<float>;
+
+	public:
+		using result_type = Vector2;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			const float x = Super::operator()(engine);
+			const float y = Super::operator()(engine);
+			return Vector2{ x, y };
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
+		{
+			const float x = Super::operator()(engine, param);
+			const float y = Super::operator()(engine, param);
+			return Vector2{ x, y };
+		}
+	};
+
+	using UniformVector2Random = Random<Vector2, std::mt19937, UniformVector2Distribution>;
+	using NormalVector2Random = Random<Vector2, std::mt19937, NormalVector2Distribution>;
 }

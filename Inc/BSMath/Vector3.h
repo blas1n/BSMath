@@ -341,4 +341,60 @@ namespace BSMath
 	// Vector2's Constructor
 	constexpr Vector2::Vector2(const Vector3& vec3)
 		: x(vec3.x), y(vec3.y) {}
+
+	// Random
+	class UniformVector3Distribution : public std::uniform_real_distribution<float>
+	{
+		using Super = std::uniform_real_distribution<float>;
+
+	public:
+		using result_type = Vector3;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			const float x = Super::operator()(engine);
+			const float y = Super::operator()(engine);
+			const float z = Super::operator()(engine);
+			return Vector3{ x, y, z };
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
+		{
+			const float x = Super::operator()(engine, param);
+			const float y = Super::operator()(engine, param);
+			const float z = Super::operator()(engine, param);
+			return Vector3{ x, y, z };
+		}
+	};
+
+	class NormalVector3Distribution : public std::normal_distribution<float>
+	{
+		using Super = std::normal_distribution<float>;
+
+	public:
+		using result_type = Vector3;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			const float x = Super::operator()(engine);
+			const float y = Super::operator()(engine);
+			const float z = Super::operator()(engine);
+			return Vector3{ x, y, z };
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
+		{
+			const float x = Super::operator()(engine, param);
+			const float y = Super::operator()(engine, param);
+			const float z = Super::operator()(engine, param);
+			return Vector3{ x, y, z };
+		}
+	};
+
+	using UniformVector3Random = Random<Vector3, std::mt19937, UniformVector3Distribution>;
+	using NormalVector3Random = Random<Vector3, std::mt19937, NormalVector3Distribution>;
 }
