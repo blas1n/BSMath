@@ -126,21 +126,21 @@ namespace BSMath
 
     [[nodiscard]] inline int Trunc(float n) noexcept
     {
-        return std::trunc(n);
+        return static_cast<int>(std::trunc(n));
     }
 
     [[nodiscard]] inline int Ceil(float n) noexcept
     {
-        return std::ceil(n);
+        return static_cast<int>(std::ceil(n));
     }
 
     [[nodiscard]] inline int Round(float n) noexcept
     {
-        return std::round(n);
+        return static_cast<int>(std::round(n));
     }
 
     [[nodiscard]] inline int Floor(float n) noexcept
     {
-        return std::floor(n);
+        return static_cast<int>(std::floor(n));
     }
 }
