@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vector2.h"
 #include "IntVector.h"
 
 namespace BSMath
@@ -67,7 +68,9 @@ namespace BSMath
 			x = ret[0]; y = ret[1]; z = ret[2];
 		}
 
-		explicit constexpr Vector3(const struct Vector2& vec2, float inZ = 0.0f);
+		explicit constexpr Vector3(const Vector2& vec2, float inZ = 0.0f)
+			: x(vec2.x), y(vec2.y), z(inZ) {}
+
 		explicit constexpr Vector3(const struct Vector4& vec4);
 
 		explicit constexpr Vector3(const IntPoint& point, float inZ = 0.0f)
@@ -338,4 +341,8 @@ namespace BSMath
 		const __m128 maxSimd = _mm_set_ps(0.0f, max.z, max.y, max.x);
 		return Vector3{ _mm_div_ps(_mm_sub_ps(vecSimd, minSimd), _mm_sub_ps(maxSimd, minSimd)) };
 	}
+
+	// Vector2's Constructor
+	constexpr Vector2::Vector2(const Vector3& vec3)
+		: x(vec3.x), y(vec3.y) {}
 }
