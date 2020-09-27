@@ -85,6 +85,8 @@ namespace BSMath
 		[[nodiscard]] constexpr int& operator[](size_t idx) noexcept { return (&x)[idx]; }
 		[[nodiscard]] constexpr int operator[](size_t idx) const noexcept { return (&x)[idx]; }
 
+		[[nodiscard]] static int Dot(const IntPoint& lhs, const IntPoint& rhs) noexcept;
+
 	public:
 		int x;
 		int y;
@@ -178,6 +180,17 @@ namespace BSMath
 	[[nodiscard]] inline IntPoint operator/(const IntPoint& vec, int divisor) noexcept
 	{
 		return IntPoint{ vec } /= divisor;
+	}
+
+	[[nodiscard]] int operator|(const IntPoint& lhs, const IntPoint& rhs) noexcept
+	{
+		IntPoint mul = lhs * rhs;
+		return mul.x + mul.y;
+	}
+
+	inline int IntPoint::Dot(const IntPoint& lhs, const IntPoint& rhs) noexcept
+	{
+		return lhs | rhs;
 	}
 
 	template <>
