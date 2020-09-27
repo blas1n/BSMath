@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdalign>
 #include <emmintrin.h>
 #include "Utility.h"
 
@@ -63,7 +64,7 @@ namespace BSMath
 
 		explicit Vector3(const __m128& simd)
 		{
-			float ret[4];
+			alignas(16) float ret[4];
 			_mm_store_ps(ret, simd);
 			x = ret[0]; y = ret[1]; z = ret[2];
 		}
