@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cstdalign>
-#include <emmintrin.h>
-#include "Utility.h"
+#include "IntVector.h"
 
 namespace BSMath
 {
@@ -69,11 +67,16 @@ namespace BSMath
 			x = ret[0]; y = ret[1]; z = ret[2];
 		}
 
-		explicit Vector3(const struct Vector2& vec2, float inZ = 0.0f);
-		explicit Vector3(const struct Vector4& vec4);
+		explicit constexpr Vector3(const struct Vector2& vec2, float inZ = 0.0f);
+		explicit constexpr Vector3(const struct Vector4& vec4);
 
-		explicit Vector3(const struct IntPoint& intPoint, float inZ = 0.0f);
-		explicit Vector3(const struct IntVector& intVec);
+		explicit constexpr Vector3(const IntPoint& point, float inZ = 0.0f)
+			: x(static_cast<float>(point.x)), y(static_cast<float>(point.y)), z(inZ) {}
+
+		explicit constexpr Vector3(const IntVector& vec)
+			: x(static_cast<float>(vec.x)),
+			y(static_cast<float>(vec.y)),
+			z(static_cast<float>(vec.z)) {}
 
 		constexpr void Set(float inX, float inY, float inZ) noexcept
 		{
