@@ -212,7 +212,7 @@ namespace BSMath
 		return IntVector{ lhs } ^= rhs;
 	}
 
-	IntVector& IntVector::operator^=(const IntVector& other) noexcept
+	inline IntVector& IntVector::operator^=(const IntVector& other) noexcept
 	{
 		auto ret1 = IntVector{ y, z, x } *IntVector{ other.z, other.x, other.y };
 		auto ret2 = IntVector{ z, x, y } *IntVector{ other.y, other.z, other.x };
