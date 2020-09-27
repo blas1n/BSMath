@@ -14,6 +14,31 @@ namespace BSMath
 			return IntPoint{ 0 };
 		}
 
+		[[nodiscard]] constexpr static IntPoint One() noexcept
+		{
+			return IntPoint{ 1 };
+		}
+
+		[[nodiscard]] constexpr static IntPoint Right() noexcept
+		{
+			return IntPoint{ 1, 0 };
+		}
+
+		[[nodiscard]] constexpr static IntPoint Left() noexcept
+		{
+			return IntPoint{ -1, 0 };
+		}
+
+		[[nodiscard]] constexpr static IntPoint Up() noexcept
+		{
+			return IntPoint{ 0, 1 };
+		}
+
+		[[nodiscard]] constexpr static IntPoint Down() noexcept
+		{
+			return IntPoint{ 0, -1 };
+		}
+
 	public:
 		constexpr IntPoint() : x(0), y(0) {}
 
