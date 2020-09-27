@@ -81,7 +81,7 @@ namespace BSMath
 
 		EXPECT_EQ(Trunc(-0.5f), 0);
 		EXPECT_EQ(Ceil(-0.5f), 0);
-		EXPECT_EQ(Round(-0.5f), 0);
+		EXPECT_EQ(Round(-0.5f), -1);
 		EXPECT_EQ(Floor(-0.5f), -1);
 	}
 }
