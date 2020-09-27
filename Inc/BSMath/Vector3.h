@@ -342,6 +342,11 @@ namespace BSMath
 		return Vector3{ _mm_div_ps(_mm_sub_ps(vecSimd, minSimd), _mm_sub_ps(maxSimd, minSimd)) };
 	}
 
+	[[nodiscard]] inline Vector3 Lerp(const Vector3& a, const Vector3& b, float t) noexcept
+	{
+		return a + t * (b - a);
+	}
+
 	// Vector2's Constructor
 	constexpr Vector2::Vector2(const Vector3& vec3)
 		: x(vec3.x), y(vec3.y) {}

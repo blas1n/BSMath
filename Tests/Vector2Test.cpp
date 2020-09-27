@@ -128,7 +128,9 @@ namespace BSMath
 		lhs = Vector2::Zero();
 		rhs = Vector2::One() * 10.0f;
 		result = GetRangePct(result, lhs, rhs);
-
 		EXPECT_TRUE(IsNearlyEqual(result, Vector2::One() * 0.5f));
+
+		result = Lerp(lhs, rhs, 0.5f);
+		EXPECT_TRUE(IsNearlyEqual(result, Vector2::One() * 5.0f));
 	}
 }

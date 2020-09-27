@@ -305,4 +305,9 @@ namespace BSMath
 		const __m128 maxSimd = _mm_set_ps(0.0f, 0.0f, max.y, max.x);
 		return Vector2{ _mm_div_ps(_mm_sub_ps(vecSimd, minSimd), _mm_sub_ps(maxSimd, minSimd)) };
 	}
+
+	[[nodiscard]] inline Vector2 Lerp(const Vector2& a, const Vector2& b, float t) noexcept
+	{
+		return a + t * (b - a);
+	}
 }
