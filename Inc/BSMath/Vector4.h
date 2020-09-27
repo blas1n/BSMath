@@ -18,7 +18,7 @@ namespace BSMath
 		}
 
 	public:
-		constexpr Vector4() : x(0.0f), y(0.0f), z(0.0f) {}
+		constexpr Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
 
 		explicit constexpr Vector4(float n)
 			: x(n), y(n), z(n), w(n) {}
