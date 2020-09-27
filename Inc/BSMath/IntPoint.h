@@ -194,8 +194,8 @@ namespace BSMath
 	{
 		const __m128i zero = _mm_setzero_si128();
 		const __m128i simd = _mm_set_epi32(0, 0, n.y, n.x);
-		const __m128i positive = _mm_and_si128(_mm_cmpgt_epi32(simd, zero), _mm_set1_epi32(1.0f));
-		const __m128i negative = _mm_and_si128(_mm_cmplt_epi32(simd, zero), _mm_set1_epi32(-1.0f));
+		const __m128i positive = _mm_and_si128(_mm_cmpgt_epi32(simd, zero), _mm_set1_epi32(1));
+		const __m128i negative = _mm_and_si128(_mm_cmplt_epi32(simd, zero), _mm_set1_epi32(-1));
 		return IntPoint{ _mm_or_si128(positive, negative) };
 	}
 }
