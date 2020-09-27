@@ -119,23 +119,28 @@ namespace BSMath
         return IsNearlyZero(n) ? 0.0f : n * InvSqrt(n, iterationNum);
     }
 
+    [[nodiscard]] inline float Fmod(float x, float y) noexcept
+    {
+        return std::fmod(x, y);
+    }
+
     [[nodiscard]] inline int Trunc(float n) noexcept
     {
-        return _mm_cvtt_ss2si(_mm_set_ss(n));
+        return std::trunc(n);
     }
 
     [[nodiscard]] inline int Ceil(float n) noexcept
     {
-        return -(_mm_cvt_ss2si(_mm_set_ss(-0.5f - (n + n))) >> 1);
+        return std::ceil(n);
     }
 
     [[nodiscard]] inline int Round(float n) noexcept
     {
-        return _mm_cvt_ss2si(_mm_set_ss(n + n + 0.5f)) >> 1;
+        return std::round(n);
     }
 
     [[nodiscard]] inline int Floor(float n) noexcept
     {
-        return _mm_cvt_ss2si(_mm_set_ss(n + n - 0.5f)) >> 1;
+        return std::floor(n);
     }
 }
