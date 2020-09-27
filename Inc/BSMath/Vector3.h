@@ -206,13 +206,9 @@ namespace BSMath
 
 	Vector3& Vector3::operator^=(const Vector3& other) noexcept
 	{
-		const __m128 a_yzx = _mm_set_ps(0.0f, x, z, y);
-		const __m128 a_zxy = _mm_set_ps(0.0f, y, x, z);
-		const __m128 b_zxy = _mm_set_ps(0.0f, other.y, other.x, other.z);
-		const __m128 b_yzx = _mm_set_ps(0.0f, other.x, other.z, other.y);
-
-		*this = Vector3{ _mm_sub_ps(_mm_mul_ps(a_yzx, b_zxy), _mm_mul_ps(a_zxy, b_yzx)) };
-		return *this;
+		auto ret1 = Vector3{ y, z, x } * Vector3{ other.z, other.x, other.y };
+		auto ret2 = Vector3{ z, x, y } * Vector3{ other.y, other.z, other.x };
+		return *this = ret1 - ret2;
 	}
 
 	[[nodiscard]] inline Vector3 operator+(const Vector3& lhs, const Vector3& rhs) noexcept
