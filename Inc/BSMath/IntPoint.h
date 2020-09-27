@@ -74,7 +74,7 @@ namespace BSMath
 	{
 		const __m128i zero = _mm_setzero_si128();
 		const __m128i vec = _mm_set_epi32(0, 0, y, x);
-		return IntPoint{ _mm_sub_ps(zero, vec) };
+		return IntPoint{ _mm_sub_epi32(zero, vec) };
 	}
 
 	IntPoint& IntPoint::operator+=(const IntPoint& other) noexcept
@@ -96,7 +96,7 @@ namespace BSMath
 		const __m128i operand = _mm_set_epi32(0, other.y, 0, other.x);
 		__m128i point = _mm_set_epi32(0, y, 0, x);
 		point = _mm_mul_epu32(point, operand);
-		return _mm_shuffle_epi32(point, _MM_SHUFFLE(3, 1, 2, 0));
+		return *this = IntPoint{ _mm_shuffle_epi32(point, _MM_SHUFFLE(3, 1, 2, 0)) };
 	}
 
 	inline IntPoint& IntPoint::operator*=(int scaler) noexcept
@@ -107,8 +107,8 @@ namespace BSMath
 	// ToDo: Use integer specific instruction
 	IntPoint& IntPoint::operator/=(const IntPoint& other) noexcept
 	{
-		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
-		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
+		const __m128 lhs = _mm_set_ps(0.0f, 0.0f, y, x);
+		const __m128 rhs = _mm_set_ps(0.0f, 0.0f, other.y, other.x);
 		return *this = IntPoint{ _mm_castps_si128(_mm_div_ps(lhs, rhs)) };
 	}
 
@@ -155,19 +155,19 @@ namespace BSMath
 	template <>
 	[[nodiscard]] auto Min<IntPoint>(const IntPoint& lhs, const IntPoint& rhs) noexcept
 	{
-		const __m128i lhsSimd = _mm_set_ps(0, 0, lhs.y, lhs.x);
-		const __m128i rhsSimd = _mm_set_ps(0, 0, rhs.y, rhs.x);
+		const __m128i lhsSimd = _mm_set_epi32(0, 0, lhs.y, lhs.x);
+		const __m128i rhsSimd = _mm_set_epi32(0, 0, rhs.y, rhs.x);
 		const __m128i mask = _mm_cmplt_epi32(lhsSimd, rhsSimd);
-		return IntPoint{ _mm_xor_si128(rhs, _mm_and_si128(mask, _mm_xor_si128(lhs, rhs))) };
+		return IntPoint{ _mm_xor_si128(rhsSimd, _mm_and_si128(mask, _mm_xor_si128(lhsSimd, rhsSimd))) };
 	}
 
 	template <>
 	[[nodiscard]] auto Max<IntPoint>(const IntPoint& lhs, const IntPoint& rhs) noexcept
 	{
-		const __m128i lhsSimd = _mm_set_ps(0, 0, lhs.y, lhs.x);
-		const __m128i rhsSimd = _mm_set_ps(0, 0, rhs.y, rhs.x);
+		const __m128i lhsSimd = _mm_set_epi32(0, 0, lhs.y, lhs.x);
+		const __m128i rhsSimd = _mm_set_epi32(0, 0, rhs.y, rhs.x);
 		const __m128i mask = _mm_cmpgt_epi32(lhsSimd, rhsSimd);
-		return IntPoint{ _mm_xor_si128(rhs, _mm_and_si128(mask, _mm_xor_si128(lhs, rhs))) };
+		return IntPoint{ _mm_xor_si128(rhsSimd, _mm_and_si128(mask, _mm_xor_si128(lhsSimd, rhsSimd))) };
 	}
 
 	template <>
