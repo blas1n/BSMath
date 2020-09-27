@@ -11,7 +11,7 @@ namespace BSMath
 	public: // Templates
 		[[nodiscard]] constexpr static IntPoint Zero() noexcept
 		{
-			return IntPoint{ 0.0f };
+			return IntPoint{ 0 };
 		}
 
 	public:
