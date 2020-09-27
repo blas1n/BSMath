@@ -115,7 +115,7 @@ namespace BSMath
 
 	IntPoint& IntPoint::operator/=(int divisor) noexcept
 	{
-		return *this /= {divisor};
+		return *this /= IntPoint{ divisor };
 	}
 
 	[[nodiscard]] inline IntPoint operator+(const IntPoint& lhs, const IntPoint& rhs) noexcept
