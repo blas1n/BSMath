@@ -4,7 +4,7 @@
 
 namespace BSMath
 {
-	TEST(Utility, Comparison)
+	TEST(UtilityTest, Comparison)
 	{
 		EXPECT_EQ(Min(0, 1), 0);
 		EXPECT_EQ(Max(0, 1), 1.0f);
@@ -33,7 +33,7 @@ namespace BSMath
 		EXPECT_EQ(Clamp(4, 1, 3), 3);
 	}
 
-	TEST(Utility, Abs)
+	TEST(UtilityTest, Abs)
 	{
 		EXPECT_EQ(Abs(1), 1);
 		EXPECT_EQ(Abs(-1), 1);
@@ -41,7 +41,7 @@ namespace BSMath
 		EXPECT_NEAR(Abs(-1.0f), 1.0f, Epsilon);
 	}
 
-	TEST(Utility, Sign)
+	TEST(UtilityTest, Sign)
 	{
 		EXPECT_EQ(Sign(10), 1);
 		EXPECT_EQ(Sign(-10), -1);
@@ -49,17 +49,17 @@ namespace BSMath
 		EXPECT_NEAR(Sign(-10.0f), -1.0f, Epsilon);
 	}
 
-	TEST(Utility, GetRangePct)
+	TEST(UtilityTest, GetRangePct)
 	{
 		EXPECT_NEAR(GetRangePct(5, 0, 10), 0.5f, Epsilon);
 	}
 
-	TEST(Utility, Lerp)
+	TEST(UtilityTest, Lerp)
 	{
 		EXPECT_NEAR(Lerp(0.0f, 10.0f, 0.5f), 5.0f, Epsilon);
 	}
 
-	TEST(Utility, Sqrt)
+	TEST(UtilityTest, Sqrt)
 	{
 		for (size_t l = 1; l <= 2; ++l)
 		{
@@ -72,7 +72,7 @@ namespace BSMath
 		}
 	}
 
-	TEST(Utility, FloatToInt)
+	TEST(UtilityTest, FloatToInt)
 	{
 		EXPECT_EQ(Trunc(0.5f), 0);
 		EXPECT_EQ(Ceil(0.5f), 1);

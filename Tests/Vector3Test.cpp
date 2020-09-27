@@ -10,7 +10,7 @@ namespace BSMath
 			IsNearlyEqual(lhs.y, rhs.y) && IsNearlyEqual(lhs.z, rhs.z);
 	}
 
-	TEST(Vector, Construct)
+	TEST(Vector3Test, Construct)
 	{
 		constexpr static const float Zeros[3]{ 0.0f, 0.0f, 0.0f };
 		
@@ -26,7 +26,7 @@ namespace BSMath
 		EXPECT_TRUE(result);
 	}
 
-	TEST(Vector, Size)
+	TEST(Vector3Test, Size)
 	{
 		Vector3 vec{ 1.0f, 2.0f, 3.0f };
 		EXPECT_TRUE(IsNearlyEqual(vec.LengthSquared(), 14.0f));
@@ -41,7 +41,7 @@ namespace BSMath
 		EXPECT_TRUE(IsNearlyZero(Vector3::Distance(vec, target)));
 	}
 
-	TEST(Vector, Compare)
+	TEST(Vector3Test, Compare)
 	{
 		for (float i = -5.0f; i <= 5.1f; ++i)
 		{
@@ -57,7 +57,7 @@ namespace BSMath
 		}
 	}
 
-	TEST(Vector, Operator)
+	TEST(Vector3Test, Operator)
 	{
 		Vector3 vec{ 1.0f, 0.0f, 0.0f };
 		Vector3 target{ -1.0f, 0.0f, 0.0f };
@@ -95,7 +95,7 @@ namespace BSMath
 		EXPECT_EQ(vec, target);
 	}
 
-	TEST(Vector, Accessor)
+	TEST(Vector3Test, Accessor)
 	{
 		constexpr Vector3 vec{ 1.0f, 2.0f, 3.0f };
 		EXPECT_EQ(vec[0], 1.0f);
@@ -103,7 +103,7 @@ namespace BSMath
 		EXPECT_EQ(vec[2], 3.0f);
 	}
 
-	TEST(Vector, Global)
+	TEST(Vector3Test, Global)
 	{
 		Vector3 lhs{ 5.0f, 2.0f, 5.0f };
 		Vector3 rhs{ 2.0f, 5.0f, 2.0f };
