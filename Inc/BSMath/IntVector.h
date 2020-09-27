@@ -136,11 +136,12 @@ namespace BSMath
 
 	inline IntVector& IntVector::operator*=(const IntVector& other) noexcept
 	{
-		const __m128i lhsSimd = _mm_set_epi32(0, y, z, x);
-		const __m128i rhsSimd = _mm_set_epi32(0, other.y, other.z, other.x);
+		const __m128i lhsSimd = _mm_set_epi32(0, z, y, x);
+		const __m128i rhsSimd = _mm_set_epi32(0, other.z, other.y, other.x);
 		const __m128i tmp1 = _mm_mul_epu32(lhsSimd, rhsSimd);
-		const __m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(lhsSimd, 8), _mm_srli_si128(rhsSimd, 8));
-		return IntVector{ _mm_unpacklo_epi32(tmp1, tmp2) };
+		const __m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(lhsSimd, 4), _mm_srli_si128(rhsSimd, 4));
+		*this = IntVector{ _mm_unpacklo_epi32(_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(3, 1, 2, 0)), tmp2) };
+		return *this;
 	}
 
 	inline IntVector& IntVector::operator*=(int scaler) noexcept
