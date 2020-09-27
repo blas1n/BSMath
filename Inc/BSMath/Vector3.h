@@ -152,7 +152,7 @@ namespace BSMath
 		if (IsNearlyZero(lengthSquared))
 			return false;
 
-		__m128 vec = _mm_set_ps(0.0f, z, y, x);
+		const __m128 vec = _mm_set_ps(0.0f, z, y, x);
 		const __m128 size = _mm_set_ps1(InvSqrt(lengthSquared));
 		*this = Vector3{ _mm_mul_ps(vec, size) };
 		return true;
