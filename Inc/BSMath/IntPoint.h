@@ -27,8 +27,8 @@ namespace BSMath
 
 		explicit IntPoint(const __m128i& simd)
 		{
-			int ret[4];
-			_mm_store_ps(ret, simd);
+			alignas(16) int ret[4];
+			_mm_store_si128(reinterpret_cast<__m128i*>(ret), simd);
 			x = ret[0]; y = ret[1];
 		}
 
