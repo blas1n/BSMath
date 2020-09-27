@@ -299,4 +299,64 @@ namespace BSMath
 
 	constexpr Vector3::Vector3(const Vector4& vec4)
 		: x(vec4.x), y(vec4.y), z(vec4.z) {}
+
+	// Random
+	class UniformVector4Distribution : public std::uniform_real_distribution<float>
+	{
+		using Super = std::uniform_real_distribution<float>;
+
+	public:
+		using result_type = Vector4;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			const float x = Super::operator()(engine);
+			const float y = Super::operator()(engine);
+			const float z = Super::operator()(engine);
+			const float w = Super::operator()(engine);
+			return Vector4{ x, y, z, w };
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
+		{
+			const float x = Super::operator()(engine, param);
+			const float y = Super::operator()(engine, param);
+			const float z = Super::operator()(engine, param);
+			const float w = Super::operator()(engine, param);
+			return Vector4{ x, y, z, w };
+		}
+	};
+
+	class NormalVector4Distribution : public std::normal_distribution<float>
+	{
+		using Super = std::normal_distribution<float>;
+
+	public:
+		using result_type = Vector3;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			const float x = Super::operator()(engine);
+			const float y = Super::operator()(engine);
+			const float z = Super::operator()(engine);
+			const float w = Super::operator()(engine);
+			return Vector4{ x, y, z, w };
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
+		{
+			const float x = Super::operator()(engine, param);
+			const float y = Super::operator()(engine, param);
+			const float z = Super::operator()(engine, param);
+			const float w = Super::operator()(engine, param);
+			return Vector4{ x, y, z, w };
+		}
+	};
+
+	using UniformVector4Random = Random<Vector4, std::mt19937, UniformVector4Distribution>;
+	using NormalVector4Random = Random<Vector4, std::mt19937, NormalVector4Distribution>;
 }

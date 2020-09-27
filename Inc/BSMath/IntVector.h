@@ -271,4 +271,33 @@ namespace BSMath
 	// IntPoint's Constructor
 	constexpr IntPoint::IntPoint(const IntVector& vec)
 		: x(vec.x), y(vec.y) {}
+
+	// Random
+	class UniformIntVectorDistribution : public std::uniform_int_distribution<int>
+	{
+		using Super = std::uniform_int_distribution<int>;
+
+	public:
+		using result_type = IntVector;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			const int x = Super::operator()(engine);
+			const int y = Super::operator()(engine);
+			const int z = Super::operator()(engine);
+			return IntVector{ x, y, z };
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
+		{
+			const int x = Super::operator()(engine, param);
+			const int y = Super::operator()(engine, param);
+			const int z = Super::operator()(engine, param);
+			return IntVector{ x, y, z };
+		}
+	};
+
+	using UniformIntVectorRandom = Random<IntVector, std::mt19937, UniformIntVectorDistribution>;
 }

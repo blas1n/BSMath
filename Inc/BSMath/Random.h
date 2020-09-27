@@ -17,8 +17,8 @@ namespace BSMath
 	class Random final : public Detail::RandomBase
 	{
 	public:
-		using Seed = Engine::result_type;
-		using Parameter = Distributor::param_type;
+		using Seed = typename Engine::result_type;
+		using Parameter = typename Distributor::param_type;
 
 	public:
 		Random() : engine(randomDevice) {}
@@ -38,8 +38,8 @@ namespace BSMath
 		Engine engine;
 	};
 	
-	using UniformIntRandom = Random<int, std::mt19937, std::uniform_int_distribution>;
-	using UniformFloatRandom = Random<float, std::mt19937, std::uniform_real_distribution>;
-	using NormalRandom = Random<float, std::mt19937, std::normal_distributionn>;
+	using UniformIntRandom = Random<int, std::mt19937, std::uniform_int_distribution<int>>;
+	using UniformFloatRandom = Random<float, std::mt19937, std::uniform_real_distribution<float>>;
+	using NormalFloatRandom = Random<float, std::mt19937, std::normal_distribution<float>>;
 	
 }
