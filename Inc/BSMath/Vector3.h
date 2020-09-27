@@ -313,23 +313,14 @@ namespace BSMath
 		return Vector3{ _mm_or_ps(positive, negative) };
 	}
 
-	namespace Detail
-	{
-		[[nodiscard]] inline bool IsLessEpsilon(const __m128& vec, const Vector3& epsilon)
-		{
-			const __m128 tolerance = _mm_set_ps(0.0f, epsilon.z, epsilon.y, epsilon.x);
-			return _mm_movemask_ps(_mm_cmple_ps(vec, tolerance)) == 15;
-		}
-	}
-
-	[[nodiscard]] inline bool IsNearlyEqual(const Vector3& lhs, const Vector3& rhs, const Vector3& tolerance = Vector3{ Epsilon }) noexcept
+	[[nodiscard]] inline bool IsNearlyEqual(const Vector3& lhs, const Vector3& rhs, float tolerance = Epsilon) noexcept
 	{
 		__m128 vec = _mm_set_ps(0.0f, lhs.z, lhs.y, lhs.x);
 		vec = _mm_sub_ps(vec, _mm_set_ps(0.0f, rhs.z, rhs.y, rhs.x));
 		return Detail::IsLessEpsilon(vec, tolerance);
 	}
 
-	[[nodiscard]] inline bool IsNearlyZero(const Vector3& vec, const Vector3& tolerance = Vector3{ Epsilon }) noexcept
+	[[nodiscard]] inline bool IsNearlyZero(const Vector3& vec, float tolerance = Epsilon) noexcept
 	{
 		return Detail::IsLessEpsilon(_mm_set_ps(0.0f, vec.z, vec.y, vec.x), tolerance);
 	}

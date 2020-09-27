@@ -4,6 +4,16 @@
 
 namespace BSMath
 {
+	// All vector's helper function
+	namespace Detail
+	{
+		[[nodiscard]] inline bool IsLessEpsilon(const __m128& vec, float epsilon)
+		{
+			const __m128 tolerance = _mm_set_ps1(epsilon);
+			return _mm_movemask_ps(_mm_cmple_ps(vec, tolerance)) == 0xF;
+		}
+	}
+
 	struct Vector2 final
 	{
 	public: // Templates
@@ -277,23 +287,14 @@ namespace BSMath
 		return Vector2{ _mm_or_ps(positive, negative) };
 	}
 
-	namespace Detail
-	{
-		[[nodiscard]] inline bool IsLessEpsilon(const __m128& vec, const Vector2& epsilon)
-		{
-			const __m128 tolerance = _mm_set_ps(0.0f, 0.0f, epsilon.y, epsilon.x);
-			return _mm_movemask_ps(_mm_cmple_ps(vec, tolerance)) == 0xF;
-		}
-	}
-
-	[[nodiscard]] inline bool IsNearlyEqual(const Vector2& lhs, const Vector2& rhs, const Vector2& tolerance = Vector2{ Epsilon }) noexcept
+	[[nodiscard]] inline bool IsNearlyEqual(const Vector2& lhs, const Vector2& rhs, float tolerance = Epsilon) noexcept
 	{
 		__m128 vec = _mm_set_ps(0.0f, 0.0f, lhs.y, lhs.x);
 		vec = _mm_sub_ps(vec, _mm_set_ps(0.0f, 0.0f, rhs.y, rhs.x));
 		return Detail::IsLessEpsilon(vec, tolerance);
 	}
 
-	[[nodiscard]] inline bool IsNearlyZero(const Vector2& vec, const Vector2& tolerance = Vector2{ Epsilon }) noexcept
+	[[nodiscard]] inline bool IsNearlyZero(const Vector2& vec, float tolerance = Epsilon) noexcept
 	{
 		return Detail::IsLessEpsilon(_mm_set_ps(0.0f, 0.0f, vec.y, vec.x), tolerance);
 	}
