@@ -290,7 +290,7 @@ namespace BSMath
 	{
 		Vector3 realMin = Min(min, max);
 		Vector3 realMax = Max(min, max);
-		return Max(min, Min(max, n));
+		return Max(realMin, Min(realMax, n));
 	}
 
 	template <>
