@@ -176,7 +176,7 @@ namespace BSMath
 	{
 		IntPoint realMin = Min(min, max);
 		IntPoint realMax = Max(min, max);
-		return Max(min, Min(max, n));
+		return Max(realMin, Min(realMax, n));
 	}
 
 	template <>
