@@ -19,7 +19,7 @@ namespace BSMath
 		constexpr Vector3 vec3{ Zeros };
 		constexpr Vector3 vec4{ Vector3::Zero() };
 	
-		bool result = IsEqual(vec0, vec1) && IsEqual(vec0, vec2)
+		const bool result = IsEqual(vec0, vec1) && IsEqual(vec0, vec2)
 			&& IsEqual(vec0, vec3) && IsEqual(vec0, vec4);
 
 		EXPECT_TRUE(result);

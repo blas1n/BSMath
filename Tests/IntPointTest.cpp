@@ -18,7 +18,7 @@ namespace BSMath
 		constexpr IntPoint vec3{ Zeros };
 		constexpr IntPoint vec4{ IntPoint::Zero() };
 
-		bool result = IsEqual(vec0, vec1) && IsEqual(vec0, vec2)
+		const bool result = IsEqual(vec0, vec1) && IsEqual(vec0, vec2)
 			&& IsEqual(vec0, vec3) && IsEqual(vec0, vec4);
 
 		EXPECT_TRUE(result);
