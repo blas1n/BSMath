@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdalign>
 #include <emmintrin.h>
 #include "Utility.h"
 
@@ -64,10 +65,10 @@ namespace BSMath
 
 	bool IntPoint::operator==(const IntPoint& other) const noexcept
 	{
-		const __m128 lhs = _mm_set_epi32(0, 0, y, x);
-		const __m128 rhs = _mm_set_epi32(0, 0, other.y, other.x);
-		const auto val = _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs));
-		return val == 15;
+		const __m128i lhs = _mm_set_epi32(0, 0, y, x);
+		const __m128i rhs = _mm_set_epi32(0, 0, other.y, other.x);
+		const auto val = _mm_movemask_epi8((_mm_cmpeq_epi32(lhs, rhs)));
+		return val == 0xFF;
 	}
 
 	[[nodiscard]] IntPoint IntPoint::operator-() const noexcept
