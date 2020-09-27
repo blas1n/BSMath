@@ -133,14 +133,14 @@ namespace BSMath
 		float z;
 	};
 
-	float Vector3::LengthSquared() const noexcept
+	inline float Vector3::LengthSquared() const noexcept
 	{
 		const __m128 vec = _mm_set_ps(0.0f, z, y, x);
 		Vector3 ret{ _mm_mul_ps(vec, vec) };
 		return ret.x + ret.y + ret.z;
 	}
 
-	bool Vector3::Normalize() noexcept
+	inline bool Vector3::Normalize() noexcept
 	{
 		const float lengthSquared = LengthSquared();
 		if (IsNearlyZero(lengthSquared))
@@ -152,35 +152,35 @@ namespace BSMath
 		return true;
 	}
 
-	bool Vector3::operator==(const Vector3& other) const noexcept
+	inline bool Vector3::operator==(const Vector3& other) const noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
 		return _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) == 15;
 	}
 
-	[[nodiscard]] Vector3 Vector3::operator-() const noexcept
+	[[nodiscard]] inline Vector3 Vector3::operator-() const noexcept
 	{
 		const __m128 zero = _mm_setzero_ps();
 		const __m128 vec = _mm_set_ps(0.0f, z, y, x);
 		return Vector3{ _mm_sub_ps(zero, vec) };
 	}
 
-	Vector3& Vector3::operator+=(const Vector3& other) noexcept
+	inline Vector3& Vector3::operator+=(const Vector3& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
 		return *this = Vector3{ _mm_add_ps(lhs, rhs) };
 	}
 
-	Vector3& Vector3::operator-=(const Vector3& other) noexcept
+	inline Vector3& Vector3::operator-=(const Vector3& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
 		return *this = Vector3{ _mm_sub_ps(lhs, rhs) };
 	}
 
-	Vector3& Vector3::operator*=(const Vector3& other) noexcept
+	inline Vector3& Vector3::operator*=(const Vector3& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
@@ -192,7 +192,7 @@ namespace BSMath
 		return *this *= Vector3{ scaler };
 	}
 
-	Vector3& Vector3::operator/=(const Vector3& other) noexcept
+	inline Vector3& Vector3::operator/=(const Vector3& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, z, y, x);
 		const __m128 rhs = _mm_set_ps(0.0f, other.z, other.y, other.x);
@@ -255,7 +255,7 @@ namespace BSMath
 		return (lhs - rhs).LengthSquared();
 	}
 
-	Vector3& Vector3::operator^=(const Vector3& other) noexcept
+	inline Vector3& Vector3::operator^=(const Vector3& other) noexcept
 	{
 		auto ret1 = Vector3{ y, z, x } *Vector3{ other.z, other.x, other.y };
 		auto ret2 = Vector3{ z, x, y } *Vector3{ other.y, other.z, other.x };
@@ -266,7 +266,7 @@ namespace BSMath
 	inline Vector3 Vector3::Cross(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs ^ rhs; }
 
 	template <>
-	[[nodiscard]] auto Min<Vector3>(const Vector3& lhs, const Vector3& rhs) noexcept
+	[[nodiscard]] inline auto Min<Vector3>(const Vector3& lhs, const Vector3& rhs) noexcept
 	{
 		const __m128 lhsSimd = _mm_set_ps(0.0f, lhs.z, lhs.y, lhs.x);
 		const __m128 rhsSimd = _mm_set_ps(0.0f, rhs.z, rhs.y, rhs.x);
@@ -274,7 +274,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] auto Max<Vector3>(const Vector3& lhs, const Vector3& rhs) noexcept
+	[[nodiscard]] inline auto Max<Vector3>(const Vector3& lhs, const Vector3& rhs) noexcept
 	{
 		const __m128 lhsSimd = _mm_set_ps(0.0f, lhs.z, lhs.y, lhs.x);
 		const __m128 rhsSimd = _mm_set_ps(0.0f, rhs.z, rhs.y, rhs.x);
@@ -282,7 +282,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] auto Clamp<Vector3>(const Vector3& n, const Vector3& min, const Vector3& max) noexcept
+	[[nodiscard]] inline auto Clamp<Vector3>(const Vector3& n, const Vector3& min, const Vector3& max) noexcept
 	{
 		Vector3 realMin = Min(min, max);
 		Vector3 realMax = Max(min, max);
@@ -290,7 +290,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] Vector3 Abs<Vector3>(const Vector3& n) noexcept
+	[[nodiscard]] inline Vector3 Abs<Vector3>(const Vector3& n) noexcept
 	{
 		const __m128 signMask = _mm_set_ps1(-0.0f);
 		const __m128 simd = _mm_set_ps(0.0f, n.z, n.y, n.x);
@@ -298,7 +298,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] Vector3 Sign<Vector3>(const Vector3& n) noexcept
+	[[nodiscard]] inline Vector3 Sign<Vector3>(const Vector3& n) noexcept
 	{
 		const __m128 zero = _mm_setzero_ps();
 		const __m128 simd = _mm_set_ps(0.0f, n.z, n.y, n.x);
@@ -309,14 +309,14 @@ namespace BSMath
 
 	namespace Detail
 	{
-		[[nodiscard]] bool IsLessEpsilon(const __m128& vec, const Vector3& epsilon)
+		[[nodiscard]] inline bool IsLessEpsilon(const __m128& vec, const Vector3& epsilon)
 		{
 			const __m128 tolerance = _mm_set_ps(0.0f, epsilon.z, epsilon.y, epsilon.x);
 			return _mm_movemask_ps(_mm_cmple_ps(vec, tolerance)) == 15;
 		}
 	}
 
-	[[nodiscard]] bool IsNearlyEqual(const Vector3& lhs, const Vector3& rhs, const Vector3& tolerance = Vector3{ Epsilon }) noexcept
+	[[nodiscard]] inline bool IsNearlyEqual(const Vector3& lhs, const Vector3& rhs, const Vector3& tolerance = Vector3{ Epsilon }) noexcept
 	{
 		__m128 vec = _mm_set_ps(0.0f, lhs.z, lhs.y, lhs.x);
 		vec = _mm_sub_ps(vec, _mm_set_ps(0.0f, rhs.z, rhs.y, rhs.x));
@@ -328,7 +328,7 @@ namespace BSMath
 		return Detail::IsLessEpsilon(_mm_set_ps(0.0f, vec.z, vec.y, vec.x), tolerance);
 	}
 
-	[[nodiscard]] Vector3 GetRangePct(const Vector3& vec, const Vector3& min, const Vector3& max) noexcept
+	[[nodiscard]] inline Vector3 GetRangePct(const Vector3& vec, const Vector3& min, const Vector3& max) noexcept
 	{
 		const __m128 vecSimd = _mm_set_ps(0.0f, vec.z, vec.y, vec.x);
 		const __m128 minSimd = _mm_set_ps(0.0f, min.z, min.y, min.x);

@@ -92,7 +92,7 @@ namespace BSMath
 		int y;
 	};
 
-	bool IntPoint::operator==(const IntPoint& other) const noexcept
+	inline bool IntPoint::operator==(const IntPoint& other) const noexcept
 	{
 		const __m128i lhs = _mm_set_epi32(0, 0, y, x);
 		const __m128i rhs = _mm_set_epi32(0, 0, other.y, other.x);
@@ -100,28 +100,28 @@ namespace BSMath
 		return val == 0xFFFF;
 	}
 
-	[[nodiscard]] IntPoint IntPoint::operator-() const noexcept
+	[[nodiscard]] inline IntPoint IntPoint::operator-() const noexcept
 	{
 		const __m128i zero = _mm_setzero_si128();
 		const __m128i vec = _mm_set_epi32(0, 0, y, x);
 		return IntPoint{ _mm_sub_epi32(zero, vec) };
 	}
 
-	IntPoint& IntPoint::operator+=(const IntPoint& other) noexcept
+	inline IntPoint& IntPoint::operator+=(const IntPoint& other) noexcept
 	{
 		const __m128i lhs = _mm_set_epi32(0, 0, y, x);
 		const __m128i rhs = _mm_set_epi32(0, 0, other.y, other.x);
 		return *this = IntPoint{ _mm_add_epi32(lhs, rhs) };
 	}
 
-	IntPoint& IntPoint::operator-=(const IntPoint& other) noexcept
+	inline IntPoint& IntPoint::operator-=(const IntPoint& other) noexcept
 	{
 		const __m128i lhs = _mm_set_epi32(0, 0, y, x);
 		const __m128i rhs = _mm_set_epi32(0, 0, other.y, other.x);
 		return *this = IntPoint{ _mm_sub_epi32(lhs, rhs) };
 	}
 
-	IntPoint& IntPoint::operator*=(const IntPoint& other) noexcept
+	inline IntPoint& IntPoint::operator*=(const IntPoint& other) noexcept
 	{
 		const __m128i operand = _mm_set_epi32(0, other.y, 0, other.x);
 		__m128i point = _mm_set_epi32(0, y, 0, x);
@@ -135,14 +135,14 @@ namespace BSMath
 	}
 
 	// ToDo: Use integer specific instruction
-	IntPoint& IntPoint::operator/=(const IntPoint& other) noexcept
+	inline IntPoint& IntPoint::operator/=(const IntPoint& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, 0.0f, static_cast<float>(y), static_cast<float>(x));
 		const __m128 rhs = _mm_set_ps(0.0f, 0.0f, static_cast<float>(other.y), static_cast<float>(other.x));
 		return *this = IntPoint{ _mm_cvtps_epi32(_mm_div_ps(lhs, rhs)) };
 	}
 
-	IntPoint& IntPoint::operator/=(int divisor) noexcept
+	inline IntPoint& IntPoint::operator/=(int divisor) noexcept
 	{
 		return *this /= IntPoint{ divisor };
 	}
@@ -194,7 +194,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] auto Min<IntPoint>(const IntPoint& lhs, const IntPoint& rhs) noexcept
+	[[nodiscard]] inline auto Min<IntPoint>(const IntPoint& lhs, const IntPoint& rhs) noexcept
 	{
 		const __m128i lhsSimd = _mm_set_epi32(0, 0, lhs.y, lhs.x);
 		const __m128i rhsSimd = _mm_set_epi32(0, 0, rhs.y, rhs.x);
@@ -203,7 +203,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] auto Max<IntPoint>(const IntPoint& lhs, const IntPoint& rhs) noexcept
+	[[nodiscard]] inline auto Max<IntPoint>(const IntPoint& lhs, const IntPoint& rhs) noexcept
 	{
 		const __m128i lhsSimd = _mm_set_epi32(0, 0, lhs.y, lhs.x);
 		const __m128i rhsSimd = _mm_set_epi32(0, 0, rhs.y, rhs.x);
@@ -212,7 +212,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] auto Clamp<IntPoint>(const IntPoint& n, const IntPoint& min, const IntPoint& max) noexcept
+	[[nodiscard]] inline auto Clamp<IntPoint>(const IntPoint& n, const IntPoint& min, const IntPoint& max) noexcept
 	{
 		IntPoint realMin = Min(min, max);
 		IntPoint realMax = Max(min, max);
@@ -220,7 +220,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] IntPoint Abs<IntPoint>(const IntPoint& n) noexcept
+	[[nodiscard]] inline IntPoint Abs<IntPoint>(const IntPoint& n) noexcept
 	{
 		__m128i point = _mm_set_epi32(0, 0, n.y, n.x);
 		__m128i mask = _mm_cmplt_epi32(point, _mm_setzero_si128());
@@ -230,7 +230,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] IntPoint Sign<IntPoint>(const IntPoint& n) noexcept
+	[[nodiscard]] inline IntPoint Sign<IntPoint>(const IntPoint& n) noexcept
 	{
 		const __m128i zero = _mm_setzero_si128();
 		const __m128i simd = _mm_set_epi32(0, 0, n.y, n.x);

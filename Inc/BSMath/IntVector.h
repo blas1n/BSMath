@@ -59,8 +59,8 @@ namespace BSMath
 		explicit constexpr IntVector(int inX, int inY, int inZ)
 			: x(inX), y(inY), z(inZ) {}
 
-		explicit constexpr IntVector(const IntVector& point, int inZ = 0)
-			: x(point.x), y(point,y), z(inZ) {}
+		explicit constexpr IntVector(const IntPoint& point, int inZ = 0)
+			: x(point.x), y(point.y), z(inZ) {}
 
 		explicit IntVector(const __m128i& simd)
 		{
@@ -105,7 +105,7 @@ namespace BSMath
 		int z;
 	};
 
-	bool IntVector::operator==(const IntVector& other) const noexcept
+	inline bool IntVector::operator==(const IntVector& other) const noexcept
 	{
 		const __m128i lhs = _mm_set_epi32(0, z, y, x);
 		const __m128i rhs = _mm_set_epi32(0, other.z, other.y, other.x);
@@ -113,34 +113,34 @@ namespace BSMath
 		return val == 0xFFFF;
 	}
 
-	[[nodiscard]] IntVector IntVector::operator-() const noexcept
+	[[nodiscard]] inline IntVector IntVector::operator-() const noexcept
 	{
 		const __m128i zero = _mm_setzero_si128();
 		const __m128i vec = _mm_set_epi32(0, z, y, x);
 		return IntVector{ _mm_sub_epi32(zero, vec) };
 	}
 
-	IntVector& IntVector::operator+=(const IntVector& other) noexcept
+	inline IntVector& IntVector::operator+=(const IntVector& other) noexcept
 	{
 		const __m128i lhs = _mm_set_epi32(0, z, y, x);
 		const __m128i rhs = _mm_set_epi32(0, other.z, other.y, other.x);
 		return *this = IntVector{ _mm_add_epi32(lhs, rhs) };
 	}
 
-	IntVector& IntVector::operator-=(const IntVector& other) noexcept
+	inline IntVector& IntVector::operator-=(const IntVector& other) noexcept
 	{
 		const __m128i lhs = _mm_set_epi32(0, z, y, x);
 		const __m128i rhs = _mm_set_epi32(0, other.z, other.y, other.x);
 		return *this = IntVector{ _mm_sub_epi32(lhs, rhs) };
 	}
 
-	IntVector& IntVector::operator*=(const IntVector& other) noexcept
+	inline IntVector& IntVector::operator*=(const IntVector& other) noexcept
 	{
 		const __m128i lhsSimd = _mm_set_epi32(0, y, z, x);
 		const __m128i rhsSimd = _mm_set_epi32(0, other.y, other.z, other.x);
 		const __m128i tmp1 = _mm_mul_epu32(lhsSimd, rhsSimd);
 		const __m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(lhsSimd, 8), _mm_srli_si128(rhsSimd, 8));
-		return _mm_unpacklo_epi32(tmp1, tmp2);
+		return IntVector{ _mm_unpacklo_epi32(tmp1, tmp2) };
 	}
 
 	inline IntVector& IntVector::operator*=(int scaler) noexcept
@@ -149,7 +149,7 @@ namespace BSMath
 	}
 
 	// ToDo: Use integer specific instruction
-	IntVector& IntVector::operator/=(const IntVector& other) noexcept
+	inline IntVector& IntVector::operator/=(const IntVector& other) noexcept
 	{
 		const __m128 lhs = _mm_set_ps(0.0f, static_cast<float>(z),
 			static_cast<float>(y), static_cast<float>(x));
@@ -160,7 +160,7 @@ namespace BSMath
 		return *this = IntVector{ _mm_cvtps_epi32(_mm_div_ps(lhs, rhs)) };
 	}
 
-	IntVector& IntVector::operator/=(int divisor) noexcept
+	inline IntVector& IntVector::operator/=(int divisor) noexcept
 	{
 		return *this /= IntVector{ divisor };
 	}
@@ -222,7 +222,7 @@ namespace BSMath
 	inline IntVector IntVector::Cross(const IntVector& lhs, const IntVector& rhs) noexcept { return lhs ^ rhs; }
 
 	template <>
-	[[nodiscard]] auto Min<IntVector>(const IntVector& lhs, const IntVector& rhs) noexcept
+	[[nodiscard]] inline auto Min<IntVector>(const IntVector& lhs, const IntVector& rhs) noexcept
 	{
 		const __m128i lhsSimd = _mm_set_epi32(0, lhs.z, lhs.y, lhs.x);
 		const __m128i rhsSimd = _mm_set_epi32(0, rhs.z, rhs.y, rhs.x);
@@ -231,7 +231,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] auto Max<IntVector>(const IntVector& lhs, const IntVector& rhs) noexcept
+	[[nodiscard]] inline auto Max<IntVector>(const IntVector& lhs, const IntVector& rhs) noexcept
 	{
 		const __m128i lhsSimd = _mm_set_epi32(0, lhs.z, lhs.y, lhs.x);
 		const __m128i rhsSimd = _mm_set_epi32(0, rhs.z , rhs.y, rhs.x);
@@ -240,7 +240,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] auto Clamp<IntVector>(const IntVector& n, const IntVector& min, const IntVector& max) noexcept
+	[[nodiscard]] inline auto Clamp<IntVector>(const IntVector& n, const IntVector& min, const IntVector& max) noexcept
 	{
 		IntVector realMin = Min(min, max);
 		IntVector realMax = Max(min, max);
@@ -248,7 +248,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] IntVector Abs<IntVector>(const IntVector& n) noexcept
+	[[nodiscard]] inline IntVector Abs<IntVector>(const IntVector& n) noexcept
 	{
 		__m128i point = _mm_set_epi32(0, n.z, n.y, n.x);
 		__m128i mask = _mm_cmplt_epi32(point, _mm_setzero_si128());
@@ -258,7 +258,7 @@ namespace BSMath
 	}
 
 	template <>
-	[[nodiscard]] IntVector Sign<IntVector>(const IntVector& n) noexcept
+	[[nodiscard]] inline IntVector Sign<IntVector>(const IntVector& n) noexcept
 	{
 		const __m128i zero = _mm_setzero_si128();
 		const __m128i simd = _mm_set_epi32(0, n.z, n.y, n.x);
@@ -268,6 +268,6 @@ namespace BSMath
 	}
 
 	// IntPoint's Constructor
-	IntPoint::IntPoint(const IntVector& vec)
+	constexpr IntPoint::IntPoint(const IntVector& vec)
 		: x(vec.x), y(vec.y) {}
 }
