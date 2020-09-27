@@ -74,6 +74,8 @@ namespace BSMath
 
 	TEST(UtilityTest, FloatToInt)
 	{
+		EXPECT_EQ(Fmod(5.0f, 2.0f), 1.0f);
+
 		EXPECT_EQ(Trunc(0.5f), 0);
 		EXPECT_EQ(Ceil(0.5f), 1);
 		EXPECT_EQ(Round(0.5f), 1);
