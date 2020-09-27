@@ -119,6 +119,11 @@ namespace BSMath
         return IsNearlyZero(n) ? 0.0f : n * InvSqrt(n, iterationNum);
     }
 
+    [[nodiscard]] inline float Fmod(float x, float y) noexcept
+    {
+        return fmod(x, y);
+    }
+
     [[nodiscard]] inline int Trunc(float n) noexcept
     {
         return _mm_cvtt_ss2si(_mm_set_ss(n));
