@@ -51,6 +51,8 @@ namespace BSMath
 		explicit constexpr IntPoint(int inX, int inY)
 			: x(inX), y(inY) {}
 
+		explicit constexpr IntPoint(const struct IntVector& vec);
+
 		explicit IntPoint(const __m128i& simd)
 		{
 			alignas(16) int ret[4];
