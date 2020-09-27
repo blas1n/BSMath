@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "BSMath/Vector2.h"
-#include "BSMath/Utility.h"
 
 namespace BSMath
 {
