@@ -66,7 +66,7 @@ namespace BSMath
 		{
 			alignas(16) int ret[4];
 			_mm_store_si128(reinterpret_cast<__m128i*>(ret), simd);
-			x = ret[0]; y = ret[1]; y = ret[2];
+			x = ret[0]; y = ret[1]; z = ret[2];
 		}
 
 		constexpr void Set(int inX, int inY, int inZ) noexcept
