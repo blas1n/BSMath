@@ -204,13 +204,6 @@ namespace BSMath
 		return *this /= Vector3{ divisor };
 	}
 
-	Vector3& Vector3::operator^=(const Vector3& other) noexcept
-	{
-		auto ret1 = Vector3{ y, z, x } * Vector3{ other.z, other.x, other.y };
-		auto ret2 = Vector3{ z, x, y } * Vector3{ other.y, other.z, other.x };
-		return *this = ret1 - ret2;
-	}
-
 	[[nodiscard]] inline Vector3 operator+(const Vector3& lhs, const Vector3& rhs) noexcept
 	{
 		return Vector3{ lhs } += rhs;
@@ -260,6 +253,13 @@ namespace BSMath
 	inline float Vector3::DistanceSquared(const Vector3& lhs, const Vector3& rhs)
 	{
 		return (lhs - rhs).LengthSquared();
+	}
+
+	Vector3& Vector3::operator^=(const Vector3& other) noexcept
+	{
+		auto ret1 = Vector3{ y, z, x } *Vector3{ other.z, other.x, other.y };
+		auto ret2 = Vector3{ z, x, y } *Vector3{ other.y, other.z, other.x };
+		return *this = ret1 - ret2;
 	}
 
 	inline float Vector3::Dot(const Vector3& lhs, const Vector3& rhs) noexcept { return lhs | rhs; }
