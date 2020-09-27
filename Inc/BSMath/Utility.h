@@ -121,7 +121,7 @@ namespace BSMath
 
     [[nodiscard]] inline float Fmod(float x, float y) noexcept
     {
-        return fmod(x, y);
+        return std::fmod(x, y);
     }
 
     [[nodiscard]] inline int Trunc(float n) noexcept
