@@ -203,7 +203,7 @@ namespace BSMath
 	[[nodiscard]] inline int operator|(const IntVector& lhs, const IntVector& rhs) noexcept
 	{
 		auto mul = lhs * rhs;
-		return mul.x + mul.y;
+		return mul.x + mul.y + mul.z;
 	}
 
 	[[nodiscard]] inline IntVector operator^(const IntVector& lhs, const IntVector& rhs) noexcept
