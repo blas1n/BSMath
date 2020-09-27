@@ -17,8 +17,8 @@ namespace BSMath
 	class Random final : public Detail::RandomBase
 	{
 	public:
-		using Seed = Engine::result_type;
-		using Parameter = Distributor::param_type;
+		using Seed = typename Engine::result_type;
+		using Parameter = typename Distributor::param_type;
 
 	public:
 		Random() : engine(randomDevice) {}
