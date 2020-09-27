@@ -182,9 +182,9 @@ namespace BSMath
 		return IntPoint{ vec } /= divisor;
 	}
 
-	[[nodiscard]] int operator|(const IntPoint& lhs, const IntPoint& rhs) noexcept
+	[[nodiscard]] inline int operator|(const IntPoint& lhs, const IntPoint& rhs) noexcept
 	{
-		IntPoint mul = lhs * rhs;
+		auto mul = lhs * rhs;
 		return mul.x + mul.y;
 	}
 

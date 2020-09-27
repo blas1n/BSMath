@@ -246,7 +246,7 @@ namespace BSMath
 		return Vector3{ vec } /= divisor;
 	}
 
-	[[nodiscard]] float operator|(const Vector3& lhs, const Vector3& rhs) noexcept
+	[[nodiscard]] inline float operator|(const Vector3& lhs, const Vector3& rhs) noexcept
 	{
 		Vector3 mul = lhs * rhs;
 		return mul.x + mul.y + mul.z;
