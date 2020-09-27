@@ -108,8 +108,8 @@ namespace BSMath
 	// ToDo: Use integer specific instruction
 	IntPoint& IntPoint::operator/=(const IntPoint& other) noexcept
 	{
-		const __m128 lhs = _mm_set_ps(0.0f, 0.0f, y, x);
-		const __m128 rhs = _mm_set_ps(0.0f, 0.0f, other.y, other.x);
+		const __m128 lhs = _mm_set_ps(0.0f, 0.0f, static_cast<float>(y), static_cast<float>(x));
+		const __m128 rhs = _mm_set_ps(0.0f, 0.0f, static_cast<float>(other.y), static_cast<float>(other.x));
 		return *this = IntPoint{ _mm_castps_si128(_mm_div_ps(lhs, rhs)) };
 	}
 
