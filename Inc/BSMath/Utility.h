@@ -50,14 +50,14 @@ namespace BSMath
         return n >= static_cast<T>(0) ? static_cast<T>(1) : static_cast<T>(-1);
     }
 
-    [[nodiscard]] IGNORE_ODR float Cos(float n) noexcept { return std::cos(n); }
-    [[nodiscard]] IGNORE_ODR float Sin(float n) noexcept { return std::sin(n); }
-    [[nodiscard]] IGNORE_ODR float Tan(float n) noexcept { return std::tan(n); }
+    [[nodiscard]] NO_ODR float Cos(float n) noexcept { return std::cos(n); }
+    [[nodiscard]] NO_ODR float Sin(float n) noexcept { return std::sin(n); }
+    [[nodiscard]] NO_ODR float Tan(float n) noexcept { return std::tan(n); }
 
-    [[nodiscard]] IGNORE_ODR float ACos(float n) noexcept { return std::acos(n); }
-    [[nodiscard]] IGNORE_ODR float ASin(float n) noexcept { return std::asin(n); }
-    [[nodiscard]] IGNORE_ODR float ATan(float n) noexcept { return std::atan(n); }
-    [[nodiscard]] IGNORE_ODR float ATan2(float y, float n) noexcept { return std::atan2(y, n); }
+    [[nodiscard]] NO_ODR float ACos(float n) noexcept { return std::acos(n); }
+    [[nodiscard]] NO_ODR float ASin(float n) noexcept { return std::asin(n); }
+    [[nodiscard]] NO_ODR float ATan(float n) noexcept { return std::atan(n); }
+    [[nodiscard]] NO_ODR float ATan2(float y, float n) noexcept { return std::atan2(y, n); }
 
     [[nodiscard]] constexpr bool IsNearlyEqual(float lhs, float rhs, float tolerance = Epsilon) noexcept
     {
@@ -92,37 +92,37 @@ namespace BSMath
     template <class T>
     [[nodiscard]] constexpr float Square(T n) { return n * n; }
 
-    [[nodiscard]] IGNORE_ODR float InvSqrt(float n, size_t iterationNum = 2) noexcept
+    [[nodiscard]] NO_ODR float InvSqrt(float n, size_t iterationNum = 2) noexcept
     {
         return SIMD::InvSqrt(n, iterationNum);
     }
 
-    [[nodiscard]] IGNORE_ODR float Sqrt(float n, size_t iterationNum = 2) noexcept
+    [[nodiscard]] NO_ODR float Sqrt(float n, size_t iterationNum = 2) noexcept
     {
         return IsNearlyZero(n) ? 0.0f : n * InvSqrt(n, iterationNum);
     }
 
-    [[nodiscard]] IGNORE_ODR float Fmod(float x, float y) noexcept
+    [[nodiscard]] NO_ODR float Fmod(float x, float y) noexcept
     {
         return std::fmod(x, y);
     }
 
-    [[nodiscard]] IGNORE_ODR int Trunc(float n) noexcept
+    [[nodiscard]] NO_ODR int Trunc(float n) noexcept
     {
         return static_cast<int>(std::trunc(n));
     }
 
-    [[nodiscard]] IGNORE_ODR int Ceil(float n) noexcept
+    [[nodiscard]] NO_ODR int Ceil(float n) noexcept
     {
         return static_cast<int>(std::ceil(n));
     }
 
-    [[nodiscard]] IGNORE_ODR int Round(float n) noexcept
+    [[nodiscard]] NO_ODR int Round(float n) noexcept
     {
         return static_cast<int>(std::round(n));
     }
 
-    [[nodiscard]] IGNORE_ODR int Floor(float n) noexcept
+    [[nodiscard]] NO_ODR int Floor(float n) noexcept
     {
         return static_cast<int>(std::floor(n));
     }

@@ -1,3 +1,3 @@
 #pragma once
 
-#define IGNORE_ODR inline
+#define NO_ODR inline
