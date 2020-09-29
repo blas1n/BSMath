@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include <emmintrin.h>
+#include "SIMD.h"
 
 namespace BSMath
 {
@@ -94,27 +94,10 @@ namespace BSMath
 
     [[nodiscard]] IGNORE_ODR float InvSqrt(float n, size_t iterationNum = 2) noexcept
     {
-        const __m128 oneHalf = _mm_set_ss(0.5f);
-
-        __m128 num = _mm_set_ss(n);
-        __m128 y = _mm_rsqrt_ss(num);
-        __m128 halfN = _mm_mul_ss(num, oneHalf);
-        __m128 beforeY;
-
-        for (size_t i = 0; i < iterationNum; ++i)
-        {
-            beforeY = y;
-            y = _mm_mul_ss(y, y);
-            y = _mm_sub_ss(oneHalf, _mm_mul_ss(halfN, y));
-            y = _mm_add_ss(beforeY, _mm_mul_ss(beforeY, y));
-        }
-
-    [[nodiscard]] IGNORE_ODR float Sqrt(float n, size_t iterationNum = 2) noexcept
-        _mm_store_ss(&ret, y);
-        return ret;
+        return SIMD::InvSqrt(n, iterationNum);
     }
 
-    [[nodiscard]] inline float Sqrt(float n, size_t iterationNum = 2) noexcept
+    [[nodiscard]] IGNORE_ODR float Sqrt(float n, size_t iterationNum = 2) noexcept
     {
         return IsNearlyZero(n) ? 0.0f : n * InvSqrt(n, iterationNum);
     }
