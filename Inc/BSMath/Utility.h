@@ -50,14 +50,14 @@ namespace BSMath
         return n >= static_cast<T>(0) ? static_cast<T>(1) : static_cast<T>(-1);
     }
 
-    [[nodiscard]] inline float Cos(float n) noexcept { return std::cos(n); }
-    [[nodiscard]] inline float Sin(float n) noexcept { return std::sin(n); }
-    [[nodiscard]] inline float Tan(float n) noexcept { return std::tan(n); }
+    [[nodiscard]] IGNORE_ODR float Cos(float n) noexcept { return std::cos(n); }
+    [[nodiscard]] IGNORE_ODR float Sin(float n) noexcept { return std::sin(n); }
+    [[nodiscard]] IGNORE_ODR float Tan(float n) noexcept { return std::tan(n); }
 
-    [[nodiscard]] inline float ACos(float n) noexcept { return std::acos(n); }
-    [[nodiscard]] inline float ASin(float n) noexcept { return std::asin(n); }
-    [[nodiscard]] inline float ATan(float n) noexcept { return std::atan(n); }
-    [[nodiscard]] inline float ATan2(float y, float n) noexcept { return std::atan2(y, n); }
+    [[nodiscard]] IGNORE_ODR float ACos(float n) noexcept { return std::acos(n); }
+    [[nodiscard]] IGNORE_ODR float ASin(float n) noexcept { return std::asin(n); }
+    [[nodiscard]] IGNORE_ODR float ATan(float n) noexcept { return std::atan(n); }
+    [[nodiscard]] IGNORE_ODR float ATan2(float y, float n) noexcept { return std::atan2(y, n); }
 
     [[nodiscard]] constexpr bool IsNearlyEqual(float lhs, float rhs, float tolerance = Epsilon) noexcept
     {
@@ -92,7 +92,7 @@ namespace BSMath
     template <class T>
     [[nodiscard]] constexpr float Square(T n) { return n * n; }
 
-    [[nodiscard]] static float InvSqrt(float n, size_t iterationNum = 2) noexcept
+    [[nodiscard]] IGNORE_ODR float InvSqrt(float n, size_t iterationNum = 2) noexcept
     {
         const __m128 oneHalf = _mm_set_ss(0.5f);
 
@@ -109,7 +109,7 @@ namespace BSMath
             y = _mm_add_ss(beforeY, _mm_mul_ss(beforeY, y));
         }
 
-        float ret;
+    [[nodiscard]] IGNORE_ODR float Sqrt(float n, size_t iterationNum = 2) noexcept
         _mm_store_ss(&ret, y);
         return ret;
     }
@@ -119,27 +119,27 @@ namespace BSMath
         return IsNearlyZero(n) ? 0.0f : n * InvSqrt(n, iterationNum);
     }
 
-    [[nodiscard]] inline float Fmod(float x, float y) noexcept
+    [[nodiscard]] IGNORE_ODR float Fmod(float x, float y) noexcept
     {
         return std::fmod(x, y);
     }
 
-    [[nodiscard]] inline int Trunc(float n) noexcept
+    [[nodiscard]] IGNORE_ODR int Trunc(float n) noexcept
     {
         return static_cast<int>(std::trunc(n));
     }
 
-    [[nodiscard]] inline int Ceil(float n) noexcept
+    [[nodiscard]] IGNORE_ODR int Ceil(float n) noexcept
     {
         return static_cast<int>(std::ceil(n));
     }
 
-    [[nodiscard]] inline int Round(float n) noexcept
+    [[nodiscard]] IGNORE_ODR int Round(float n) noexcept
     {
         return static_cast<int>(std::round(n));
     }
 
-    [[nodiscard]] inline int Floor(float n) noexcept
+    [[nodiscard]] IGNORE_ODR int Floor(float n) noexcept
     {
         return static_cast<int>(std::floor(n));
     }
