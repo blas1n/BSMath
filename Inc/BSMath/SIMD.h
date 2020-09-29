@@ -17,17 +17,111 @@
 
 namespace BSMath::SIMD
 {
-	using VectorRegister = __m128;
-	using IntVectorRegister = __m128i;
-
-    [[nodiscard]] IGNORE_ODR float InvSqrt(float n, size_t iterationNum) noexcept
+    namespace Integer
     {
-        const VectorRegister oneHalf = _mm_set_ss(0.5f);
+        using VectorRegister = __m128i;
 
-        VectorRegister num = _mm_set_ss(n);
-        VectorRegister y = _mm_rsqrt_ss(num);
-        VectorRegister halfN = _mm_mul_ss(num, oneHalf);
-        VectorRegister beforeY;
+        [[nodiscard]] NO_ODR VectorRegister VectorLoad(int x = 0.0f, int y = 0.0f, int z = 0.0f, int w = 0.0f) noexcept
+        {
+            return _mm_setr_epi32(x, y, z, w);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VectorLoad1(int n) noexcept
+        {
+            return _mm_set1_epi32(n);
+        }
+
+        [[nodiscard]] NO_ODR void VectorStore(VectorRegister vec, int* ptr) noexcept
+        {
+            _mm_store_si128(reinterpret_cast<VectorRegister*>(ptr), vec);
+        }
+
+        [[nodiscard]] NO_ODR int VectorStore1(VectorRegister vec) noexcept
+        {
+            return _mm_cvtsi128_si32(vec);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAdd(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_add_epi32(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorSubtract(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_sub_epi32(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMultiply(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            const VectorRegister tmp1 = _mm_mul_epu32(lhs, rhs);
+            const VectorRegister tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs, 4), _mm_srli_si128(rhs, 4));
+            return _mm_unpacklo_epi32(_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(3, 1, 2, 0)), tmp2);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorDivide(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            // ToDo: Use integer specific instruction
+            const __m128 lhsReal = _mm_cvtepi32_ps(lhs);
+            const __m128 rhsReal = _mm_cvtepi32_ps(rhs);
+            return _mm_cvtps_epi32(_mm_div_ps(lhsReal, rhsReal));
+        }
+    }
+
+    namespace Real
+    {
+        using VectorRegister = __m128;
+
+        [[nodiscard]] NO_ODR VectorRegister VectorLoad(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) noexcept
+        {
+            return _mm_setr_ps(x, y, z, w);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VectorLoad1(float n) noexcept
+        {
+            return _mm_set1_ps(n);
+        }
+
+        [[nodiscard]] NO_ODR void VectorStore(VectorRegister vec, float* ptr) noexcept
+        {
+            _mm_store_ps(ptr, vec);
+        }
+
+        [[nodiscard]] NO_ODR float VectorStore1(VectorRegister vec) noexcept
+        {
+            float ret;
+            _mm_store_ps1(&ret, vec);
+            return ret;
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAdd(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_add_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorSubtract(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_sub_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMultiply(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_mul_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorDivide(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_div_ps(lhs, rhs);
+        }
+    }
+
+    [[nodiscard]] NO_ODR float InvSqrt(float n, size_t iterationNum) noexcept
+    {
+        const Real::VectorRegister oneHalf = _mm_set_ss(0.5f);
+
+        Real::VectorRegister num = _mm_set_ss(n);
+        Real::VectorRegister y = _mm_rsqrt_ss(num);
+        Real::VectorRegister halfN = _mm_mul_ss(num, oneHalf);
+        Real::VectorRegister beforeY;
 
         for (size_t i = 0; i < iterationNum; ++i)
         {
