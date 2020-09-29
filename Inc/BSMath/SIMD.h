@@ -8,11 +8,11 @@
 #endif
 
 #if defined(HAS_VECTOR_CALL)
-#define XM_CALLCONV __vectorcall
+#define VECTOR_CALL __vectorcall
 #elif defined(__GNUC__)
-#define XM_CALLCONV
+#define VECTOR_CALL
 #else
-#define XM_CALLCONV __fastcall
+#define VECTOR_CALL __fastcall
 #endif
 
 namespace BSMath::SIMD
