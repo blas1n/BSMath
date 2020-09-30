@@ -21,6 +21,8 @@ namespace BSMath::SIMD
     {
         using VectorRegister = __m128i;
 
+        const static VectorRegister Zero = _mm_setzero_si128();
+
         [[nodiscard]] NO_ODR VectorRegister VectorLoad(int x = 0.0f, int y = 0.0f, int z = 0.0f, int w = 0.0f) noexcept
         {
             return _mm_setr_epi32(x, y, z, w);
