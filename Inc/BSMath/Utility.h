@@ -90,7 +90,7 @@ namespace BSMath
     }
 
     template <class T>
-    [[nodiscard]] constexpr float Square(T n) { return n * n; }
+    [[nodiscard]] constexpr float Square(T n) noexcept { return n * n; }
 
     [[nodiscard]] NO_ODR float InvSqrt(float n, size_t iterationNum = 2) noexcept
     {
