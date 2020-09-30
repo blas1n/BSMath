@@ -5,41 +5,47 @@
 #include "Random.h"
 #include "SIMD.h"
 
-namespace BSMath
+#define BRANCH_SIMD(T) \
+if constexpr (std::is_floating_point_v<T>) \
+	using namespace SIMD::Real; \
+else \
+	using namespace SIMD::Integer;
+
+namespace BSMath::Detail
 {
 	template <class T, size_t Row, size_t Column>
-	struct alignas(16) MatrixBase
+	struct alignas(16) MatrixBase0
 	{
 		static_assert(std::is_arithmetic_v<T>, "T must be arithmetic!");
 		static_assert(Row > 0 && Row <= 4, "Row must in the range, 1 ~ 4");
 		static_assert(Column > 0 && Column <= 4, "Column must in the range, 1 ~ 4");
 
 	public:
-		constexpr MatrixBase() noexcept : data() {}
+		constexpr MatrixBase0() noexcept : data() {}
 
-		explicit MatrixBase(T n) noexcept
+		explicit MatrixBase0(T n) noexcept
 		{
 			std::fill(data, Row * Column, n);
 		}
 
-		explicit MatrixBase(const T* ptr) noexcept
+		explicit MatrixBase0(const T* ptr) noexcept
 		{
 			std::memcpy(data, ptr, Row * Column);
 		}
 
-		explicit MatrixBase(std::initializer_list<T> list) noexcept
+		explicit MatrixBase0(std::initializer_list<T> list) noexcept
 		{
 			std::copy_n(data, Row * Column, list.begin());
 		}
 
-		[[nodiscard]] bool operator==(const MatrixBase& other) const noexcept;
-		[[nodiscard]] inline bool operator!=(const MatrixBase& other) const noexcept { return !(*this == other); }
+		[[nodiscard]] bool operator==(const MatrixBase0& other) const noexcept;
+		[[nodiscard]] inline bool operator!=(const MatrixBase0& other) const noexcept { return !(*this == other); }
 
-		MatrixBase& operator+=(const MatrixBase& other) noexcept;
-		MatrixBase& operator-=(const MatrixBase& other) noexcept;
+		MatrixBase0& operator+=(const MatrixBase0& other) noexcept;
+		MatrixBase0& operator-=(const MatrixBase0& other) noexcept;
 
-		MatrixBase& operator*=(T scaler) noexcept;
-		MatrixBase& operator/=(T divisor) noexcept;
+		MatrixBase0& operator*=(T scaler) noexcept;
+		MatrixBase0& operator/=(T divisor) noexcept;
 
 		[[nodiscard]] constexpr T& operator()(size_t rowIdx, size_t columnIdx) noexcept { return data[rowIdx][columnIdx]; }
 		[[nodiscard]] constexpr T operator()(size_t rowIdx, size_t columnIdx) const noexcept { return data[rowIdx][columnIdx]; }
@@ -48,157 +54,160 @@ namespace BSMath
 		T data[Row][Column];
 	};
 
-	namespace Detail
+	template <class T, size_t L>
+	NO_ODR void LoadRow(T row[L]) noexcept;
+
+	template <class T, size_t L, class = std::enable_if_t<std::is_floating_point_v<T>>>
+	NO_ODR SIMD::Real::VectorRegister LoadRow(T row[L]) noexcept
 	{
-		template <class T, size_t L>
-		NO_ODR void LoadRow(T row[L]) noexcept;
+		using namespace SIMD::Real;
 
-		template <class T, size_t L, class = std::enable_if_t<std::is_floating_point_v<T>>>
-		NO_ODR SIMD::Real::VectorRegister LoadRow(T row[L]) noexcept
-		{
-			using namespace SIMD::Real;
+		VectorRegister row;
+		if constexpr (Column == 1)
+			row = VectorLoad(row[0]);
+		else if (Column == 2)
+			row = VectorLoad(row[0], row[1]);
+		else if (Column == 3)
+			row = VectorLoad(row[0], row[1], row[2]);
+		else
+			row = VectorLoad(row[0], row[1], row[2], row[3]);
+		return row;
+	}
 
-			VectorRegister row;
-			if constexpr (Column == 1)
-				row = VectorLoad(row[0]);
-			else if (Column == 2)
-				row = VectorLoad(row[0], row[1]);
-			else if (Column == 3)
-				row = VectorLoad(row[0], row[1], row[2]);
-			else
-				row = VectorLoad(row[0], row[1], row[2], row[3]);
-			return row;
-		}
-
-		template <class T, size_t L, class = std::enable_if_t<std::is_integral_v<T>>>
-		NO_ODR SIMD::Integer::VectorRegister LoadRow(T row[L]) noexcept
-		{
-			using namespace SIMD::Integer;
-
-			VectorRegister row;
-			if constexpr (Column == 1)
-				row = VectorLoad(row[0]);
-			else if (Column == 2)
-				row = VectorLoad(row[0], row[1]);
-			else if (Column == 3)
-				row = VectorLoad(row[0], row[1], row[2]);
-			else
-				row = VectorLoad(row[0], row[1], row[2], row[3]);
-			return row;
-		}
+	template <class T, size_t L, class = std::enable_if_t<std::is_integral_v<T>>>
+	NO_ODR SIMD::Integer::VectorRegister LoadRow(T row[L]) noexcept
+	{
+		using namespace SIMD::Integer;
+		
+		VectorRegister row;
+		if constexpr (Column == 1)
+			row = VectorLoad(row[0]);
+		else if (Column == 2)
+			row = VectorLoad(row[0], row[1]);
+		else if (Column == 3)
+			row = VectorLoad(row[0], row[1], row[2]);
+		else
+			row = VectorLoad(row[0], row[1], row[2], row[3]);
+		return row;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	MatrixBase<T, Row, Columnm>& MatrixBase<T, Row, Column>::operator+=(const MatrixBase<T, Row, Column>& other) noexcept
+	bool MatrixBase0<T, Row, Column>::operator==(const MatrixBase0<T, Row, Column>& other) const noexcept
 	{
-		if constexpr (std::is_floating_point_v<T>)
-			using namespace SIMD::Real;
-		else
-			using namespace SIMD::Integer;
+		BRANCH_SIMD(T);
+		VectorRegister lhs, rhs;
+		bool ret = true;
 
+		for (size_t i = 0; i < Row; ++i)
+		{
+			lhs = LoadRow(data[i]);
+			rhs = LoadRow(other.data[i]);
+			ret = ret && VectorEqual(VectorAdd(lhs, rhs), data[i]);
+		}
+
+		return ret;
+	}
+	
+	template <class T, size_t Row, size_t Column>
+	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator+=(const MatrixBase0<T, Row, Column>& other) noexcept
+	{
+		BRANCH_SIMD(T);
 		VectorRegister lhs, rhs;
 
 		for (size_t i = 0; i < Row; ++i)
 		{
-			lhs = Detail::LoadRow(data[i]);
-			rhs = Detail::LoadRow(other.data[i]);
+			lhs = LoadRow(data[i]);
+			rhs = LoadRow(other.data[i]);
 			VectorStore(VectorAdd(lhs, rhs), data[i]);
 		}
+
+		return *this;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	MatrixBase<T, Row, Column>& MatrixBase<T, Row, Column>::operator-=(const MatrixBase<T, Row, Column>& other) noexcept
+	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator-=(const MatrixBase0<T, Row, Column>& other) noexcept
 	{
-		if constexpr (std::is_floating_point_v<T>)
-			using namespace SIMD::Real;
-		else
-			using namespace SIMD::Integer;
-
+		BRANCH_SIMD(T);
 		VectorRegister lhs, rhs;
 
 		for (size_t i = 0; i < Row; ++i)
 		{
-			lhs = Detail::LoadRow(data[i]);
-			rhs = Detail::LoadRow(other.data[i]);
+			lhs = LoadRow(data[i]);
+			rhs = LoadRow(other.data[i]);
 			VectorStore(VectorSubtract(lhs, rhs), data[i]);
 		}
+
+		return *this;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	MatrixBase<T, Row, Column>& MatrixBase<T, Row, Column>::operator*=(T scaler) noexcept
+	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator*=(T scaler) noexcept
 	{
-		if constexpr (std::is_floating_point_v<T>)
-			using namespace SIMD::Real;
-		else
-			using namespace SIMD::Integer;
-
+		BRANCH_SIMD(T);
 		VectorRegister lhs, rhs;
 
 		for (size_t i = 0; i < Row; ++i)
 		{
-			lhs = Detail::LoadRow(data[i]);
+			lhs = LoadRow(data[i]);
 			rhs = VectorLoad1(scaler);
 			VectorStore(VectorMultiply(lhs, rhs), data[i]);
 		}
+
+		return *this;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	MatrixBase<T, Row, Column>& MatrixBase<T, Row, Column>::operator/=(T divisor) noexcept
+	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator/=(T divisor) noexcept
 	{
-		if constexpr (std::is_floating_point_v<T>)
-			using namespace SIMD::Real;
-		else
-			using namespace SIMD::Integer;
-
+		BRANCH_SIMD(T);
 		VectorRegister lhs, rhs;
 
 		for (size_t i = 0; i < Row; ++i)
 		{
-			lhs = Detail::LoadRow(data[i]);
+			lhs = LoadRow(data[i]);
 			rhs = VectorLoad1(divisor);
 			VectorStore(VectorDivide(lhs, rhs), data[i]);
 		}
+
+		return *this;
 	}
 
 	// Global Operator
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase<T, Row, Columnm> operator+(const MatrixBase<T, Row, Column>& lhs, const MatrixBase<T, Row, Column>& rhs) noexcept
+	NO_ODR MatrixBase0<T, Row, Column> operator+(const MatrixBase0<T, Row, Column>& lhs, const MatrixBase0<T, Row, Column>& rhs) noexcept
 	{
-		return MatrixBase<T, Row, Column>{ lhs } += rhs;
+		return MatrixBase0<T, Row, Column>{ lhs } += rhs;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase<T, Row, Columnm> operator-(const MatrixBase<T, Row, Column>& lhs, const MatrixBase<T, Row, Column>& rhs) noexcept
+	NO_ODR MatrixBase0<T, Row, Column> operator-(const MatrixBase0<T, Row, Column>& lhs, const MatrixBase0<T, Row, Column>& rhs) noexcept
 	{
-		return MatrixBase<T, Row, Column>{ lhs } -= rhs;
+		return MatrixBase0<T, Row, Column>{ lhs } -= rhs;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase<T, Row, Columnm> operator*(const MatrixBase<T, Row, Column>& mat, T scaler) noexcept
+	NO_ODR MatrixBase0<T, Row, Column> operator*(const MatrixBase0<T, Row, Column>& mat, T scaler) noexcept
 	{
-		return MatrixBase<T, Row, Column>{ mat } *= scaler;
+		return MatrixBase0<T, Row, Column>{ mat } *= scaler;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase<T, Row, Columnm> operator*(T scaler, const MatrixBase<T, Row, Column>& mat) noexcept
+	NO_ODR MatrixBase0<T, Row, Column> operator*(T scaler, const MatrixBase0<T, Row, Column>& mat) noexcept
 	{
-		return MatrixBase<T, Row, Column>{ mat } *= scaler;
+		return MatrixBase0<T, Row, Column>{ mat } *= scaler;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase<T, Row, Columnm> operator/(const MatrixBase<T, Row, Column>& mat, T divisor) noexcept
+	NO_ODR MatrixBase0<T, Row, Column> operator/(const MatrixBase0<T, Row, Column>& mat, T divisor) noexcept
 	{
-		return MatrixBase<T, Row, Column>{ mat } /= divisor;
+		return MatrixBase0<T, Row, Column>{ mat } /= divisor;
 	}
 
 	// Random
 
 	template <class T, size_t Row, size_t Column>
-	class UniformMatrixDistribution
-	{
-		static_assert(false, "T must be arthimetic!");
-	};
+	class UniformMatrixDistribution;
 	
 	template <class T, size_t Row, size_t Column, class = std::enable_if_t<std::is_integral_v<T>>>
 	class UniformMatrixDistribution<T, Row, Column> : public std::uniform_int_distribution<T>
@@ -206,7 +215,7 @@ namespace BSMath
 		using Super = std::uniform_int_distribution<T>;
 
 	public:
-		using result_type = MatrixBase<T, Row, Column>;
+		using result_type = MatrixBase0<T, Row, Column>;
 
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
@@ -239,7 +248,7 @@ namespace BSMath
 		using Super = std::uniform_real_distribution<T>;
 
 	public:
-		using result_type = MatrixBase<T, Row, Column>;
+		using result_type = MatrixBase0<T, Row, Column>;
 
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
@@ -274,7 +283,7 @@ namespace BSMath
 		using Super = std::uniform_real_distribution<T>;
 
 	public:
-		using result_type = MatrixBase<T, Row, Column>;
+		using result_type = MatrixBase0<T, Row, Column>;
 
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
