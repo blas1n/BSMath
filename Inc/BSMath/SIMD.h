@@ -43,6 +43,16 @@ namespace BSMath::SIMD
             return _mm_cvtsi128_si32(vec);
         }
 
+        [[nodiscard]] NO_ODR bool VECTOR_CALL VectorEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_movemask_epi8((_mm_cmpeq_epi32(lhs, rhs))) == 0xFFFF;
+        }
+
+        [[nodiscard]] NO_ODR bool VECTOR_CALL VectorNotEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return !VectorEqual(lhs, rhs);
+        }
+
         [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAdd(VectorRegister lhs, VectorRegister rhs) noexcept
         {
             return _mm_add_epi32(lhs, rhs);
@@ -73,6 +83,8 @@ namespace BSMath::SIMD
     {
         using VectorRegister = __m128;
 
+        const static VectorRegister Zero = _mm_setzero_ps();
+
         [[nodiscard]] NO_ODR VectorRegister VectorLoad(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) noexcept
         {
             return _mm_setr_ps(x, y, z, w);
@@ -93,6 +105,16 @@ namespace BSMath::SIMD
             float ret;
             _mm_store_ps1(&ret, vec);
             return ret;
+        }
+
+        [[nodiscard]] NO_ODR bool VECTOR_CALL VectorEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) == 0xF;
+        }
+
+        [[nodiscard]] NO_ODR bool VECTOR_CALL VectorNotEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return !VectorEqual(lhs, rhs);
         }
 
         [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAdd(VectorRegister lhs, VectorRegister rhs) noexcept
