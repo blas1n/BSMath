@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include "SIMD.h"
 
@@ -20,6 +21,12 @@ namespace BSMath
         return Min(Min(x1, x2), xs...);
     }
 
+    template <class ForwardIt>
+    [[nodiscard]] constexpr typename std::iterator_traits<ForwardIt>::value_type Min(ForwardIt first, ForwardIt last) noexcept
+    {
+        return *std::min_element(first, last);
+    }
+
     template <class T1, class T2>
     [[nodiscard]] constexpr auto Max(const T1& lhs, const T2& rhs) noexcept
     {
@@ -30,6 +37,12 @@ namespace BSMath
     [[nodiscard]] constexpr auto Max(const T1& x1, const T2& x2, const Ts&... xs) noexcept
     {
         return Max(Max(x1, x2), xs...);
+    }
+
+    template <class ForwardIt>
+    [[nodiscard]] constexpr typename std::iterator_traits<ForwardIt>::value_type Max(ForwardIt first, ForwardIt last) noexcept
+    {
+        return *std::max_element(first, last);
     }
 
     template <class T, class U, class V>
