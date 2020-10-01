@@ -10,8 +10,8 @@ namespace BSMath::Detail
 	public:
 		using Super = MatrixBase0<T, L, 1>;
 
-		inline const static VectorBase Zero;
-		inline const static VectorBase One;
+		NO_ODR const static VectorBase Zero;
+		NO_ODR const static VectorBase One;
 
 	public:
 		using Super::Super;
@@ -26,7 +26,7 @@ namespace BSMath::Detail
 		[[nodiscard]] constexpr T GetMin() const noexcept { return Min(data, data + L); }
 		[[nodiscard]] constexpr T GetMax() const noexcept { return Max(data, data + L); }
 
-		[[nodiscard]] inline float Length() const noexcept
+		[[nodiscard]] NO_ODR float Length() const noexcept
 		{
 			return Sqrt(LengthSquared());
 		}
