@@ -70,10 +70,10 @@ namespace BSMath::Detail
 	};
 
 	template <class T, size_t L>
-	const VectorBase<T, L> VectorBase<T, L>::Zero{ 0.0f };
+	const VectorBase<T, L> VectorBase<T, L>::Zero;
 
 	template <class T, size_t L>
-	const VectorBase<T, L> VectorBase<T, L>::One{ 1.0f };
+	const VectorBase<T, L> VectorBase<T, L>::One(1.0f);
 
 	template <class T, size_t L>
 	bool VectorBase<T, L>::Normalize() noexcept
