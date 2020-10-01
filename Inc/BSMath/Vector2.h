@@ -10,10 +10,10 @@ namespace BSMath
 	public:
 		using Super = Detail::VectorBase<float, 2>;
 
-		inline const static Vector2 Right;
-		inline const static Vector2 Left;
-		inline const static Vector2 Up;
-		inline const static Vector2 Down;
+		const static Vector2 Right;
+		const static Vector2 Left;
+		const static Vector2 Up;
+		const static Vector2 Down;
 
 	public:
 		using Super::Super;

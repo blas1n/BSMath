@@ -10,8 +10,8 @@ namespace BSMath::Detail
 	public:
 		using Super = MatrixBase0<T, 1, L>;
 
-		inline const static VectorBase Zero;
-		inline const static VectorBase One;
+		const static VectorBase Zero;
+		const static VectorBase One;
 
 	public:
 		using Super::Super;
