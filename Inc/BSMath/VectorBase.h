@@ -150,7 +150,7 @@ namespace BSMath::Detail
 	// Global Function
 
 	template <class T, size_t L>
-	[[nodiscard]] NO_ODR auto Min<VectorBase<T, L>>(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
+	[[nodiscard]] NO_ODR auto Min(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
 	{
 		BRANCH_SIMD(T);
 		Vector<T, L> ret;
@@ -159,7 +159,7 @@ namespace BSMath::Detail
 	}
 
 	template <class T, size_t L>
-	[[nodiscard]] NO_ODR auto Max<VectorBase<T, L>>(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
+	[[nodiscard]] NO_ODR auto Max(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
 	{
 		BRANCH_SIMD(T);
 		Vector<T, L> ret;
@@ -168,7 +168,7 @@ namespace BSMath::Detail
 	}
 
 	template <class T, size_t L>
-	[[nodiscard]] NO_ODR auto Clamp<VectorBase<T, L>>(const VectorBase<T, L>& n, const VectorBase<T, L>& min, const VectorBase<T, L>& max) noexcept
+	[[nodiscard]] NO_ODR auto Clamp(const VectorBase<T, L>& n, const VectorBase<T, L>& min, const VectorBase<T, L>& max) noexcept
 	{
 		auto realMin = Min(min, max);
 		auto realMax = Max(min, max);
@@ -176,7 +176,7 @@ namespace BSMath::Detail
 	}
 
 	template <size_t L>
-	[[nodiscard]] NO_ODR VectorBase<int, L> Abs<VectorBase<int, L>>(const VectorBase<int, L>& n) noexcept
+	[[nodiscard]] NO_ODR VectorBase<int, L> Abs(const VectorBase<int, L>& n) noexcept
 	{
 		using namespace SIMD::Integer;
 
@@ -188,7 +188,7 @@ namespace BSMath::Detail
 	}
 
 	template <size_t L>
-	[[nodiscard]] NO_ODR VectorBase<float, L> Abs<VectorBase<float, L>>(const VectorBase<float, L>& n) noexcept
+	[[nodiscard]] NO_ODR VectorBase<float, L> Abs(const VectorBase<float, L>& n) noexcept
 	{
 		using namespace SIMD::Real;
 		const auto vec = LoadRow(n.data[0]);
@@ -197,24 +197,25 @@ namespace BSMath::Detail
 	}
 
 	template <class T, size_t L>
-	[[nodiscard]] NO_ODR VectorBase<T, L> Sign<VectorBase<T, L>>(const VectorBase<T, L>& n) noexcept
+	[[nodiscard]] NO_ODR VectorBase<T, L> Sign(const VectorBase<T, L>& n) noexcept
 	{
 		BRANCH_SIMD(T);
 		const auto vec = LoadRow(n.data[0]);
 		const auto positive = VectorAnd(VectorGreaterThan(vec, Zero), One);
-		const auto negative = VectorAnd(VectorLessThan(vec, Zero), VectorLoadOne(static_cast<T>(-1));
+		const auto negative = VectorAnd(VectorLessThan(vec, Zero), VectorLoadOne(static_cast<T>(-1)));
 		return VectorOr(positive, negative);
 	}
 
 	template <size_t L>
-	[[nodiscard]] NO_ODR bool IsNearlyEqual<VectorBase<float, L>>(const VectorBase<float, L>& lhs, const VectorBase<float, L>& rhs, float tolerance = Epsilon) noexcept
+	[[nodiscard]] NO_ODR bool IsNearlyEqual(const VectorBase<float, L>& lhs, const VectorBase<float, L>& rhs, float tolerance = Epsilon) noexcept
 	{
 		using namespace SIMD::Real;
 		const auto epsilon = VectorLoad1(tolerance);
-		const auto vec = VectorSubtract(LoadRow(lhs.data[0]), LoadRow(rhs.data[0]);
+		const auto vec = VectorSubtract(LoadRow(lhs.data[0]), LoadRow(rhs.data[0]));
 		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
 	}
 
+	template <size_t L>
 	[[nodiscard]] NO_ODR bool IsNearlyZero(const VectorBase<float, L>& vec, float tolerance = Epsilon) noexcept
 	{
 		using namespace SIMD::Real;
@@ -223,7 +224,8 @@ namespace BSMath::Detail
 		return VectorMoveMask(VectorLessEqual(vecSimd, epsilon)) == 0xF;
 	}
 
-	[[nodiscard]] NO_ODR VectorBase<T, L> GetRangePct(const VectorBase<float, L>& vec, const VectorBase<float, L>& min, const VectorBase<float, L>& max) noexcept
+	template <size_t L>
+	[[nodiscard]] NO_ODR VectorBase<float, L> GetRangePct(const VectorBase<float, L>& vec, const VectorBase<float, L>& min, const VectorBase<float, L>& max) noexcept
 	{
 		using namespace SIMD::Real;
 		const auto vecSimd = LoadRow(vec.data[0]);
