@@ -5,10 +5,10 @@
 
 namespace BSMath
 {
-	struct Vector2 final : public VectorBase<float, 2>
+	struct Vector2 final : public Detail::VectorBase<float, 2>
 	{
 	public:
-		using Super = VectorBase<float, 2>;
+		using Super = Detail::VectorBase<float, 2>;
 
 		inline const static Vector2 Right;
 		inline const static Vector2 Left;
