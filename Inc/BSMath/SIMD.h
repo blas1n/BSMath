@@ -89,7 +89,7 @@ namespace BSMath::SIMD
             return VectorSelect(lhs, rhs, _mm_cmplt_epi32(lhs, rhs));
         }
 
-        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMin(VectorRegister lhs, VectorRegister rhs) noexcept
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMax(VectorRegister lhs, VectorRegister rhs) noexcept
         {
             return VectorSelect(lhs, rhs, _mm_cmpgt_epi32(lhs, rhs));
         }
@@ -159,7 +159,7 @@ namespace BSMath::SIMD
             return _mm_min_ps(lhs, rhs);
         }
 
-        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMin(VectorRegister lhs, VectorRegister rhs) noexcept
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMax(VectorRegister lhs, VectorRegister rhs) noexcept
         {
             return _mm_max_ps(lhs, rhs);
         }
