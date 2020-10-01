@@ -22,6 +22,7 @@ namespace BSMath::SIMD
         using VectorRegister = __m128i;
 
         const static VectorRegister Zero = _mm_setzero_si128();
+        const static VectorRegister One = _mm_set1_epi32(1);
 
         [[nodiscard]] NO_ODR VectorRegister VectorLoad(int x = 0, int y = 0, int z = 0, int w = 0) noexcept
         {
@@ -99,6 +100,7 @@ namespace BSMath::SIMD
         using VectorRegister = __m128;
 
         const static VectorRegister Zero = _mm_setzero_ps();
+        const static VectorRegister One = _mm_set1_ps(1.0f);
 
         [[nodiscard]] NO_ODR VectorRegister VectorLoad(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) noexcept
         {
