@@ -44,19 +44,70 @@ namespace BSMath::SIMD
             return _mm_cvtsi128_si32(vec);
         }
 
-        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorSelect(VectorRegister lhs, VectorRegister rhs, VectorRegister mask)
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAnd(VectorRegister lhs, VectorRegister rhs) noexcept
         {
-            return _mm_xor_si128(rhs, _mm_and_si128(mask, _mm_xor_si128(lhs, rhs)));
+            return _mm_and_si128(lhs, rhs);
         }
 
-        [[nodiscard]] NO_ODR bool VECTOR_CALL VectorEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorOr(VectorRegister lhs, VectorRegister rhs) noexcept
         {
-            return _mm_movemask_epi8((_mm_cmpeq_epi32(lhs, rhs))) == 0xFFFF;
+            return _mm_or_si128(lhs, rhs);
         }
 
-        [[nodiscard]] NO_ODR bool VECTOR_CALL VectorNotEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorXor(VectorRegister lhs, VectorRegister rhs) noexcept
         {
-            return !VectorEqual(lhs, rhs);
+            return _mm_xor_si128(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorNot(VectorRegister vec) noexcept
+        {
+            return VectorXor(vec, One);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAndNot(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_andnot_si128(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorSelect(VectorRegister lhs, VectorRegister rhs, VectorRegister mask) noexcept
+        {
+            return VectorXor(rhs, VectorAnd(mask, VectorXor(lhs, rhs)));
+        }
+
+        [[nodiscard]] NO_ODR int VECTOR_CALL VectorMoveMask(VectorRegister vec) noexcept
+        {
+            // ToDo: Use integer specific instruction
+            return _mm_movemask_ps(_mm_castsi128_ps(vec));
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_cmpeq_epi32(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorNotEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return VectorNot(VectorEqual(lhs, rhs));
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorGreaterThan(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_cmpgt_epi32(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorGreaterEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return VectorNot(_mm_cmplt_epi32(lhs, rhs));
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorLessThan(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_cmplt_epi32(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorLessEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return VectorNot(VectorGreaterThan(lhs, rhs));
         }
 
         [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAdd(VectorRegister lhs, VectorRegister rhs) noexcept
@@ -124,14 +175,64 @@ namespace BSMath::SIMD
             return ret;
         }
 
-        [[nodiscard]] NO_ODR bool VECTOR_CALL VectorEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        [[nodiscard]] NO_ODR int VECTOR_CALL VectorMoveMask(VectorRegister vec) noexcept
         {
-            return _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) == 0xF;
+            return _mm_movemask_ps(vec);
         }
 
-        [[nodiscard]] NO_ODR bool VECTOR_CALL VectorNotEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAnd(VectorRegister lhs, VectorRegister rhs) noexcept
         {
-            return !VectorEqual(lhs, rhs);
+            return _mm_and_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorOr(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_or_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorXor(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_xor_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorNot(VectorRegister vec) noexcept
+        {
+            return VectorXor(vec, One);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAndNot(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_andnot_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_cmpeq_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorNotEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return VectorNot(VectorEqual(lhs, rhs));
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorGreaterThan(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_cmpgt_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorGreaterEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_cmpge_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorLessThan(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_cmplt_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorLessEqual(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_cmple_ps(lhs, rhs);
         }
 
         [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorAdd(VectorRegister lhs, VectorRegister rhs) noexcept
