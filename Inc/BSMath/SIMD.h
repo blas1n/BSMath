@@ -23,7 +23,7 @@ namespace BSMath::SIMD
 
         const static VectorRegister Zero = _mm_setzero_si128();
 
-        [[nodiscard]] NO_ODR VectorRegister VectorLoad(int x = 0.0f, int y = 0.0f, int z = 0.0f, int w = 0.0f) noexcept
+        [[nodiscard]] NO_ODR VectorRegister VectorLoad(int x = 0, int y = 0, int z = 0, int w = 0) noexcept
         {
             return _mm_setr_epi32(x, y, z, w);
         }
