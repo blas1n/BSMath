@@ -17,7 +17,7 @@ namespace BSMath::Detail
 		using Super::Super;
 
 		template <class U, size_t L2>
-		VectorBase(const VectorBase<U, L2>& other) explicit
+		explicit VectorBase(const VectorBase<U, L2>& other) noexcept
 			: Super()
 		{
 			std::copy_n(data, L2, other.data);
