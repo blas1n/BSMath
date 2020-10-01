@@ -96,13 +96,14 @@ namespace BSMath::Detail
 	{
 		BRANCH_SIMD(T);
 		VectorRegister lhs, rhs;
-		bool ret = true;
+		bool tmp, ret = true;
 
 		for (size_t i = 0; i < Row; ++i)
 		{
 			lhs = LoadRow(data[i]);
 			rhs = LoadRow(other.data[i]);
-			ret = ret && VectorEqual(VectorAdd(lhs, rhs), data[i]);
+			tmp = VectorMoveMask(VectorEqual(VectorAdd(lhs, rhs), data[i])) == 0xF;
+			ret = ret && tmp;
 		}
 
 		return ret;
