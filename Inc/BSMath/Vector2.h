@@ -18,12 +18,9 @@ namespace BSMath
 	public:
 		using Super::Super;
 
-		constexpr Vector2() noexcept 
-			: Super(), x(data[0][0]), y(data[0][1]) {}
-
 	public:
-		float& x;
-		float& y;
+		float& x = data[0][0];
+		float& y = data[0][1];
 	};
 
 	const Vector2 Vector2::Right{ 1.0f, 0.0f };
