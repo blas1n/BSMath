@@ -5,10 +5,10 @@
 namespace BSMath::Detail
 {
 	template <class T, size_t L>
-	struct alignas(16) VectorBase : public MatrixBase0<T, L, 1>
+	struct alignas(16) VectorBase : public MatrixBase0<T, 1, L>
 	{
 	public:
-		using Super = MatrixBase0<T, L, 1>;
+		using Super = MatrixBase0<T, 1, L>;
 
 		inline const static VectorBase Zero;
 		inline const static VectorBase One;
