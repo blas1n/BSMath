@@ -210,24 +210,24 @@ namespace BSMath::Detail
 	template <class T, size_t Row, size_t Column>
 	class UniformMatrixDistribution;
 	
-	template <class T, size_t Row, size_t Column, class = std::enable_if_t<std::is_integral_v<T>>>
-	class UniformMatrixDistribution<T, Row, Column> : public std::uniform_int_distribution<T>
+	template <size_t Row, size_t Column>
+	class UniformMatrixDistribution<int, Row, Column> final : public std::uniform_int_distribution<int>
 	{
-		using Super = std::uniform_int_distribution<T>;
+		using Super = std::uniform_int_distribution<int>;
 
 	public:
-		using result_type = MatrixBase0<T, Row, Column>;
+		using result_type = MatrixBase0<int, Row, Column>;
 
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
 		{
-			T data[Row][Column]{ 0 };
+			int data[Row][Column]{ 0 };
 
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
 					data[row][columnm] = Super::operator()(engine);
 
-			return result_type(data);
+			return result_type{ data };
 		}
 
 		template <class Engine>
@@ -239,45 +239,45 @@ namespace BSMath::Detail
 				for (size_t column = 0; column < Column; ++column)
 					data[row][columnm] = Super::operator()(engine, param);
 
-			return result_type(data);
+			return result_type{ data };
 		}
 	};
 
-	template <class T, size_t Row, size_t Column, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	class UniformMatrixDistribution<T, Row, Column> : public std::uniform_real_distribution<T>
+	template <size_t Row, size_t Column>
+	class UniformMatrixDistribution<float, Row, Column> final : public std::uniform_real_distribution<float>
 	{
-		using Super = std::uniform_real_distribution<T>;
+		using Super = std::uniform_real_distribution<float>;
 
 	public:
-		using result_type = MatrixBase0<T, Row, Column>;
+		using result_type = MatrixBase0<float, Row, Column>;
 
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
 		{
-			T data[Row][Column]{ 0 };
+			float data[Row][Column]{ 0.0f };
 				
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
 					data[row][columnm] = Super::operator()(engine);
 	
-			return result_type(data);
+			return result_type{ data };
 		}
 		
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
 		{
-			T data[Row][Column]{ 0 };
+			float data[Row][Column]{ 0.0f };
 
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
 					data[row][columnm] = Super::operator()(engine, param);
 
-			return result_type(data);
+			return result_type{ data };
 		}
 	};
 
 	template <class T, size_t Row, size_t Column>
-	class NormalMatrixDistribution<T, Row, Column> : public std::normal_distribution<T>
+	class NormalMatrixDistribution final : public std::normal_distribution<T>
 	{
 		static_assert(std::is_floating_point_v<T>, "T must be float type!");
 
@@ -295,7 +295,7 @@ namespace BSMath::Detail
 				for (size_t column = 0; column < Column; ++column)
 					data[row][columnm] = Super::operator()(engine);
 
-			return result_type(data);
+			return result_type{ data };
 		}
 
 		template <class Engine>
@@ -307,7 +307,7 @@ namespace BSMath::Detail
 				for (size_t column = 0; column < Column; ++column)
 					data[row][columnm] = Super::operator()(engine, param);
 
-			return result_type(data);
+			return result_type{ data };
 		}
 	};
 }
