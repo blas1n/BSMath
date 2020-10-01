@@ -43,6 +43,11 @@ namespace BSMath::SIMD
             return _mm_cvtsi128_si32(vec);
         }
 
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorSelect(VectorRegister lhs, VectorRegister rhs, VectorRegister mask)
+        {
+            return _mm_xor_si128(rhs, _mm_and_si128(mask, _mm_xor_si128(lhs, rhs)));
+        }
+
         [[nodiscard]] NO_ODR bool VECTOR_CALL VectorEqual(VectorRegister lhs, VectorRegister rhs) noexcept
         {
             return _mm_movemask_epi8((_mm_cmpeq_epi32(lhs, rhs))) == 0xFFFF;
@@ -76,6 +81,16 @@ namespace BSMath::SIMD
             const __m128 lhsReal = _mm_cvtepi32_ps(lhs);
             const __m128 rhsReal = _mm_cvtepi32_ps(rhs);
             return _mm_cvtps_epi32(_mm_div_ps(lhsReal, rhsReal));
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMin(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return VectorSelect(lhs, rhs, _mm_cmplt_epi32(lhs, rhs));
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMin(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return VectorSelect(lhs, rhs, _mm_cmpgt_epi32(lhs, rhs));
         }
     }
 
@@ -135,6 +150,16 @@ namespace BSMath::SIMD
         [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorDivide(VectorRegister lhs, VectorRegister rhs) noexcept
         {
             return _mm_div_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMin(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_min_ps(lhs, rhs);
+        }
+
+        [[nodiscard]] NO_ODR VectorRegister VECTOR_CALL VectorMin(VectorRegister lhs, VectorRegister rhs) noexcept
+        {
+            return _mm_max_ps(lhs, rhs);
         }
     }
 
