@@ -141,4 +141,76 @@ namespace BSMath::Detail
 	{
 		return VectorBase<T, L>::Dot(lhs, rhs);
 	}
+
+	// Global Function
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR auto Min<VectorBase<T, L>>(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
+	{
+		BRANCH_SIMD(T);
+		Vector<T, L> ret;
+		VectorStore(VectorMin(LoadRow(lhs.data[0]), LoadRow(rhs.data[0])), ret.data[0]);
+		return ret;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR auto Max<VectorBase<T, L>>(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
+	{
+		BRANCH_SIMD(T);
+		Vector<T, L> ret;
+		VectorStore(VectorMax(LoadRow(lhs.data[0]), LoadRow(rhs.data[0])), ret.data[0]);
+		return ret;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR auto Clamp<VectorBase<T, L>>(const VectorBase<T, L>& n, const VectorBase<T, L>& min, const VectorBase<T, L>& max) noexcept
+	{
+		VectorBase<T, L> realMin = Min(min, max);
+		VectorBase<T, L> realMax = Max(min, max);
+		return Max(realMin, Min(realMax, n));
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR VectorBase<T, L> Abs<VectorBase<T, L>>(const VectorBase<T, L>& n) noexcept
+	{
+		const __m128 signMask = _mm_set_ps1(-0.0f);
+		const __m128 simd = _mm_set_ps(0.0f, 0.0f, n.y, n.x);
+		return VectorBase<T, L>{ _mm_andnot_ps(signMask, simd) };
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR VectorBase<T, L> Sign<VectorBase<T, L>>(const VectorBase<T, L>& n) noexcept
+	{
+		const __m128 zero = _mm_setzero_ps();
+		const __m128 simd = _mm_set_ps(0.0f, 0.0f, n.y, n.x);
+		const __m128 positive = _mm_and_ps(_mm_cmpgt_ps(simd, zero), _mm_set1_ps(1.0f));
+		const __m128 negative = _mm_and_ps(_mm_cmplt_ps(simd, zero), _mm_set1_ps(-1.0f));
+		return VectorBase<T, L>{ _mm_or_ps(positive, negative) };
+	}
+
+	template <size_t L>
+	[[nodiscard]] NO_ODR bool IsNearlyEqual<VectorBase<float, L>>(const VectorBase<float, L>& lhs, const VectorBase<float, L>& rhs, float tolerance = Epsilon) noexcept
+	{
+		__m128 vec = _mm_set_ps(0.0f, 0.0f, lhs.y, lhs.x);
+		vec = _mm_sub_ps(vec, _mm_set_ps(0.0f, 0.0f, rhs.y, rhs.x));
+		return Detail::IsLessEpsilon(vec, tolerance);
+	}
+
+	[[nodiscard]] NO_ODR bool IsNearlyZero(const VectorBase<float, L>& vec, float tolerance = Epsilon) noexcept
+	{
+		return Detail::IsLessEpsilon(_mm_set_ps(0.0f, 0.0f, vec.y, vec.x), tolerance);
+	}
+
+	[[nodiscard]] NO_ODR VectorBase<T, L> GetRangePct(const VectorBase<float, L>& vec, const VectorBase<float, L>& min, const VectorBase<float, L>& max) noexcept
+	{
+		const __m128 vecSimd = _mm_set_ps(0.0f, 0.0f, vec.y, vec.x);
+		const __m128 minSimd = _mm_set_ps(0.0f, 0.0f, min.y, min.x);
+		const __m128 maxSimd = _mm_set_ps(0.0f, 0.0f, max.y, max.x);
+		return VectorBase<T, L>{ _mm_div_ps(_mm_sub_ps(vecSimd, minSimd), _mm_sub_ps(maxSimd, minSimd)) };
+	}
+
+	[[nodiscard]] NO_ODR VectorBase<T, L> Lerp(const VectorBase<float, L>& a, const VectorBase<float, L>& b, float t) noexcept
+	{
+		return a + t * (b - a);
+	}
 }
