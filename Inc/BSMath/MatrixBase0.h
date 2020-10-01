@@ -23,17 +23,17 @@ namespace BSMath::Detail
 	public:
 		constexpr MatrixBase0() noexcept : data() {}
 
-		explicit MatrixBase0(T n) noexcept
+		explicit MatrixBase0(T n) noexcept : data()
 		{
 			std::fill(data, Row * Column, n);
 		}
 
-		explicit MatrixBase0(const T* ptr) noexcept
+		explicit MatrixBase0(const T* ptr) noexcept : data()
 		{
 			std::memcpy(data, ptr, Row * Column);
 		}
 
-		explicit MatrixBase0(std::initializer_list<T> list) noexcept
+		explicit MatrixBase0(std::initializer_list<T> list) noexcept : data()
 		{
 			std::copy_n(data, Row * Column, list.begin());
 		}
