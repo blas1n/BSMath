@@ -21,17 +21,6 @@ namespace BSMath
 		constexpr Vector2() noexcept 
 			: Super(), x(data[0][0]), y(data[0][1]) {}
 
-		explicit constexpr Vector2(float inX, float inY) noexcept
-			: Vector2()
-		{
-			x = inX; y = inY;
-		}
-
-		constexpr void Set(float inX, float inY) noexcept
-		{
-			x = inX; y = inY;
-		}
-
 	public:
 		float& x;
 		float& y;
