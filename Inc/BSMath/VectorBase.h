@@ -170,8 +170,8 @@ namespace BSMath::Detail
 	template <class T, size_t L>
 	[[nodiscard]] NO_ODR auto Clamp<VectorBase<T, L>>(const VectorBase<T, L>& n, const VectorBase<T, L>& min, const VectorBase<T, L>& max) noexcept
 	{
-		VectorBase<T, L> realMin = Min(min, max);
-		VectorBase<T, L> realMax = Max(min, max);
+		auto realMin = Min(min, max);
+		auto realMax = Max(min, max);
 		return Max(realMin, Min(realMax, n));
 	}
 
