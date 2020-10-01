@@ -98,7 +98,8 @@ namespace BSMath
         return (n - min) / (max - min);
     }
 
-    [[nodiscard]] constexpr float Lerp(float a, float b, float t) noexcept
+    template <class T>
+    [[nodiscard]] T Lerp(const T& a, const T& b, float t) noexcept
     {
         return a + t * (b - a);
     }
