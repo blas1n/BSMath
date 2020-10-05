@@ -30,7 +30,7 @@ namespace BSMath::SIMD
         }
 
         template <size_t L>
-        [[nodiscasrd]] NO_ODR VectorRegister VectorLoad(const int(&vec)[L]) noexcept
+        [[nodiscard]] NO_ODR VectorRegister VectorLoad(const int(&vec)[L]) noexcept
         {
             if constexpr (L == 1)
                 return VectorLoad(vec[0]);
@@ -172,7 +172,7 @@ namespace BSMath::SIMD
         }
 
         template <size_t L>
-        [[nodiscasrd]] NO_ODR VectorRegister VectorLoad(const float(&vec)[L]) noexcept
+        [[nodiscard]] NO_ODR VectorRegister VectorLoad(const float(&vec)[L]) noexcept
         {
             if constexpr (L == 1)
                 return VectorLoad(vec[0]);
