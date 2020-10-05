@@ -5,11 +5,17 @@
 #include "Random.h"
 #include "SIMD.h"
 
-#define BRANCH_SIMD(T) \
+#define INVOKE_SIMD(T, ...) \
 if constexpr (std::is_floating_point_v<T>) \
+{ \
 	using namespace SIMD::Real; \
+	__VA_ARGS__ \
+} \
 else \
-	using namespace SIMD::Integer;
+{ \
+	using namespace SIMD::Integer; \
+	__VA_ARGS__ \
+}
 
 namespace BSMath::Detail
 {
@@ -54,123 +60,121 @@ namespace BSMath::Detail
 		T data[Row][Column];
 	};
 
-	template <class T, size_t L>
-	NO_ODR void LoadRow(T row[L]) noexcept;
+	template <size_t L>
+	[[nodiscard]] NO_ODR SIMD::Integer::VectorRegister LoadRow(const int(&row)[L]) noexcept
+	{
+		using namespace SIMD::Integer;
 
-	template <class T, size_t L, class = std::enable_if_t<std::is_floating_point_v<T>>>
-	NO_ODR SIMD::Real::VectorRegister LoadRow(T row[L]) noexcept
+		if constexpr (L == 1)
+			return VectorLoad(row[0]);
+		else if (L == 2)
+			return VectorLoad(row[0], row[1]);
+		else if (L == 3)
+			return VectorLoad(row[0], row[1], row[2]);
+		else
+			return VectorLoad(row[0], row[1], row[2], row[3]);
+	}
+
+	template <size_t L>
+	[[nodiscard]] NO_ODR SIMD::Real::VectorRegister LoadRow(const float (&row)[L]) noexcept
 	{
 		using namespace SIMD::Real;
 
-		VectorRegister row;
-		if constexpr (Column == 1)
-			row = VectorLoad(row[0]);
-		else if (Column == 2)
-			row = VectorLoad(row[0], row[1]);
-		else if (Column == 3)
-			row = VectorLoad(row[0], row[1], row[2]);
+		if constexpr (L == 1)
+			return VectorLoad(row[0]);
+		else if (L == 2)
+			return VectorLoad(row[0], row[1]);
+		else if (L == 3)
+			return VectorLoad(row[0], row[1], row[2]);
 		else
-			row = VectorLoad(row[0], row[1], row[2], row[3]);
-		return row;
-	}
-
-	template <class T, size_t L, class = std::enable_if_t<std::is_integral_v<T>>>
-	NO_ODR SIMD::Integer::VectorRegister LoadRow(T row[L]) noexcept
-	{
-		using namespace SIMD::Integer;
-		
-		VectorRegister row;
-		if constexpr (Column == 1)
-			row = VectorLoad(row[0]);
-		else if (Column == 2)
-			row = VectorLoad(row[0], row[1]);
-		else if (Column == 3)
-			row = VectorLoad(row[0], row[1], row[2]);
-		else
-			row = VectorLoad(row[0], row[1], row[2], row[3]);
-		return row;
+			return VectorLoad(row[0], row[1], row[2], row[3]);
 	}
 
 	template <class T, size_t Row, size_t Column>
 	bool MatrixBase0<T, Row, Column>::operator==(const MatrixBase0<T, Row, Column>& other) const noexcept
 	{
-		BRANCH_SIMD(T);
-		VectorRegister lhs, rhs;
-		bool tmp, ret = true;
+		INVOKE_SIMD(T,
+			VectorRegister lhs, rhs;
+			bool tmp, ret = true;
 
-		for (size_t i = 0; i < Row; ++i)
-		{
-			lhs = LoadRow(data[i]);
-			rhs = LoadRow(other.data[i]);
-			tmp = VectorMoveMask(VectorEqual(VectorAdd(lhs, rhs), data[i])) == 0xF;
-			ret = ret && tmp;
-		}
+			for (size_t i = 0; i < Row; ++i)
+			{
+				lhs = LoadRow(data[i]);
+				rhs = LoadRow(other.data[i]);
+				tmp = VectorMoveMask(VectorEqual(lhs, rhs)) == 0xF;
+				ret = ret && tmp;
+			}
 
-		return ret;
+			return ret;
+		);
 	}
-	
+
 	template <class T, size_t Row, size_t Column>
 	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator+=(const MatrixBase0<T, Row, Column>& other) noexcept
 	{
-		BRANCH_SIMD(T);
-		VectorRegister lhs, rhs;
+		INVOKE_SIMD(T,
+			VectorRegister lhs, rhs;
 
-		for (size_t i = 0; i < Row; ++i)
-		{
-			lhs = LoadRow(data[i]);
-			rhs = LoadRow(other.data[i]);
-			VectorStore(VectorAdd(lhs, rhs), data[i]);
-		}
+			for (size_t i = 0; i < Row; ++i)
+			{
+				lhs = LoadRow(data[i]);
+				rhs = LoadRow(other.data[i]);
+				VectorStore(VectorAdd(lhs, rhs), data[i]);
+			}
 
-		return *this;
+			return *this;
+		);
 	}
 
 	template <class T, size_t Row, size_t Column>
 	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator-=(const MatrixBase0<T, Row, Column>& other) noexcept
 	{
-		BRANCH_SIMD(T);
-		VectorRegister lhs, rhs;
+		INVOKE_SIMD(T,
+			VectorRegister lhs, rhs;
+			
+			for (size_t i = 0; i < Row; ++i)
+			{
+				lhs = LoadRow(data[i]);
+				rhs = LoadRow(other.data[i]);
+				VectorStore(VectorSubtract(lhs, rhs), data[i]);
+			}
 
-		for (size_t i = 0; i < Row; ++i)
-		{
-			lhs = LoadRow(data[i]);
-			rhs = LoadRow(other.data[i]);
-			VectorStore(VectorSubtract(lhs, rhs), data[i]);
-		}
-
-		return *this;
+			return *this;
+		);
 	}
 
 	template <class T, size_t Row, size_t Column>
 	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator*=(T scaler) noexcept
 	{
-		BRANCH_SIMD(T);
-		VectorRegister lhs, rhs;
-
-		for (size_t i = 0; i < Row; ++i)
-		{
-			lhs = LoadRow(data[i]);
-			rhs = VectorLoad1(scaler);
-			VectorStore(VectorMultiply(lhs, rhs), data[i]);
-		}
-
-		return *this;
+		INVOKE_SIMD(T,
+			VectorRegister lhs, rhs;
+			
+			for (size_t i = 0; i < Row; ++i)
+			{
+				lhs = LoadRow(data[i]);
+				rhs = VectorLoad1(scaler);
+				VectorStore(VectorMultiply(lhs, rhs), data[i]);
+			}
+			
+			return *this;
+		);
 	}
 
 	template <class T, size_t Row, size_t Column>
 	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator/=(T divisor) noexcept
 	{
-		BRANCH_SIMD(T);
-		VectorRegister lhs, rhs;
-
-		for (size_t i = 0; i < Row; ++i)
-		{
-			lhs = LoadRow(data[i]);
-			rhs = VectorLoad1(divisor);
-			VectorStore(VectorDivide(lhs, rhs), data[i]);
-		}
-
-		return *this;
+		INVOKE_SIMD(T,
+			VectorRegister lhs, rhs;
+			
+			for (size_t i = 0; i < Row; ++i)
+			{
+				lhs = LoadRow(data[i]);
+				rhs = VectorLoad1(divisor);
+				VectorStore(VectorDivide(lhs, rhs), data[i]);
+			}
+			
+			return *this;
+		);
 	}
 
 	// Global Operator
