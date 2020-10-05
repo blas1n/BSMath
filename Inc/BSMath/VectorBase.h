@@ -60,8 +60,8 @@ namespace BSMath
 				return VectorBase(lhs - rhs).LengthSquared();
 			}
 
-			[[nodiscard]] constexpr T& operator[](size_t idx) noexcept { return data[idx]; }
-			[[nodiscard]] constexpr T operator[](size_t idx) const noexcept { return data[idx]; }
+			[[nodiscard]] constexpr T& operator[](size_t idx) noexcept { return data[0][idx]; }
+			[[nodiscard]] constexpr T operator[](size_t idx) const noexcept { return data[0][idx]; }
 
 			[[nodiscard]] VectorBase operator-() const noexcept;
 			VectorBase& operator*=(const VectorBase& other) noexcept;
