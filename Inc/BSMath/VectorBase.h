@@ -29,11 +29,6 @@ namespace BSMath
 			VectorBase(const Super& super) noexcept
 				: Super(super) {}
 
-			void Set(std::initializer_list<T> list) noexcept
-			{
-				std::copy_n(data, L, list.begin());
-			}
-
 			[[nodiscard]] constexpr T GetMin() const noexcept { return Min(*data, *data + L); }
 			[[nodiscard]] constexpr T GetMax() const noexcept { return Max(*data, *data + L); }
 

@@ -18,6 +18,11 @@ namespace BSMath
 	public:
 		using Super::Super;
 
+		void Set(float inX, float inY) noexcept
+		{
+			x = inX; y = inY;
+		}
+
 	public:
 		float& x = data[0][0];
 		float& y = data[0][1];
