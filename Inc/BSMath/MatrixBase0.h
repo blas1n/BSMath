@@ -5,18 +5,6 @@
 #include "Random.h"
 #include "SIMD.h"
 
-#define INVOKE_SIMD(T, ...) \
-if constexpr (std::is_floating_point_v<T>) \
-{ \
-	using namespace SIMD::Real; \
-	__VA_ARGS__ \
-} \
-else \
-{ \
-	using namespace SIMD::Integer; \
-	__VA_ARGS__ \
-}
-
 namespace BSMath::Detail
 {
 	template <class T, size_t Row, size_t Column>
