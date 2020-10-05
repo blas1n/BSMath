@@ -176,65 +176,75 @@ namespace BSMath
 
 	// Global Function
 
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR auto Min(const Detail::VectorBase<T, L>& lhs, const Detail::VectorBase<T, L>& rhs) noexcept
+	namespace Detail
 	{
-		Vector<T, L> ret;
-		INVOKE_SIMD(T,
-			VectorStore(VectorMin(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0])), ret.data[0]);
-		);
-		return ret;
-	}
+		template <class T, class Ty, size_t L>
+		[[nodiscard]] NO_ODR T MinImpl(const VectorBase<Ty, L>*, const T& lhs, const T& rhs) noexcept
+		{
+			T ret;
+			INVOKE_SIMD(Ty,
+				VectorStore(VectorMin(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0])), ret.data[0]);
+			);
+			return ret;
+		}
 
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR auto Max(const Detail::VectorBase<T, L>& lhs, const Detail::VectorBase<T, L>& rhs) noexcept
-	{
-		Vector<T, L> ret;
-		INVOKE_SIMD(T,
-			VectorStore(VectorMax(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0])), ret.data[0]);
-		);
-		return ret;
-	}
+		template <class T, class Ty, size_t L>
+		[[nodiscard]] NO_ODR T MaxImpl(const VectorBase<Ty, L>*, const T& lhs, const T& rhs) noexcept
+		{
+			T ret;
+			INVOKE_SIMD(Ty,
+				VectorStore(VectorMax(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0])), ret.data[0]);
+			);
+			return ret;
+		}
 
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR auto Clamp(const Detail::VectorBase<T, L>& n,
-		const Detail::VectorBase<T, L>& min, const Detail::VectorBase<T, L>& max) noexcept
-	{
-		auto realMin = Min(min, max);
-		auto realMax = Max(min, max);
-		return Max(realMin, Min(realMax, n));
-	}
+		template <class T, class Ty, size_t L>
+		[[nodiscard]] NO_ODR T ClampImpl(const VectorBase<Ty, L>*, const T& n, const T& min, const T& max) noexcept
+		{
+			auto realMin = Min(min, max);
+			auto realMax = Max(min, max);
+			return Max(realMin, Min(realMax, n));
+		}
 
-	template <size_t L>
-	[[nodiscard]] NO_ODR Detail::VectorBase<int, L> Abs(const Detail::VectorBase<int, L>& n) noexcept
-	{
-		using namespace SIMD::Integer;
+		template <class T, size_t L>
+		[[nodiscard]] NO_ODR T AbsImpl(const VectorBase<int, L>*, const T& n) noexcept
+		{
+			using namespace SIMD::Integer;
+			auto point = VectorLoad(n.data[0]);
+			auto mask = VectorLessThan(point, Zero);
+			point = VectorXor(point, mask);
+			mask = VectorAnd(mask, One);
 
-		auto point = VectorLoad(n.data[0]);
-		auto mask = VectorLessThan(point, Zero);
-		point = VectorXor(point, mask);
-		mask = VectorAnd(mask, One);
-		return VectorAdd(point, mask);
-	}
+			Detail::VectorBase<float, L> ret;
+			VectorStore(VectorAdd(point, mask), ret.data[0]);
+			return ret;
+		}
 
-	template <size_t L>
-	[[nodiscard]] NO_ODR Detail::VectorBase<float, L> Abs(const Detail::VectorBase<float, L>& n) noexcept
-	{
-		using namespace SIMD::Real;
-		const auto vec = VectorLoad(n.data[0]);
-		const auto mask = VectorLoad1(-0.0f);
-		return VectorAndNot(mask, vec);
-	}
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR Detail::VectorBase<T, L> Sign(const Detail::VectorBase<T, L>& n) noexcept
-	{
-		INVOKE_SIMD(T,
+		template <class T, size_t L>
+		[[nodiscard]] NO_ODR T AbsImpl(const VectorBase<float, L>*, const T& n) noexcept
+		{
+			using namespace SIMD::Real;
 			const auto vec = VectorLoad(n.data[0]);
-			const auto positive = VectorAnd(VectorGreaterThan(vec, Zero), One);
-			const auto negative = VectorAnd(VectorLessThan(vec, Zero), VectorLoadOne(static_cast<T>(-1)));
-			return VectorOr(positive, negative);
-		);
+			const auto mask = VectorLoad1(-0.0f);
+
+			Detail::VectorBase<float, L> ret;
+			VectorStore(VectorAndNot(mask, vec), ret.data[0]);
+			return ret;
+		}
+
+		template <class T, class Ty, size_t L>
+		[[nodiscard]] NO_ODR T SignImpl(const VectorBase<Ty, L>*, const T& n) noexcept
+		{
+			INVOKE_SIMD(Ty,
+				const auto vec = VectorLoad(n.data[0]);
+				const auto positive = VectorAnd(VectorGreaterThan(vec, Zero), One);
+				const auto negative = VectorAnd(VectorLessThan(vec, Zero), VectorLoad1(static_cast<Ty>(-1)));
+
+				Detail::VectorBase<float, L> ret;
+				VectorStore(VectorOr(positive, negative), ret.data[0]);
+				return ret;
+			);
+		}
 	}
 
 	template <size_t L>
@@ -264,6 +274,11 @@ namespace BSMath
 		const auto vecSimd = VectorLoad(vec.data[0]);
 		const auto minSimd = VectorLoad(min.data[0]);
 		const auto maxSimd = VectorLoad(max.data[0]);
-		return VectorDivide(VectorSubtract(vecSimd, minSimd), VectorSubtract(maxSimd, minSimd));
+		const auto numerator = VectorSubtract(vecSimd, minSimd);
+		const auto denomirator = VectorSubtract(maxSimd, minSimd);
+
+		Detail::VectorBase<float, L> ret;
+		VectorStore(VectorDivide(numerator, denomirator), ret.data[0]);
+		return ret;
 	}
 }

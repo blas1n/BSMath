@@ -8,6 +8,45 @@ namespace BSMath
     constexpr float Pi = 3.141592654f;
     constexpr float Epsilon = 1.192092896e-07F;
 
+    namespace Detail
+    {
+        template <class T>
+        [[nodiscard]] constexpr T MinImpl(const void*, const T& lhs, const T& rhs) noexcept
+        {
+            return lhs < rhs ? lhs : rhs;
+        }
+
+        template <class T>
+        [[nodiscard]] constexpr T MaxImpl(const void*, const T& lhs, const T& rhs) noexcept
+        {
+            return lhs > rhs ? lhs : rhs;
+        }
+
+        template <class T>
+        [[nodiscard]] constexpr T ClmapImpl(const void*, const T& n, const T& min, const T& max) noexcept
+        {
+            return Max(Min(n, max), min);
+        }
+
+        template <class T>
+        [[nodiscard]] constexpr T AbsImpl(const void*, const T& n) noexcept
+        {
+            return n >= static_cast<T>(0) ? n : -n;
+        }
+
+        template <class T>
+        [[nodiscard]] constexpr T SignImpl(const void*, const T& n) noexcept
+        {
+            return n >= static_cast<T>(0) ? static_cast<T>(1) : static_cast<T>(-1);
+        }
+    }
+
+    template <class T>
+    [[nodiscard]] constexpr T Min(const T& lhs, const T& rhs) noexcept
+    {
+        return Detail::MinImpl(static_cast<T*>(nullptr), lhs, rhs);
+    }
+
     template <class T1, class T2>
     [[nodiscard]] constexpr auto Min(const T1& lhs, const T2& rhs) noexcept
     {
@@ -30,6 +69,12 @@ namespace BSMath
             ret = Min(ret, *first);
 
         return ret;
+    }
+
+    template <class T>
+    [[nodiscard]] constexpr T Max(const T& lhs, const T& rhs) noexcept
+    {
+        return Detail::MaxImpl(static_cast<T*>(nullptr), lhs, rhs);
     }
 
     template <class T1, class T2>
@@ -56,6 +101,12 @@ namespace BSMath
         return ret;
     }
 
+    template <class T>
+    [[nodiscard]] constexpr T Clamp(const T& n, const T& min, const T& max) noexcept
+    {
+        return Detail::ClmapImpl(static_cast<T*>(nullptr), n, min, max);
+    }
+
     template <class T, class U, class V>
     [[nodiscard]] constexpr auto Clamp(const T& n, const U& min, const V& max) noexcept
     {
@@ -65,13 +116,13 @@ namespace BSMath
     template <class T>
     [[nodiscard]] constexpr T Abs(const T& n) noexcept
     {
-        return n >= static_cast<T>(0) ? n : -n;
+        return Detail::AbsImpl(static_cast<T*>(nullptr), n);
     }
 
     template <class T>
     [[nodiscard]] constexpr T Sign(const T& n) noexcept
     {
-        return n >= static_cast<T>(0) ? static_cast<T>(1) : static_cast<T>(-1);
+        return Detail::SignImpl(static_cast<T*>(nullptr), n);
     }
 
     [[nodiscard]] NO_ODR float Cos(float n) noexcept { return std::cos(n); }
