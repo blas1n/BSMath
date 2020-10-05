@@ -23,7 +23,7 @@ namespace BSMath
 			explicit VectorBase(const VectorBase<U, L2>& other) noexcept
 				: Super()
 			{
-				std::copy_n(data, L2, other.data);
+				std::copy_n(data, Min(L, L2), other.data);
 			}
 
 			VectorBase(const Super& super) noexcept
