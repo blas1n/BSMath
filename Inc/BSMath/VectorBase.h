@@ -3,6 +3,22 @@
 #include "MatrixBase0.h"
 #include "Utility.h"
 
+#ifndef x
+#define x data[0][0]
+#endif
+
+#ifndef y
+#define y data[0][1]
+#endif
+
+#ifndef z
+#define z data[0][2]
+#endif
+
+#ifndef w
+#define w data[0][3]
+#endif
+
 namespace BSMath
 {
 	namespace Detail
