@@ -38,7 +38,34 @@ namespace BSMath
 
 	TEST(VectorTest, Operator)
 	{
+		Vector2 lhs{ 1.0f, 2.0f };
+		Vector2 rhs{ 2.0f, 1.0f };
+		Vector2 target{ 3.0f, 3.0f };
+
+		EXPECT_EQ(lhs + rhs, target);
 		
+		target.Set(-1.0f, 1.0f);
+		EXPECT_EQ(lhs - rhs, target);
+
+		target.Set(2.0f, 2.0f);
+		EXPECT_EQ(lhs * rhs, target);
+
+		target.Set(0.5f, 2.0f);
+		EXPECT_EQ(lhs / rhs, target);
+
+		target.Set(3.0f, 6.0f);
+		EXPECT_EQ(lhs * 3.0f, target);
+
+		target.Set(2.0f, 4.0f);
+		EXPECT_EQ(lhs / 0.5f, target);
+
+		EXPECT_NEAR(lhs | rhs, 4.0f, Epsilon);
+
+		EXPECT_NEAR(lhs(0, 0), 1.0f, Epsilon);
+		EXPECT_NEAR(lhs(0, 1), 2.0f, Epsilon);
+
+		EXPECT_NEAR(lhs[0], 1.0f, Epsilon);
+		EXPECT_NEAR(lhs[1], 2.0f, Epsilon);
 	}
 
 	TEST(VectorTest, Misc)
