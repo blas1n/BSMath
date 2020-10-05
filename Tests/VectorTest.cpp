@@ -116,14 +116,14 @@ namespace BSMath
 		EXPECT_TRUE(IsNearlyZero(result));
 
 		lhs.Set(0.0f, 0.0f);
-		rhs.Set(9.0f, 9.0f);
-		result.Set(4.0f, 4.0f);
+		rhs.Set(10.0f, 10.0f);
+		result = Vector2::One * 5.0f;
 		result = GetRangePct(result, lhs, rhs);
 		target.Set(0.5f, 0.5f);
 		EXPECT_TRUE(IsNearlyEqual(result, target));
 
 		result = Lerp(lhs, rhs, 0.5f);
-		target.Set(4.0f, 4.0f);
+		target = Vector2::One * 5.0f;
 		EXPECT_TRUE(IsNearlyEqual(result, target));
 	}
 }
