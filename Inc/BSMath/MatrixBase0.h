@@ -195,7 +195,7 @@ namespace BSMath::Detail
 
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
-					data[row][columnm] = Super::operator()(engine);
+					data[row][column] = Super::operator()(engine);
 
 			return result_type{ data };
 		}
@@ -207,7 +207,7 @@ namespace BSMath::Detail
 
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
-					data[row][columnm] = Super::operator()(engine, param);
+					data[row][column] = Super::operator()(engine, param);
 
 			return result_type{ data };
 		}
@@ -228,7 +228,7 @@ namespace BSMath::Detail
 				
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
-					data[row][columnm] = Super::operator()(engine);
+					data[row][column] = Super::operator()(engine);
 	
 			return result_type{ data };
 		}
@@ -263,7 +263,7 @@ namespace BSMath::Detail
 
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
-					data[row][columnm] = Super::operator()(engine);
+					data[row][column] = Super::operator()(engine);
 
 			return result_type{ data };
 		}
