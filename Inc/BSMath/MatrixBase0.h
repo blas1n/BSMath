@@ -176,31 +176,31 @@ namespace BSMath::Detail
 	// Global Operator
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase0<T, Row, Column> operator+(const MatrixBase0<T, Row, Column>& lhs, const MatrixBase0<T, Row, Column>& rhs) noexcept
+	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator+(const MatrixBase0<T, Row, Column>& lhs, const MatrixBase0<T, Row, Column>& rhs) noexcept
 	{
 		return MatrixBase0<T, Row, Column>{ lhs } += rhs;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase0<T, Row, Column> operator-(const MatrixBase0<T, Row, Column>& lhs, const MatrixBase0<T, Row, Column>& rhs) noexcept
+	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator-(const MatrixBase0<T, Row, Column>& lhs, const MatrixBase0<T, Row, Column>& rhs) noexcept
 	{
 		return MatrixBase0<T, Row, Column>{ lhs } -= rhs;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase0<T, Row, Column> operator*(const MatrixBase0<T, Row, Column>& mat, T scaler) noexcept
+	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator*(const MatrixBase0<T, Row, Column>& mat, T scaler) noexcept
 	{
 		return MatrixBase0<T, Row, Column>{ mat } *= scaler;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase0<T, Row, Column> operator*(T scaler, const MatrixBase0<T, Row, Column>& mat) noexcept
+	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator*(T scaler, const MatrixBase0<T, Row, Column>& mat) noexcept
 	{
 		return MatrixBase0<T, Row, Column>{ mat } *= scaler;
 	}
 
 	template <class T, size_t Row, size_t Column>
-	NO_ODR MatrixBase0<T, Row, Column> operator/(const MatrixBase0<T, Row, Column>& mat, T divisor) noexcept
+	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator/(const MatrixBase0<T, Row, Column>& mat, T divisor) noexcept
 	{
 		return MatrixBase0<T, Row, Column>{ mat } /= divisor;
 	}

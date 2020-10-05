@@ -130,19 +130,19 @@ namespace BSMath::Detail
 	// Global Operator
 
 	template <class T, size_t L>
-	NO_ODR VectorBase<T, L> operator*(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
+	[[nodiscard]] NO_ODR VectorBase<T, L> operator*(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
 	{
 		return VectorBase<T, L>{ lhs } *= rhs;
 	}
 
 	template <class T, size_t L>
-	NO_ODR VectorBase<T, L> operator/(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
+	[[nodiscard]] NO_ODR VectorBase<T, L> operator/(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
 	{
 		return VectorBase<T, L>{ lhs } *= rhs;
 	}
 
 	template <class T, size_t L>
-	NO_ODR T operator|(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
+	[[nodiscard]] NO_ODR T operator|(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
 	{
 		return VectorBase<T, L>::Dot(lhs, rhs);
 	}
