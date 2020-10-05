@@ -3,6 +3,14 @@
 #include "Utility.h"
 #include "VectorBase.h"
 
+#ifndef x
+#define x data[0][0]
+#endif
+
+#ifndef y
+#define y data[0][1]
+#endif
+
 namespace BSMath
 {
 	struct Vector2 final : public Detail::VectorBase<float, 2>
@@ -22,10 +30,6 @@ namespace BSMath
 		{
 			x = inX; y = inY;
 		}
-
-	public:
-		float& x = data[0][0];
-		float& y = data[0][1];
 	};
 
 	const Vector2 Vector2::Right{ 1.0f, 0.0f };
