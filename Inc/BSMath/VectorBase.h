@@ -8,7 +8,7 @@ namespace BSMath
 	namespace Detail
 	{
 		template <class T, size_t L>
-		struct alignas(16) VectorBase : public MatrixBase0<T, 1, L>
+		struct VectorBase : public MatrixBase0<T, 1, L>
 		{
 		public:
 			using Super = MatrixBase0<T, 1, L>;
