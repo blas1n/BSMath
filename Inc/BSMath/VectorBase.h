@@ -199,7 +199,7 @@ namespace BSMath
 		}
 
 		template <class T, class Ty, size_t L>
-		[[nodiscard]] NO_ODR T ClampImpl(const VectorBase<Ty, L>*, const T& n, const T& min, const T& max) noexcept
+		[[nodiscard]] constexpr T ClampImpl(const VectorBase<Ty, L>*, const T& n, const T& min, const T& max) noexcept
 		{
 			auto realMin = Min(min, max);
 			auto realMax = Max(min, max);
