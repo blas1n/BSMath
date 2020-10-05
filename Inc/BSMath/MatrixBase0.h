@@ -15,7 +15,7 @@ namespace BSMath::Detail
 		static_assert(Column > 0 && Column <= 4, "Column must in the range, 1 ~ 4");
 
 	public:
-		constexpr MatrixBase0() noexcept : data() {}
+		MatrixBase0() noexcept : data() {}
 
 		explicit MatrixBase0(T n) noexcept : data()
 		{
