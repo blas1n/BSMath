@@ -203,7 +203,7 @@ namespace BSMath::Detail
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine, const param_type& param)
 		{
-			T data[Row][Column]{ 0 };
+			int data[Row][Column]{ 0 };
 
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
