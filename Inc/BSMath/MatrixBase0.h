@@ -69,8 +69,8 @@ namespace BSMath::Detail
 
 			for (size_t i = 0; i < Row; ++i)
 			{
-				lhs = LoadRow(data[i]);
-				rhs = LoadRow(other.data[i]);
+				lhs = VectorLoad(data[i]);
+				rhs = VectorLoad(other.data[i]);
 				tmp = VectorMoveMask(VectorEqual(lhs, rhs)) == 0xF;
 				ret = ret && tmp;
 			}
@@ -87,8 +87,8 @@ namespace BSMath::Detail
 
 			for (size_t i = 0; i < Row; ++i)
 			{
-				lhs = LoadRow(data[i]);
-				rhs = LoadRow(other.data[i]);
+				lhs = VectorLoad(data[i]);
+				rhs = VectorLoad(other.data[i]);
 				VectorStore(VectorAdd(lhs, rhs), data[i]);
 			}
 
@@ -104,8 +104,8 @@ namespace BSMath::Detail
 			
 			for (size_t i = 0; i < Row; ++i)
 			{
-				lhs = LoadRow(data[i]);
-				rhs = LoadRow(other.data[i]);
+				lhs = VectorLoad(data[i]);
+				rhs = VectorLoad(other.data[i]);
 				VectorStore(VectorSubtract(lhs, rhs), data[i]);
 			}
 
@@ -121,7 +121,7 @@ namespace BSMath::Detail
 			
 			for (size_t i = 0; i < Row; ++i)
 			{
-				lhs = LoadRow(data[i]);
+				lhs = VectorLoad(data[i]);
 				rhs = VectorLoad1(scaler);
 				VectorStore(VectorMultiply(lhs, rhs), data[i]);
 			}
@@ -138,7 +138,7 @@ namespace BSMath::Detail
 			
 			for (size_t i = 0; i < Row; ++i)
 			{
-				lhs = LoadRow(data[i]);
+				lhs = VectorLoad(data[i]);
 				rhs = VectorLoad1(divisor);
 				VectorStore(VectorDivide(lhs, rhs), data[i]);
 			}

@@ -79,16 +79,17 @@ namespace BSMath
 		template <class T, size_t L>
 		bool VectorBase<T, L>::Normalize() noexcept
 		{
-			INVOKE_SIMD(T,
-				const float lengthSquared = LengthSquared();
-				if (IsNearlyZero(lengthSquared))
-					return false;
+			const float lengthSquared = LengthSquared();
+			if (IsNearlyZero(lengthSquared))
+				return false;
 
-				const auto vec = LoadRow(data[0]);
+			INVOKE_SIMD(T,
+				const auto vec = VectorLoad(data[0]);
 				const auto size = VectorLoad1(InvSqrt(lengthSquared));
 				VectorStore(VectorMultiply(vec, size), data[0]);
-				return true;
 			);
+
+			return true;
 		}
 
 		template <class T, size_t L>
@@ -101,22 +102,28 @@ namespace BSMath
 		VectorBase<T, L>& VectorBase<T, L>:: operator*=(const VectorBase<T, L>& other) noexcept
 		{
 			INVOKE_SIMD(T,
-				const auto lhs = LoadRow(data[0]);
-				const auto rhs = LoadRow(other.data[0]);
+				const auto lhs = VectorLoad(data[0]);
+				const auto rhs = VectorLoad(other.data[0]);
 				VectorStore(VectorMultiply(lhs, rhs), data[0]);
-				return *this;
 			);
+
+			return *this;
 		}
 
 		template <class T, size_t L>
 		VectorBase<T, L>& VectorBase<T, L>:: operator/=(const VectorBase<T, L>& other) noexcept
 		{
+			for (size_t i = 0; i < L; ++i)
+				if (other.data[0][i] == 0.0f)
+					return *this;
+
 			INVOKE_SIMD(T,
-				const auto lhs = LoadRow(data[0]);
-				const auto rhs = LoadRow(other.data[0]);
+				const auto lhs = VectorLoad(data[0]);
+				const auto rhs = VectorLoad(other.data[0]);
 				VectorStore(VectorDivide(lhs, rhs), data[0]);
-				return *this;
 			);
+
+			return *this;
 		}
 
 		template <class T, size_t L>
@@ -141,7 +148,7 @@ namespace BSMath
 		template <class T, size_t L>
 		[[nodiscard]] NO_ODR VectorBase<T, L> operator/(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
 		{
-			return VectorBase<T, L>{ lhs } *= rhs;
+			return VectorBase<T, L>{ lhs } /= rhs;
 		}
 
 		template <class T, size_t L>
@@ -156,21 +163,21 @@ namespace BSMath
 	template <class T, size_t L>
 	[[nodiscard]] NO_ODR auto Min(const Detail::VectorBase<T, L>& lhs, const Detail::VectorBase<T, L>& rhs) noexcept
 	{
+		Vector<T, L> ret;
 		INVOKE_SIMD(T,
-			Vector<T, L> ret;
-			VectorStore(VectorMin(LoadRow(lhs.data[0]), LoadRow(rhs.data[0])), ret.data[0]);
-			return ret;
+			VectorStore(VectorMin(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0])), ret.data[0]);
 		);
+		return ret;
 	}
 
 	template <class T, size_t L>
 	[[nodiscard]] NO_ODR auto Max(const Detail::VectorBase<T, L>& lhs, const Detail::VectorBase<T, L>& rhs) noexcept
 	{
+		Vector<T, L> ret;
 		INVOKE_SIMD(T,
-			Vector<T, L> ret;
-			VectorStore(VectorMax(LoadRow(lhs.data[0]), LoadRow(rhs.data[0])), ret.data[0]);
-			return ret;
+			VectorStore(VectorMax(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0])), ret.data[0]);
 		);
+		return ret;
 	}
 
 	template <class T, size_t L>
@@ -187,7 +194,7 @@ namespace BSMath
 	{
 		using namespace SIMD::Integer;
 
-		auto point = LoadRow(n.data[0]);
+		auto point = VectorLoad(n.data[0]);
 		auto mask = VectorLessThan(point, Zero);
 		point = VectorXor(point, mask);
 		mask = VectorAnd(mask, One);
@@ -198,7 +205,7 @@ namespace BSMath
 	[[nodiscard]] NO_ODR Detail::VectorBase<float, L> Abs(const Detail::VectorBase<float, L>& n) noexcept
 	{
 		using namespace SIMD::Real;
-		const auto vec = LoadRow(n.data[0]);
+		const auto vec = VectorLoad(n.data[0]);
 		const auto mask = VectorLoad1(-0.0f);
 		return VectorAndNot(mask, vec);
 	}
@@ -207,7 +214,7 @@ namespace BSMath
 	[[nodiscard]] NO_ODR Detail::VectorBase<T, L> Sign(const Detail::VectorBase<T, L>& n) noexcept
 	{
 		INVOKE_SIMD(T,
-			const auto vec = LoadRow(n.data[0]);
+			const auto vec = VectorLoad(n.data[0]);
 			const auto positive = VectorAnd(VectorGreaterThan(vec, Zero), One);
 			const auto negative = VectorAnd(VectorLessThan(vec, Zero), VectorLoadOne(static_cast<T>(-1)));
 			return VectorOr(positive, negative);
@@ -220,7 +227,7 @@ namespace BSMath
 	{
 		using namespace SIMD::Real;
 		const auto epsilon = VectorLoad1(tolerance);
-		const auto vec = VectorSubtract(LoadRow(lhs.data[0]), LoadRow(rhs.data[0]));
+		const auto vec = VectorSubtract(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0]));
 		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
 	}
 
@@ -229,7 +236,7 @@ namespace BSMath
 	{
 		using namespace SIMD::Real;
 		const auto epsilon = VectorLoad1(tolerance);
-		const auto vecSimd = LoadRow(vec.data[0]);
+		const auto vecSimd = VectorLoad(vec.data[0]);
 		return VectorMoveMask(VectorLessEqual(vecSimd, epsilon)) == 0xF;
 	}
 
@@ -238,9 +245,9 @@ namespace BSMath
 		const Detail::VectorBase<float, L>& min, const Detail::VectorBase<float, L>& max) noexcept
 	{
 		using namespace SIMD::Real;
-		const auto vecSimd = LoadRow(vec.data[0]);
-		const auto minSimd = LoadRow(min.data[0]);
-		const auto maxSimd = LoadRow(max.data[0]);
+		const auto vecSimd = VectorLoad(vec.data[0]);
+		const auto minSimd = VectorLoad(min.data[0]);
+		const auto maxSimd = VectorLoad(max.data[0]);
 		return VectorDivide(VectorSubtract(vecSimd, minSimd), VectorSubtract(maxSimd, minSimd));
 	}
 }
