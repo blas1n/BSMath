@@ -114,7 +114,7 @@ namespace BSMath
 		VectorBase<T, L>& VectorBase<T, L>:: operator/=(const VectorBase<T, L>& other) noexcept
 		{
 			for (size_t i = 0; i < L; ++i)
-				if (other.data[0][i] == 0.0f)
+				if (IsNearlyZero(other.data[0][i]))
 					return *this;
 
 			INVOKE_SIMD(T,

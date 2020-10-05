@@ -121,6 +121,9 @@ namespace BSMath::Detail
 	template <class T, size_t Row, size_t Column>
 	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator/=(T divisor) noexcept
 	{
+		if (IsNearlyZero(divisor))
+			return *this;
+
 		INVOKE_SIMD(T,
 			VectorRegister lhs, rhs;
 			
