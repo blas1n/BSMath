@@ -23,6 +23,9 @@ namespace BSMath::Detail
 			std::copy_n(data, L2, other.data);
 		}
 
+		VectorBase(const Super& super) noexcept
+			: Super(super) {}
+
 		void Set(std::initializer_list<T> list) noexcept
 		{
 			std::copy_n(data, L, list.begin());
@@ -56,7 +59,7 @@ namespace BSMath::Detail
 
 		[[nodiscard]] static float DistanceSquared(const VectorBase& lhs, const VectorBase& rhs)
 		{
-			return (lhs - rhs).LengthSquared();
+			return VectorBase(lhs - rhs).LengthSquared();
 		}
 
 		[[nodiscard]] constexpr T& operator[](size_t idx) noexcept { return data[idx]; }
