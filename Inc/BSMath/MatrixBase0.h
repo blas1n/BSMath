@@ -60,36 +60,6 @@ namespace BSMath::Detail
 		T data[Row][Column];
 	};
 
-	template <size_t L>
-	[[nodiscard]] NO_ODR SIMD::Integer::VectorRegister LoadRow(const int(&row)[L]) noexcept
-	{
-		using namespace SIMD::Integer;
-
-		if constexpr (L == 1)
-			return VectorLoad(row[0]);
-		else if (L == 2)
-			return VectorLoad(row[0], row[1]);
-		else if (L == 3)
-			return VectorLoad(row[0], row[1], row[2]);
-		else
-			return VectorLoad(row[0], row[1], row[2], row[3]);
-	}
-
-	template <size_t L>
-	[[nodiscard]] NO_ODR SIMD::Real::VectorRegister LoadRow(const float (&row)[L]) noexcept
-	{
-		using namespace SIMD::Real;
-
-		if constexpr (L == 1)
-			return VectorLoad(row[0]);
-		else if (L == 2)
-			return VectorLoad(row[0], row[1]);
-		else if (L == 3)
-			return VectorLoad(row[0], row[1], row[2]);
-		else
-			return VectorLoad(row[0], row[1], row[2], row[3]);
-	}
-
 	template <class T, size_t Row, size_t Column>
 	bool MatrixBase0<T, Row, Column>::operator==(const MatrixBase0<T, Row, Column>& other) const noexcept
 	{

@@ -29,6 +29,19 @@ namespace BSMath::SIMD
             return _mm_setr_epi32(x, y, z, w);
         }
 
+        template <size_t L>
+        [[nodiscasrd]] NO_ODR VectorRegister VectorLoad(const int(&vec)[L]) noexcept
+        {
+            if constexpr (L == 1)
+                return VectorLoad(vec[0]);
+            else if (L == 2)
+                return VectorLoad(vec[0], vec[1]);
+            else if (L == 3)
+                return VectorLoad(vec[0], vec[1], vec[2]);
+            else
+                return VectorLoad(vec[0], vec[1], vec[2], vec[3]);
+        }
+
         [[nodiscard]] NO_ODR VectorRegister VectorLoad1(int n) noexcept
         {
             return _mm_set1_epi32(n);
@@ -156,6 +169,19 @@ namespace BSMath::SIMD
         [[nodiscard]] NO_ODR VectorRegister VectorLoad(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) noexcept
         {
             return _mm_setr_ps(x, y, z, w);
+        }
+
+        template <size_t L>
+        [[nodiscasrd]] NO_ODR VectorRegister VectorLoad(const float(&vec)[L]) noexcept
+        {
+            if constexpr (L == 1)
+                return VectorLoad(vec[0]);
+            else if (L == 2)
+                return VectorLoad(vec[0], vec[1]);
+            else if (L == 3)
+                return VectorLoad(vec[0], vec[1], vec[2]);
+            else
+                return VectorLoad(vec[0], vec[1], vec[2], vec[3]);
         }
 
         [[nodiscard]] NO_ODR VectorRegister VectorLoad1(float n) noexcept
