@@ -85,6 +85,45 @@ namespace BSMath
 
 	TEST(VectorTest, Global)
 	{
-		
+		Vector2 lhs{ 1.0f, 2.0f };
+		Vector2 rhs{ 2.0f, 1.0f };
+
+		Vector2 result = Min(lhs, rhs);
+		Vector2 target{ 1.0f, 1.0f };
+		EXPECT_EQ(result, target);
+
+		result = Max(lhs, rhs);
+		target.Set(2.0f, 2.0f);
+		EXPECT_EQ(result, target);
+
+		result.Set(3.0f, 0.0f);
+		result = Clamp(result, lhs, rhs);
+		target.Set(2.0f, 1.0f);
+		EXPECT_EQ(result, target);
+
+		result.Set(-10.0f, 10.0f);
+		result = Abs(result);
+		target.Set(10.0f, 10.0f);
+		EXPECT_EQ(result, target);
+
+		result.Set(-10.0f, 10.0f);
+		result = Sign(result);
+		target.Set(-1.0f, 1.0f);
+		EXPECT_EQ(result, target);
+
+		result = target = Vector2::Zero;
+		EXPECT_TRUE(IsNearlyEqual(result, target));
+		EXPECT_TRUE(IsNearlyZero(result));
+
+		lhs.Set(0.0f, 0.0f);
+		rhs.Set(9.0f, 9.0f);
+		result.Set(4.0f, 4.0f);
+		result = GetRangePct(result, lhs, rhs);
+		target.Set(0.5f, 0.5f);
+		EXPECT_TRUE(IsNearlyEqual(result, target));
+
+		result = Lerp(lhs, rhs, 0.5f);
+		target.Set(4.0f, 4.0f);
+		EXPECT_TRUE(IsNearlyEqual(result, target));
 	}
 }
