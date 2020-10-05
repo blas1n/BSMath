@@ -23,7 +23,7 @@ namespace BSMath
         }
 
         template <class T>
-        [[nodiscard]] constexpr T ClmapImpl(const void*, const T& n, const T& min, const T& max) noexcept
+        [[nodiscard]] constexpr T ClampImpl(const void*, const T& n, const T& min, const T& max) noexcept
         {
             return Max(Min(n, max), min);
         }
@@ -104,7 +104,7 @@ namespace BSMath
     template <class T>
     [[nodiscard]] constexpr T Clamp(const T& n, const T& min, const T& max) noexcept
     {
-        return Detail::ClmapImpl(static_cast<T*>(nullptr), n, min, max);
+        return Detail::ClampImpl(static_cast<T*>(nullptr), n, min, max);
     }
 
     template <class T, class U, class V>
