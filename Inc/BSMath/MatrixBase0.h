@@ -7,12 +7,17 @@
 
 namespace BSMath::Detail
 {
-	template <class T, size_t Row, size_t Column>
+	template <class T, size_t InRow, size_t InColumn>
 	struct alignas(16) MatrixBase0
 	{
 		static_assert(std::is_arithmetic_v<T>, "T must be arithmetic!");
-		static_assert(Row > 0 && Row <= 4, "Row must in the range, 1 ~ 4");
-		static_assert(Column > 0 && Column <= 4, "Column must in the range, 1 ~ 4");
+		static_assert(InRow > 0 && InRow <= 4, "InRow must in the range, 1 ~ 4");
+		static_assert(InColumn > 0 && InColumn <= 4, "InColumn must in the range, 1 ~ 4");
+
+	public:
+		using Type = T;
+		constexpr static size_t Row = InRow;
+		constexpr static size_t Column = InColumn;
 
 	public:
 		MatrixBase0() noexcept : data() {}
@@ -45,11 +50,11 @@ namespace BSMath::Detail
 		[[nodiscard]] constexpr T operator()(size_t rowIdx, size_t columnIdx) const noexcept { return data[rowIdx][columnIdx]; }
 
 	public:
-		T data[Row][Column];
+		T data[InRow][InColumn];
 	};
 
-	template <class T, size_t Row, size_t Column>
-	bool MatrixBase0<T, Row, Column>::operator==(const MatrixBase0<T, Row, Column>& other) const noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	bool MatrixBase0<T, InRow, InColumn>::operator==(const MatrixBase0<T, InRow, InColumn>& other) const noexcept
 	{
 		INVOKE_SIMD(T,
 			VectorRegister lhs, rhs;
@@ -67,8 +72,8 @@ namespace BSMath::Detail
 		);
 	}
 
-	template <class T, size_t Row, size_t Column>
-	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator+=(const MatrixBase0<T, Row, Column>& other) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	MatrixBase0<T, InRow, InColumn>& MatrixBase0<T, InRow, InColumn>::operator+=(const MatrixBase0<T, InRow, InColumn>& other) noexcept
 	{
 		INVOKE_SIMD(T,
 			VectorRegister lhs, rhs;
@@ -84,8 +89,8 @@ namespace BSMath::Detail
 		);
 	}
 
-	template <class T, size_t Row, size_t Column>
-	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator-=(const MatrixBase0<T, Row, Column>& other) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	MatrixBase0<T, InRow, InColumn>& MatrixBase0<T, InRow, InColumn>::operator-=(const MatrixBase0<T, InRow, InColumn>& other) noexcept
 	{
 		INVOKE_SIMD(T,
 			VectorRegister lhs, rhs;
@@ -101,8 +106,8 @@ namespace BSMath::Detail
 		);
 	}
 
-	template <class T, size_t Row, size_t Column>
-	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator*=(T scaler) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	MatrixBase0<T, InRow, InColumn>& MatrixBase0<T, InRow, InColumn>::operator*=(T scaler) noexcept
 	{
 		INVOKE_SIMD(T,
 			VectorRegister lhs, rhs;
@@ -118,8 +123,8 @@ namespace BSMath::Detail
 		);
 	}
 
-	template <class T, size_t Row, size_t Column>
-	MatrixBase0<T, Row, Column>& MatrixBase0<T, Row, Column>::operator/=(T divisor) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	MatrixBase0<T, InRow, InColumn>& MatrixBase0<T, InRow, InColumn>::operator/=(T divisor) noexcept
 	{
 		if (IsNearlyZero(divisor))
 			return *this;
@@ -140,34 +145,34 @@ namespace BSMath::Detail
 
 	// Global Operator
 
-	template <class T, size_t Row, size_t Column>
-	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator+(const MatrixBase0<T, Row, Column>& lhs, const MatrixBase0<T, Row, Column>& rhs) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	[[nodiscard]] NO_ODR MatrixBase0<T, InRow, InColumn> operator+(const MatrixBase0<T, InRow, InColumn>& lhs, const MatrixBase0<T, InRow, InColumn>& rhs) noexcept
 	{
-		return MatrixBase0<T, Row, Column>{ lhs } += rhs;
+		return MatrixBase0<T, InRow, InColumn>{ lhs } += rhs;
 	}
 
-	template <class T, size_t Row, size_t Column>
-	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator-(const MatrixBase0<T, Row, Column>& lhs, const MatrixBase0<T, Row, Column>& rhs) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	[[nodiscard]] NO_ODR MatrixBase0<T, InRow, InColumn> operator-(const MatrixBase0<T, InRow, InColumn>& lhs, const MatrixBase0<T, InRow, InColumn>& rhs) noexcept
 	{
-		return MatrixBase0<T, Row, Column>{ lhs } -= rhs;
+		return MatrixBase0<T, InRow, InColumn>{ lhs } -= rhs;
 	}
 
-	template <class T, size_t Row, size_t Column>
-	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator*(const MatrixBase0<T, Row, Column>& mat, T scaler) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	[[nodiscard]] NO_ODR MatrixBase0<T, InRow, InColumn> operator*(const MatrixBase0<T, InRow, InColumn>& mat, T scaler) noexcept
 	{
-		return MatrixBase0<T, Row, Column>{ mat } *= scaler;
+		return MatrixBase0<T, InRow, InColumn>{ mat } *= scaler;
 	}
 
-	template <class T, size_t Row, size_t Column>
-	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator*(T scaler, const MatrixBase0<T, Row, Column>& mat) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	[[nodiscard]] NO_ODR MatrixBase0<T, InRow, InColumn> operator*(T scaler, const MatrixBase0<T, InRow, InColumn>& mat) noexcept
 	{
-		return MatrixBase0<T, Row, Column>{ mat } *= scaler;
+		return MatrixBase0<T, InRow, InColumn>{ mat } *= scaler;
 	}
 
-	template <class T, size_t Row, size_t Column>
-	[[nodiscard]] NO_ODR MatrixBase0<T, Row, Column> operator/(const MatrixBase0<T, Row, Column>& mat, T divisor) noexcept
+	template <class T, size_t InRow, size_t InColumn>
+	[[nodiscard]] NO_ODR MatrixBase0<T, InRow, InColumn> operator/(const MatrixBase0<T, InRow, InColumn>& mat, T divisor) noexcept
 	{
-		return MatrixBase0<T, Row, Column>{ mat } /= divisor;
+		return MatrixBase0<T, InRow, InColumn>{ mat } /= divisor;
 	}
 
 	// Random
@@ -235,7 +240,7 @@ namespace BSMath::Detail
 
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
-					data[row][columnm] = Super::operator()(engine, param);
+					data[row][column] = Super::operator()(engine, param);
 
 			return result_type{ data };
 		}
@@ -270,7 +275,7 @@ namespace BSMath::Detail
 
 			for (size_t row = 0; row < Row; ++row)
 				for (size_t column = 0; column < Column; ++column)
-					data[row][columnm] = Super::operator()(engine, param);
+					data[row][column] = Super::operator()(engine, param);
 
 			return result_type{ data };
 		}
