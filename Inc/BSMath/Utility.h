@@ -25,7 +25,9 @@ namespace BSMath
         template <class T>
         [[nodiscard]] constexpr T ClampImpl(const void*, const T& n, const T& min, const T& max) noexcept
         {
-            return Max(Min(n, max), min);
+            if (n < min) return min;
+            if (n > max) return max;
+            return n;
         }
 
         template <class T>
