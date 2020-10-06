@@ -50,7 +50,7 @@ namespace BSMath::Detail
 		[[nodiscard]] constexpr T operator()(size_t rowIdx, size_t columnIdx) const noexcept { return data[rowIdx][columnIdx]; }
 
 	public:
-		T data[InRow][InColumn];
+		T data[Row][Column];
 	};
 
 	template <class T, size_t InRow, size_t InColumn>
