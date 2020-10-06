@@ -189,7 +189,7 @@ namespace BSMath::SIMD
             return _mm_set1_ps(n);
         }
 
-        [[nodiscard]] NO_ODR void VectorStore(VectorRegister vec, float* ptr) noexcept
+        NO_ODR void VectorStore(VectorRegister vec, float* ptr) noexcept
         {
             _mm_store_ps(ptr, vec);
         }
