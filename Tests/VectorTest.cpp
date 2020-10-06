@@ -19,11 +19,11 @@ namespace BSMath
 		vec5 = vec0;
 		
 		Vector3 vec6(Vector2::Zero);
-		Vector3 vec7(Vector2::Zero);
+		Vector3 vec7(Vector3::Zero);
 		Vector3 vec8(Vector4::Zero);
 		Vector3 vec9(IntVector2::Zero);
 		Vector3 vec10(IntVector3::Zero);
-		Vector3 vec11(Vector4::Zero);
+		Vector3 vec11(IntVector4::Zero);
 
 		EXPECT_EQ(vec0, vec1);
 		EXPECT_EQ(vec0, vec2);
