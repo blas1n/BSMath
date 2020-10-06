@@ -183,11 +183,12 @@ namespace BSMath::Detail
 	template <size_t Row, size_t Column>
 	class UniformMatrixDistribution<int, Row, Column> final : public std::uniform_int_distribution<int>
 	{
+	public:
 		using Super = std::uniform_int_distribution<int>;
+		using result_type = MatrixBase0<int, Row, Column>;
+		using Super::param_type;
 
 	public:
-		using result_type = MatrixBase0<int, Row, Column>;
-
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
 		{
@@ -216,11 +217,12 @@ namespace BSMath::Detail
 	template <size_t Row, size_t Column>
 	class UniformMatrixDistribution<float, Row, Column> final : public std::uniform_real_distribution<float>
 	{
+	public:
 		using Super = std::uniform_real_distribution<float>;
+		using result_type = MatrixBase0<float, Row, Column>;
+		using Super::param_type;
 
 	public:
-		using result_type = MatrixBase0<float, Row, Column>;
-
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
 		{
@@ -251,10 +253,10 @@ namespace BSMath::Detail
 	{
 		static_assert(std::is_floating_point_v<T>, "T must be float type!");
 
-		using Super = std::uniform_real_distribution<T>;
-
 	public:
+		using Super = std::normal_distribution<T>;
 		using result_type = MatrixBase0<T, Row, Column>;
+		using Super::param_type;
 
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
