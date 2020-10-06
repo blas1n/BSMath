@@ -1,21 +1,29 @@
 #include <cmath>
 #include <gtest/gtest.h>
 #include "BSMath/Vector2.h"
+#include "BSMath/Vector3.h"
+#include "BSMath/Vector4.h"
 
 namespace BSMath
 {
 	TEST(VectorTest, Construct)
 	{
-		const static float Zeros[2]{ 0.0f, 0.0f };
+		const static float Zeros[3]{ 0.0f, 0.0f, 0.0f };
 
-		Vector2 vec0;
-		Vector2 vec1(0.0f);
-		Vector2 vec2{ 0.0f, 0.0f };
-		Vector2 vec3(Zeros);
-		Vector2 vec4(Vector2::Zero);
-		Vector2 vec5(vec0);
-		Vector2 vec6;
-		vec6 = vec0;
+		Vector3 vec0;
+		Vector3 vec1(0.0f);
+		Vector3 vec2{ 0.0f, 0.0f, 0.0f };
+		Vector3 vec3(Zeros);
+		Vector3 vec4(vec0);
+		Vector3 vec5;
+		vec5 = vec0;
+		
+		Vector3 vec6(Vector2::Zero);
+		Vector3 vec7(Vector2::Zero);
+		Vector3 vec8(Vector4::Zero);
+		Vector3 vec9(IntVector2::Zero);
+		Vector3 vec10(IntVector3::Zero);
+		Vector3 vec11(Vector4::Zero);
 
 		EXPECT_EQ(vec0, vec1);
 		EXPECT_EQ(vec0, vec2);
@@ -23,6 +31,11 @@ namespace BSMath
 		EXPECT_EQ(vec0, vec4);
 		EXPECT_EQ(vec0, vec5);
 		EXPECT_EQ(vec0, vec6);
+		EXPECT_EQ(vec0, vec7);
+		EXPECT_EQ(vec0, vec8);
+		EXPECT_EQ(vec0, vec9);
+		EXPECT_EQ(vec0, vec10);
+		EXPECT_EQ(vec0, vec11);
 
 		EXPECT_NEAR(vec0.x, vec6.x, Epsilon);
 		EXPECT_NEAR(vec0.y, vec6.y, Epsilon);
@@ -81,6 +94,12 @@ namespace BSMath
 		Vector2 result{ lhs.x + rhs.y, lhs.y + rhs.x };
 		target.Set(2.0f, 4.0f);
 		EXPECT_EQ(result, target);
+
+		Vector3 lhs3{ 1.0f, 2.0f, 3.0f };
+		Vector3 rhs3{ 3.0f, 2.0f, 1.0f };
+		Vector3 result3 = lhs3 ^ rhs3;
+		Vector3 target3{ -4.0f, 8.0f, -4.0f };
+		EXPECT_EQ(result3, target3);
 	}
 
 	TEST(VectorTest, Global)
