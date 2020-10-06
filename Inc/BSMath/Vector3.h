@@ -52,7 +52,7 @@ namespace BSMath
 		const Vector3Base<T> Vector3Base<T>::Backward{ static_cast<T>(0), static_cast<T>(0), static_cast<T>(-1) };
 
 		template <class T>
-		Vector3Base<T>& operator^=(const Vector3Base<T>& other) noexcept
+		Vector3Base<T>& Vector3Base<T>::operator^=(const Vector3Base<T>& other) noexcept
 		{
 			const auto ret1 = Vector3Base<T>{ y, z, x } * Vector3Base<T>{ other.z, other.x, other.y };
 			const auto ret2 = Vector3Base<T>{ z, x, y } * Vector3Base<T>{ other.y, other.z, other.x };
@@ -60,7 +60,7 @@ namespace BSMath
 		}
 
 		template <class T>
-		Vector3Base<T> Cross(const Vector3Base<T>& lhs, const Vector3Base<T>& rhs) noexcept
+		Vector3Base<T> Vector3Base<T>::Cross(const Vector3Base<T>& lhs, const Vector3Base<T>& rhs) noexcept
 		{
 			return Vector3Base<T>{ lhs } ^= rhs;
 		}
