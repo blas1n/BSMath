@@ -256,7 +256,7 @@ namespace BSMath::Detail
 	public:
 		using Super = std::normal_distribution<T>;
 		using result_type = MatrixBase0<T, Row, Column>;
-		using Super::param_type;
+		using typename Super::param_type;
 
 		template <class Engine>
 		[[nodiscard]] result_type operator()(Engine& engine)
