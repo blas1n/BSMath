@@ -29,7 +29,7 @@ namespace BSMath::Detail
 
 		explicit MatrixBase0(const T* ptr) noexcept : data()
 		{
-			std::memcpy(*data, ptr, Row * Column);
+			std::copy_n(ptr, Row * Column, *data);
 		}
 
 		explicit MatrixBase0(std::initializer_list<T> list) noexcept : data()
