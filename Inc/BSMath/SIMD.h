@@ -47,7 +47,7 @@ namespace BSMath::SIMD
             return _mm_set1_epi32(n);
         }
 
-        [[nodiscard]] NO_ODR void VectorStore(VectorRegister vec, int* ptr) noexcept
+        NO_ODR void VectorStore(VectorRegister vec, int* ptr) noexcept
         {
             _mm_store_si128(reinterpret_cast<VectorRegister*>(ptr), vec);
         }
