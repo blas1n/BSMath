@@ -34,7 +34,7 @@ namespace BSMath::Detail
 
 		explicit MatrixBase0(std::initializer_list<T> list) noexcept : data()
 		{
-			std::copy_n(list.begin(), Row * Column, *data);
+			std::copy_n(list.begin(), Min(Row * Column, list.size()), *data);
 		}
 
 		[[nodiscard]] bool operator==(const MatrixBase0& other) const noexcept;
