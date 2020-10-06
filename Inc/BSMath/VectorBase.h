@@ -34,6 +34,7 @@ namespace BSMath
 
 		public:
 			using Super::Super;
+			using Super::data;
 
 			template <class U, size_t L2>
 			explicit VectorBase(const VectorBase<U, L2>& other) noexcept
