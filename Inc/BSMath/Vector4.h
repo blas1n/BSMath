@@ -12,10 +12,10 @@ namespace BSMath
 		{
 		public:
 			using Super = Detail::VectorBase<T, 4>;
+			using Super::Super;
+			using Super::data;
 
 		public:
-			using Super::Super;
-
 			void Set(T inX, T inY, T inZ, T inW) noexcept
 			{
 				x = inX; y = inY; z = inZ; w = inW;

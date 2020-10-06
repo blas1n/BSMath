@@ -12,6 +12,8 @@ namespace BSMath
 		{
 		public:
 			using Super = Detail::VectorBase<T, 2>;
+			using Super::Super;
+			using Super::data;
 
 			const static Vector2Base Right;
 			const static Vector2Base Left;
@@ -19,8 +21,6 @@ namespace BSMath
 			const static Vector2Base Down;
 
 		public:
-			using Super::Super;
-
 			void Set(T inX, T inY) noexcept
 			{
 				x = inX; y = inY;

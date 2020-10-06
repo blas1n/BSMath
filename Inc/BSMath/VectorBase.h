@@ -28,14 +28,13 @@ namespace BSMath
 		{
 		public:
 			using Super = MatrixBase0<T, 1, L>;
+			using Super::Super;
+			using Super::data;
 
 			const static VectorBase Zero;
 			const static VectorBase One;
 
 		public:
-			using Super::Super;
-			using Super::data;
-
 			template <class U, size_t L2>
 			explicit VectorBase(const VectorBase<U, L2>& other) noexcept
 				: Super()
