@@ -26,7 +26,7 @@ namespace BSMath
 		T operator()(const Parameter& param) noexcept
 		{
 			Distributor distributor{ engine };
-			return Distributor(param);
+			return distributor(param);
 		}
 
 		void SetSeed(Seed seed)
@@ -41,5 +41,4 @@ namespace BSMath
 	using UniformIntRandom = Random<int, std::mt19937, std::uniform_int_distribution<int>>;
 	using UniformFloatRandom = Random<float, std::mt19937, std::uniform_real_distribution<float>>;
 	using NormalFloatRandom = Random<float, std::mt19937, std::normal_distribution<float>>;
-	
 }
