@@ -282,4 +282,10 @@ namespace BSMath::Detail
 			return result_type{ data };
 		}
 	};
+
+	template <class T, size_t Row, size_t Column>
+	using UniformMatrixRandom = Random<T, std::mt19937, UniformMatrixDistribution<T, Row, Column>>;
+
+	template <size_t Row, size_t Column>
+	using NormalMatrixRandom = Random<float, std::mt19937, NormalMatrixDistribution<float, Row, Column>>;
 }
