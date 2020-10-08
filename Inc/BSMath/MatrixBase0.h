@@ -56,71 +56,67 @@ namespace BSMath::Detail
 	template <class T, size_t InRow, size_t InColumn>
 	bool MatrixBase0<T, InRow, InColumn>::operator==(const MatrixBase0<T, InRow, InColumn>& other) const noexcept
 	{
-		INVOKE_SIMD(T,
-			VectorRegister lhs, rhs;
-			bool tmp, ret = true;
+		using namespace SIMD;
+		VectorRegister<T> lhs, rhs;
+		bool tmp, ret = true;
 
-			for (size_t i = 0; i < Row; ++i)
-			{
-				lhs = VectorLoad(data[i]);
-				rhs = VectorLoad(other.data[i]);
-				tmp = VectorMoveMask(VectorEqual(lhs, rhs)) == 0xF;
-				ret = ret && tmp;
-			}
+		for (size_t i = 0; i < Row; ++i)
+		{
+			lhs = VectorLoad(data[i]);
+			rhs = VectorLoad(other.data[i]);
+			tmp = VectorMoveMask(VectorEqual(lhs, rhs)) == 0xF;
+			ret = ret && tmp;
+		}
 
-			return ret;
-		);
+		return ret;
 	}
 
 	template <class T, size_t InRow, size_t InColumn>
 	MatrixBase0<T, InRow, InColumn>& MatrixBase0<T, InRow, InColumn>::operator+=(const MatrixBase0<T, InRow, InColumn>& other) noexcept
 	{
-		INVOKE_SIMD(T,
-			VectorRegister lhs, rhs;
+		using namespace SIMD;
+		VectorRegister<T> lhs, rhs;
 
-			for (size_t i = 0; i < Row; ++i)
-			{
-				lhs = VectorLoad(data[i]);
-				rhs = VectorLoad(other.data[i]);
-				VectorStore(VectorAdd(lhs, rhs), data[i]);
-			}
+		for (size_t i = 0; i < Row; ++i)
+		{
+			lhs = VectorLoad(data[i]);
+			rhs = VectorLoad(other.data[i]);
+			VectorStore(VectorAdd(lhs, rhs), data[i]);
+		}
 
-			return *this;
-		);
+		return *this;
 	}
 
 	template <class T, size_t InRow, size_t InColumn>
 	MatrixBase0<T, InRow, InColumn>& MatrixBase0<T, InRow, InColumn>::operator-=(const MatrixBase0<T, InRow, InColumn>& other) noexcept
 	{
-		INVOKE_SIMD(T,
-			VectorRegister lhs, rhs;
+		using namespace SIMD;
+		VectorRegister<T> lhs, rhs;
 			
-			for (size_t i = 0; i < Row; ++i)
-			{
-				lhs = VectorLoad(data[i]);
-				rhs = VectorLoad(other.data[i]);
-				VectorStore(VectorSubtract(lhs, rhs), data[i]);
-			}
+		for (size_t i = 0; i < Row; ++i)
+		{
+			lhs = VectorLoad(data[i]);
+			rhs = VectorLoad(other.data[i]);
+			VectorStore(VectorSubtract(lhs, rhs), data[i]);
+		}
 
-			return *this;
-		);
+		return *this;
 	}
 
 	template <class T, size_t InRow, size_t InColumn>
 	MatrixBase0<T, InRow, InColumn>& MatrixBase0<T, InRow, InColumn>::operator*=(T scaler) noexcept
 	{
-		INVOKE_SIMD(T,
-			VectorRegister lhs, rhs;
+		using namespace SIMD;
+		VectorRegister<T> lhs, rhs;
 			
-			for (size_t i = 0; i < Row; ++i)
-			{
-				lhs = VectorLoad(data[i]);
-				rhs = VectorLoad1(scaler);
-				VectorStore(VectorMultiply(lhs, rhs), data[i]);
-			}
+		for (size_t i = 0; i < Row; ++i)
+		{
+			lhs = VectorLoad(data[i]);
+			rhs = VectorLoad1(scaler);
+			VectorStore(VectorMultiply(lhs, rhs), data[i]);
+		}
 			
-			return *this;
-		);
+		return *this;
 	}
 
 	template <class T, size_t InRow, size_t InColumn>
@@ -129,18 +125,17 @@ namespace BSMath::Detail
 		if (IsNearlyZero(divisor))
 			return *this;
 
-		INVOKE_SIMD(T,
-			VectorRegister lhs, rhs;
+		using namespace SIMD;
+		VectorRegister<T> lhs, rhs;
 			
-			for (size_t i = 0; i < Row; ++i)
-			{
-				lhs = VectorLoad(data[i]);
-				rhs = VectorLoad1(divisor);
-				VectorStore(VectorDivide(lhs, rhs), data[i]);
-			}
+		for (size_t i = 0; i < Row; ++i)
+		{
+			lhs = VectorLoad(data[i]);
+			rhs = VectorLoad1(divisor);
+			VectorStore(VectorDivide(lhs, rhs), data[i]);
+		}
 			
-			return *this;
-		);
+		return *this;
 	}
 
 	// Global Operator
