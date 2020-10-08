@@ -203,9 +203,9 @@ namespace BSMath
 	{
 		using namespace SIMD;
 		auto point = VectorLoad(n.data[0]);
-		auto mask = VectorLessThan(point, Zero);
+		auto mask = VectorLessThan(point, Zero<int>);
 		point = VectorXor(point, mask);
-		mask = VectorAnd(mask, One);
+		mask = VectorAnd(mask, One<int>);
 
 		Detail::VectorBase<float, L> ret;
 		VectorStore(VectorAdd(point, mask), ret.data[0]);
