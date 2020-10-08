@@ -24,22 +24,22 @@ namespace BSMath::SIMD
     using VectorRegister = std::conditional_t<std::is_integral_v<T>, __m128i, __m128>;
 
     template <class T>
-    const static VectorRegister<T> Zero;
+    inline const VectorRegister<T> Zero;
 
     template <>
-    const static VectorRegister<float> Zero<float> = _mm_setzero_ps();
+    inline const VectorRegister<float> Zero<float> = _mm_setzero_ps();
 
     template <>
-    const static VectorRegister<int> Zero<int> = _mm_setzero_si128();
+    inline const VectorRegister<int> Zero<int> = _mm_setzero_si128();
 
     template <class T>
-    const static VectorRegister<T> One;
+    inline const VectorRegister<T> One;
 
     template <>
-    const static VectorRegister<float> One<float> = _mm_set1_ps(1.0f);
+    inline const VectorRegister<float> One<float> = _mm_set1_ps(1.0f);
 
     template <>
-    const static VectorRegister<int> One<int> = _mm_set1_epi32(1);
+    inline const VectorRegister<int> One<int> = _mm_set1_epi32(1);
 
     [[nodiscard]] NO_ODR VectorRegister<float> VectorLoad(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) noexcept
     {
