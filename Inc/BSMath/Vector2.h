@@ -42,4 +42,8 @@ namespace BSMath
 
 	using Vector2 = Detail::Vector2Base<float>;
 	using IntVector2 = Detail::Vector2Base<int>;
+
+	using UniformIntVector2Random = Detail::UniformMatrixRandom<int, 1, 2>;
+	using UniformVector2Random = Detail::UniformMatrixRandom<float, 1, 2>;
+	using NormalVector2Random = Detail::NormalMatrixRandom<1, 2>;
 }

@@ -25,4 +25,8 @@ namespace BSMath
 
 	using Vector4 = Detail::Vector4Base<float>;
 	using IntVector4 = Detail::Vector4Base<int>;
+
+	using UniformIntVector4Random = Detail::UniformMatrixRandom<int, 1, 4>;
+	using UniformVector4Random = Detail::UniformMatrixRandom<float, 1, 4>;
+	using NormalVector4Random = Detail::NormalMatrixRandom<1, 4>;
 }

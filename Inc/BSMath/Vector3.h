@@ -74,4 +74,8 @@ namespace BSMath
 
 	using Vector3 = Detail::Vector3Base<float>;
 	using IntVector3 = Detail::Vector3Base<int>;
+
+	using UniformIntVector3Random = Detail::UniformMatrixRandom<int, 1, 3>;
+	using UniformVector3Random = Detail::UniformMatrixRandom<float, 1, 3>;
+	using NormalVector3Random = Detail::NormalMatrixRandom<1, 3>;
 }
