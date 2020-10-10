@@ -41,6 +41,14 @@ namespace BSMath::Detail
 			std::copy_n(list.begin(), Min(Row * Column, list.size()), *data);
 		}
 
+		template <class Child, std::enable_if_t<std::is_base_of_v<MatrixBase0, Child>, int> = 0>
+		operator Child() const noexcept
+		{
+			Child ret;
+			std::copy_n(*data, ret.Row * ret.Column, *ret.data);
+			return ret;
+		}
+
 		[[nodiscard]] bool operator==(const MatrixBase0& other) const noexcept;
 		[[nodiscard]] inline bool operator!=(const MatrixBase0& other) const noexcept { return !(*this == other); }
 

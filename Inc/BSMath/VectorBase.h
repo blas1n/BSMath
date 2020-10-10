@@ -42,9 +42,6 @@ namespace BSMath
 				std::copy_n(*other.data, Min(L, L2), *data);
 			}
 
-			VectorBase(const Super& super) noexcept
-				: Super(super) {}
-
 			[[nodiscard]] constexpr T GetMin() const noexcept { return Min(*data, *data + L); }
 			[[nodiscard]] constexpr T GetMax() const noexcept { return Max(*data, *data + L); }
 
