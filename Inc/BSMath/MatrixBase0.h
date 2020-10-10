@@ -7,6 +7,10 @@
 
 namespace BSMath::Detail
 {
+	/*
+		Base class of vector, matrix.
+		Warning: Never add variables to child classes
+	*/
 	template <class T, size_t InRow, size_t InColumn>
 	struct alignas(16) MatrixBase0
 	{
