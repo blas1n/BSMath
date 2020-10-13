@@ -20,6 +20,11 @@
 
 namespace BSMath::SIMD
 {
+    enum class Swizzle : byte
+    {
+        X, Y, Z, W
+    };
+
     template <class T>
     using VectorRegister = std::conditional_t<std::is_integral_v<T>, __m128i, __m128>;
 
@@ -107,6 +112,16 @@ namespace BSMath::SIMD
     [[nodiscard]] NO_ODR int VECTOR_CALL VectorStore1(VectorRegister<int> vec) noexcept
     {
         return _mm_cvtsi128_si32(vec);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorSwizzle(VectorRegister<float> vec, Swizzle x, Swizzle y, Swizzle z, Swizzle w)
+    {
+        return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(static_cast<byte>(w), static_cast<byte>(z), static_cast<byte>(y), static_cast<byte>(x)));
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorSwizzle(VectorRegister<int> vec, Swizzle x, Swizzle y, Swizzle z, Swizzle w)
+    {
+        return _mm_shuffle_epi32(vec, _MM_SHUFFLE(static_cast<byte>(w), static_cast<byte>(z), static_cast<byte>(y), static_cast<byte>(x)));
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorAnd(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
@@ -264,7 +279,7 @@ namespace BSMath::SIMD
     {
         const VectorRegister<int> tmp1 = _mm_mul_epu32(lhs, rhs);
         const VectorRegister<int> tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs, 4), _mm_srli_si128(rhs, 4));
-        return _mm_unpacklo_epi32(_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(3, 1, 2, 0)), tmp2);
+        return _mm_unpacklo_epi32(VectorSwizzle(tmp1, Swizzle::Z, Swizzle::Y, Swizzle::Z, Swizzle::X), tmp2);
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorDivide(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
