@@ -114,14 +114,20 @@ namespace BSMath::SIMD
         return _mm_cvtsi128_si32(vec);
     }
 
-    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorSwizzle(VectorRegister<float> vec, Swizzle x, Swizzle y, Swizzle z, Swizzle w)
+    template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorSwizzle(VectorRegister<float> vec) noexcept
     {
-        return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(static_cast<byte>(w), static_cast<byte>(z), static_cast<byte>(y), static_cast<byte>(x)));
+        constexpr static auto mask = _MM_SHUFFLE(static_cast<byte>(W),
+            static_cast<byte>(Z), static_cast<byte>(Y), static_cast<byte>(X));
+        return _mm_shuffle_ps(vec, vec, mask);
     }
 
-    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorSwizzle(VectorRegister<int> vec, Swizzle x, Swizzle y, Swizzle z, Swizzle w)
+    template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorSwizzle(VectorRegister<int> vec) noexcept
     {
-        return _mm_shuffle_epi32(vec, _MM_SHUFFLE(static_cast<byte>(w), static_cast<byte>(z), static_cast<byte>(y), static_cast<byte>(x)));
+        constexpr static auto mask = _MM_SHUFFLE(static_cast<byte>(W),
+            static_cast<byte>(Z), static_cast<byte>(Y), static_cast<byte>(X));
+        return _mm_shuffle_epi32(vec, mask);
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorAnd(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
@@ -279,7 +285,7 @@ namespace BSMath::SIMD
     {
         const VectorRegister<int> tmp1 = _mm_mul_epu32(lhs, rhs);
         const VectorRegister<int> tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs, 4), _mm_srli_si128(rhs, 4));
-        return _mm_unpacklo_epi32(VectorSwizzle(tmp1, Swizzle::Z, Swizzle::Y, Swizzle::Z, Swizzle::X), tmp2);
+        return _mm_unpacklo_epi32(VectorSwizzle<Swizzle::Z, Swizzle::Y, Swizzle::Z, Swizzle::X>(tmp1), tmp2);
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorDivide(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
