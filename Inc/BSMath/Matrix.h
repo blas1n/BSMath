@@ -123,7 +123,7 @@ namespace BSMath
 	}
 
 	template <size_t L>
-	[[nodiscard]] NO_ODR bool IsNearlyZero(const Matrix<T>& mat, float tolerance = Epsilon) noexcept
+	[[nodiscard]] NO_ODR bool IsNearlyZero(const Matrix<L>& mat, float tolerance = Epsilon) noexcept
 	{
 		using namespace SIMD;
 		const auto epsilon = VectorLoad1(tolerance);
