@@ -39,7 +39,9 @@ namespace BSMath
 			explicit VectorBase(const VectorBase<U, L2>& other) noexcept
 				: Super()
 			{
+#pragma warning(disable:4244)
 				std::copy_n(*other.data, Min(L, L2), *data);
+#pragma warning(default:4244)
 			}
 
 			[[nodiscard]] constexpr T GetMin() const noexcept { return Min(*data, *data + L); }
