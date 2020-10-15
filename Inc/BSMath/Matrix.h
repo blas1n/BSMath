@@ -35,7 +35,7 @@ namespace BSMath
 	namespace Detail
 	{
 		template <size_t L>
-		static Matrix<L> GetIdentity() const noexcept
+		static Matrix<L> GetIdentity() noexcept
 		{
 			Matrix<L> ret;
 			for (size_t i = 0; i < L; ++i)
