@@ -28,8 +28,8 @@ namespace BSMath
 
 		Matrix& operator*=(const Matrix& other) noexcept;
 
-		[[nodiscard]] constexpr float* operator[](size_t idx) noexcept { return data[idx]; }
-		[[nodiscard]] constexpr const float* operator[](size_t idx) const noexcept { return data[idx]; }
+		[[nodiscard]] float* operator[](size_t idx) noexcept { return data[idx]; }
+		[[nodiscard]] const float* operator[](size_t idx) const noexcept { return data[idx]; }
 	};
 
 	namespace Detail
