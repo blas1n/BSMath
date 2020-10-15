@@ -20,7 +20,7 @@
 
 namespace BSMath::SIMD
 {
-    enum class Swizzle : byte
+    enum class Swizzle : uint32
     {
         X, Y, Z, W
     };
@@ -117,16 +117,16 @@ namespace BSMath::SIMD
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorSwizzle(VectorRegister<float> vec) noexcept
     {
-        constexpr static auto mask = _MM_SHUFFLE(static_cast<byte>(W),
-            static_cast<byte>(Z), static_cast<byte>(Y), static_cast<byte>(X));
+        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
+            static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X));
         return _mm_shuffle_ps(vec, vec, mask);
     }
 
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorSwizzle(VectorRegister<int> vec) noexcept
     {
-        constexpr static auto mask = _MM_SHUFFLE(static_cast<byte>(W),
-            static_cast<byte>(Z), static_cast<byte>(Y), static_cast<byte>(X));
+        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
+            static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X));
         return _mm_shuffle_epi32(vec, mask);
     }
 
