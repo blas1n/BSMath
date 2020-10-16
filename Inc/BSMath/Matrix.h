@@ -21,7 +21,7 @@ namespace BSMath
 		[[nodiscard]] float Determinant() const noexcept;
 
 		[[nodiscard]] Matrix GetInvert() const noexcept;
-		void Invert() noexcept;
+		bool Invert() noexcept;
 
 		[[nodiscard]] Matrix GetTranspose() const noexcept;
 		void Transpose() noexcept;
@@ -146,7 +146,7 @@ namespace BSMath
 	}
 	
 	template <size_t L>
-	void Matrix<L>::Invert() noexcept
+	bool Matrix<L>::Invert() noexcept
 	{
 
 	}
