@@ -193,6 +193,16 @@ namespace BSMath
 		return *this;
 	}
 
+	// Global Operator
+
+	template <size_t L>
+	[[nodiscard]] NO_ODR Matrix<L> operator*(const Matrix<L>& lhs, const Matrix<L>& rhs) noexcept
+	{
+		return Matrix<L>{ lhs } *= rhs;
+	}
+
+	// Global Function
+
 	template <size_t L>
 	[[nodiscard]] NO_ODR bool IsNearlyEqual(const Matrix<L>& lhs,
 		const Matrix<L>& rhs, float tolerance = Epsilon) noexcept
