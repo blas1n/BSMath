@@ -179,7 +179,7 @@ namespace BSMath
 			const auto lhs = VectorLoad(data[i]);
 			for (size_t j = 0; j < L; ++j)
 			{
-				const auto rhs = VectorLoad(operand[i]);
+				const auto rhs = VectorLoad(operand.data[j]);
 
 				alignas(16) float tmp[L];
 				VectorStore(VectorMultiply(lhs, rhs), tmp);
