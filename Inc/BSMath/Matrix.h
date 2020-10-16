@@ -142,7 +142,9 @@ namespace BSMath
 	template <size_t L>
 	Matrix<L> Matrix<L>::GetInvert() const noexcept
 	{
-
+		if (auto ret = *this; ret.Invert())
+			return ret;
+		return Identity;
 	}
 	
 	template <size_t L>
