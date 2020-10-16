@@ -53,10 +53,90 @@ namespace BSMath
 	template <size_t L>
 	const Matrix<L> Matrix<L>::Identity = Detail::GetIdentity<L>();
 
+	namespace Detail
+	{
+		template <size_t Idx>
+		[[nodiscard]] NO_ODR decltype(auto) GetExpression
+			(SIMD::VectorRegister<float> r2, SIMD::VectorRegister<float> r3) noexcept
+		{
+			using namespace SIMD;
+
+			constexpr static Swizzle Swizzles[3][4][4]
+			{
+				{
+					{ Swizzle::Z, Swizzle::Z, Swizzle::Y, Swizzle::Y },
+					{ Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::Z },
+					{ Swizzle::Z, Swizzle::Z, Swizzle::Y, Swizzle::Y },
+					{ Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::Z }
+				},
+				{
+					{ Swizzle::Y, Swizzle::X, Swizzle::X, Swizzle::X },
+					{ Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::Z },
+					{ Swizzle::Y, Swizzle::X, Swizzle::X, Swizzle::X },
+					{ Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::Z }
+				},
+				{
+					{ Swizzle::Y, Swizzle::X, Swizzle::X, Swizzle::X },
+					{ Swizzle::Z, Swizzle::Z, Swizzle::Y, Swizzle::Y },
+					{ Swizzle::Y, Swizzle::X, Swizzle::X, Swizzle::X },
+					{ Swizzle::Z, Swizzle::Z, Swizzle::Y, Swizzle::Y }
+				}
+			};
+
+			const auto v0 = VectorSwizzle<Swizzles[Idx][0][0],
+				Swizzles[Idx][0][1], Swizzles[Idx][0][2], Swizzles[Idx][0][3]>(r2);
+
+			const auto v1 = VectorSwizzle<Swizzles[Idx][1][0],
+				Swizzles[Idx][1][1], Swizzles[Idx][1][2], Swizzles[Idx][1][3]>(r3);
+
+			const auto v2 = VectorSwizzle<Swizzles[Idx][2][0],
+				Swizzles[Idx][2][1], Swizzles[Idx][2][2], Swizzles[Idx][2][3]>(r3);
+
+			const auto v3 = VectorSwizzle<Swizzles[Idx][3][0],
+				Swizzles[Idx][3][1], Swizzles[Idx][3][2], Swizzles[Idx][3][3]>(r2);
+
+			return VectorSubtract(VectorMultiply(v0, v1), VectorMultiply(v2, v3));
+		}
+	}
+
 	template <size_t L>
 	float Matrix<L>::Determinant() const noexcept
 	{
+		using namespace SIMD;
+		const auto self = GetTranspose();
 
+		VectorRegister<float> r0 = VectorLoad(self.data[0]);
+		VectorRegister<float> r1, r2, r3;
+
+		if constexpr (L > 1)
+			r1 = VectorLoad(self.data[1]);
+		else
+			r1 = SIMD::Zero<float>;
+
+		if constexpr (L > 2)
+			r2 = VectorLoad(self.data[2]);
+		else
+			r2 = SIMD::Zero<float>;
+
+		if constexpr (L > 3)
+			r3 = VectorLoad(self.data[3]);
+		else
+			r3 = SIMD::Zero<float>;
+
+		auto e0 = Detail::GetExpression<0>(r2, r3);
+		auto e1 = Detail::GetExpression<1>(r2, r3);
+		auto e2 = Detail::GetExpression<2>(r2, r3);
+		
+		e0 = VectorMultiply(e0, VectorSwizzle<Swizzle::Y, Swizzle::X, Swizzle::X, Swizzle::X>(r1));
+		e1 = VectorMultiply(e1, VectorSwizzle<Swizzle::Z, Swizzle::Z, Swizzle::Y, Swizzle::Y>(r1));
+		e2 = VectorMultiply(e2, VectorSwizzle<Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::Z>(r1));
+
+		const auto cofactor = VectorAdd(VectorSubtract(e0, e1), e2);
+		const auto det = VectorMultiply(cofactor, r0);
+		
+		float ret[4];
+		VectorStore(det, ret);
+		return ret[0] - ret[1] + ret[2] - ret[3];
 	}
 
 	template <size_t L>
