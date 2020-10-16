@@ -190,6 +190,7 @@ namespace BSMath
 				data[i][j] = sum;
 			}
 		}
+		return *this;
 	}
 
 	template <size_t L>
