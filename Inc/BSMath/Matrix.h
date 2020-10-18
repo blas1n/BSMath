@@ -186,7 +186,70 @@ namespace BSMath
 	template <size_t L>
 	bool Matrix<L>::Invert() noexcept
 	{
+		// The site below is the source
+		// https://lxjk.github.io/2017/09/03/Fast-4x4-Matrix-Inverse-with-SSE-SIMD-Explained.html#_general_matrix_inverse
 
+		using namespace SIMD;
+		using namespace Detail;
+
+		auto A = VecShuffle_	0101(inM.mVec[0], inM.mVec[1]);
+		auto B = VecShuffle_2323(inM.mVec[0], inM.mVec[1]);
+		auto C = VecShuffle_0101(inM.mVec[2], inM.mVec[3]);
+		auto D = VecShuffle_2323(inM.mVec[2], inM.mVec[3]);
+
+		auto detSub = _mm_sub_ps(
+			_mm_mul_ps(VecShuffle(inM.mVec[0], inM.mVec[2], 0, 2, 0, 2), VecShuffle(inM.mVec[1], inM.mVec[3], 1, 3, 1, 3)),
+			_mm_mul_ps(VecShuffle(inM.mVec[0], inM.mVec[2], 1, 3, 1, 3), VecShuffle(inM.mVec[1], inM.mVec[3], 0, 2, 0, 2))
+		);
+		auto detA = VecSwizzle1(detSub, 0);
+		auto detB = VecSwizzle1(detSub, 1);
+		auto detC = VecSwizzle1(detSub, 2);
+		auto detD = VecSwizzle1(detSub, 3);
+
+		auto D_C = Mat2AdjMul(D, C);
+		// A#B
+		auto A_B = Mat2AdjMul(A, B);
+		// X# = |D|A - B(D#C)
+		auto X_ = _mm_sub_ps(_mm_mul_ps(detD, A), Mat2Mul(B, D_C));
+		// W# = |A|D - C(A#B)
+		auto W_ = _mm_sub_ps(_mm_mul_ps(detA, D), Mat2Mul(C, A_B));
+
+		// |M| = |A|*|D| + ... (continue later)
+		auto detM = _mm_mul_ps(detA, detD);
+
+		// Y# = |B|C - D(A#B)#
+		auto Y_ = _mm_sub_ps(_mm_mul_ps(detB, C), Mat2MulAdj(D, A_B));
+		// Z# = |C|B - A(D#C)#
+		auto Z_ = _mm_sub_ps(_mm_mul_ps(detC, B), Mat2MulAdj(A, D_C));
+
+		// |M| = |A|*|D| + |B|*|C| ... (continue later)
+		detM = _mm_add_ps(detM, _mm_mul_ps(detB, detC));
+
+		// tr((A#B)(D#C))
+		auto tr = _mm_mul_ps(A_B, VecSwizzle(D_C, 0, 2, 1, 3));
+		tr = _mm_hadd_ps(tr, tr);
+		tr = _mm_hadd_ps(tr, tr);
+		// |M| = |A|*|D| + |B|*|C| - tr((A#B)(D#C)
+		detM = _mm_sub_ps(detM, tr);
+
+		const auto adjSignMask = _mm_setr_ps(1.f, -1.f, -1.f, 1.f);
+		// (1/|M|, -1/|M|, -1/|M|, 1/|M|)
+		auto rDetM = _mm_div_ps(adjSignMask, detM);
+
+		X_ = _mm_mul_ps(X_, rDetM);
+		Y_ = _mm_mul_ps(Y_, rDetM);
+		Z_ = _mm_mul_ps(Z_, rDetM);
+		W_ = _mm_mul_ps(W_, rDetM);
+
+		Matrix<L> ret;
+
+		// apply adjugate and store, here we combine adjugate shuffle and store shuffle
+		ret.mVec[0] = VecShuffle(X_, Y_, 3, 1, 3, 1);
+		ret.mVec[1] = VecShuffle(X_, Y_, 2, 0, 2, 0);
+		ret.mVec[2] = VecShuffle(Z_, W_, 3, 1, 3, 1);
+		ret.mVec[3] = VecShuffle(Z_, W_, 2, 0, 2, 0);
+
+		return r;
 	}
 
 	template <size_t L>
