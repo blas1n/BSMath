@@ -147,6 +147,42 @@ namespace BSMath
 		return Identity;
 	}
 	
+	namespace Detail
+	{
+		decltype(auto) Mat2Mul(SIMD::VectorRegister<float> lhs, SIMD::VectorRegister<float> rhs) noexcept
+		{
+			using namespace SIMD;
+			const auto swi0 = VectorSwizzle<Swizzle::X, Swizzle::W, Swizzle::X, Swizzle::W>(rhs);
+			const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::X, Swizzle::W, Swizzle::Z>(lhs);
+			const auto swi2 = VectorSwizzle<Swizzle::Z, Swizzle::Y, Swizzle::Z, Swizzle::Y>(rhs);
+			const auto vec0 = VectorMultiply(lhs, swi0);
+			const auto vec1 = VectorMultiply(swi1, swi2);
+			return VectorAdd(vec0, vec1);
+		};
+
+		decltype(auto) Mat2AdjMul(SIMD::VectorRegister<float> lhs, SIMD::VectorRegister<float> rhs) noexcept
+		{
+			using namespace SIMD;
+			const auto swi0 = VectorSwizzle<Swizzle::W, Swizzle::W, Swizzle::X, Swizzle::X>(lhs);
+			const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::Y, Swizzle::Z, Swizzle::Z>(lhs);
+			const auto swi2 = VectorSwizzle<Swizzle::Z, Swizzle::W, Swizzle::X, Swizzle::Y>(rhs);
+			const auto vec0 = VectorMultiply(swi0, rhs);
+			const auto vec1 = VectorMultiply(swi1, swi2);
+			return VectorSubtract(vec0, vec1);
+		};
+
+		decltype(auto) Mat2MulAdj(SIMD::VectorRegister<float> lhs, SIMD::VectorRegister<float> rhs) noexcept
+		{
+			using namespace SIMD;
+			const auto swi0 = VectorSwizzle<Swizzle::W, Swizzle::X, Swizzle::W, Swizzle::X>(rhs);
+			const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::X, Swizzle::W, Swizzle::Z>(lhs);
+			const auto swi2 = VectorSwizzle<Swizzle::Z, Swizzle::Y, Swizzle::Z, Swizzle::Y>(rhs);
+			const auto vec0 = VectorMultiply(lhs, swi0);
+			const auto vec1 = VectorMultiply(swi1, swi2);
+			return VectorSubtract(vec0, vec1);
+		};
+	}
+
 	template <size_t L>
 	bool Matrix<L>::Invert() noexcept
 	{
