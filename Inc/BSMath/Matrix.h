@@ -186,8 +186,7 @@ namespace BSMath
 	template <size_t L>
 	bool Matrix<L>::Invert() noexcept
 	{
-		// The site below is the source
-		// https://lxjk.github.io/2017/09/03/Fast-4x4-Matrix-Inverse-with-SSE-SIMD-Explained.html#_general_matrix_inverse
+		// Source: https://lxjk.github.io/2017/09/03/Fast-4x4-Matrix-Inverse-with-SSE-SIMD-Explained.html
 
 		using namespace SIMD;
 		using namespace Detail;
