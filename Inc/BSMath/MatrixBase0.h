@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <type_traits>
 #include "Random.h"
-#include "SIMD.h"
+#include "Utility.h"
 
 namespace BSMath::Detail
 {
@@ -39,6 +39,16 @@ namespace BSMath::Detail
 		explicit MatrixBase0(std::initializer_list<T> list) noexcept : data()
 		{
 			std::copy_n(list.begin(), Min(Row * Column, list.size()), *data);
+		}
+
+		template <class U, size_t Row2, size_t Column2>
+		explicit MatrixBase0(const MatrixBase0<U, Row2, Column2>& other) noexcept : data()
+		{
+#pragma warning(disable:4244)
+			const size_t N = Min(Row, Row2);
+			for (size_t i = 0; i < N; ++i)
+				std::copy_n(other.data[i], Min(Column, Column2), data[i]);
+#pragma warning(default:4244)
 		}
 
 		template <class Child, std::enable_if_t<std::is_base_of_v<MatrixBase0, Child>, int> = 0>

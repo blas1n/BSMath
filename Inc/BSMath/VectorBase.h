@@ -35,13 +35,6 @@ namespace BSMath
 			const static VectorBase One;
 
 		public:
-			template <class U, size_t L2>
-			explicit VectorBase(const VectorBase<U, L2>& other) noexcept
-				: Super()
-			{
-				std::copy_n(*other.data, Min(L, L2), *data);
-			}
-
 			[[nodiscard]] constexpr T GetMin() const noexcept { return Min(*data, *data + L); }
 			[[nodiscard]] constexpr T GetMax() const noexcept { return Max(*data, *data + L); }
 

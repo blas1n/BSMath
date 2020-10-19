@@ -18,8 +18,16 @@
 #define VECTOR_CALL __fastcall
 #endif
 
+#define GET_MASK(X, Y, Z, W) \
+_MM_SHUFFLE(static_cast<uint8>(W), static_cast<uint8>(Z), static_cast<uint8>(Y), static_cast<uint8>(X))
+
 namespace BSMath::SIMD
 {
+    enum class Swizzle : uint8
+    {
+        X, Y, Z, W
+    };
+
     template <class T>
     using VectorRegister = std::conditional_t<std::is_integral_v<T>, __m128i, __m128>;
 
@@ -107,6 +115,50 @@ namespace BSMath::SIMD
     [[nodiscard]] NO_ODR int VECTOR_CALL VectorStore1(VectorRegister<int> vec) noexcept
     {
         return _mm_cvtsi128_si32(vec);
+    }
+
+    template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorSwizzle(VectorRegister<float> vec) noexcept
+    {
+        return _mm_shuffle_ps(vec, vec, GET_MASK(X, Y, Z, W));
+    }
+
+    template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorSwizzle(VectorRegister<int> vec) noexcept
+    {
+        return _mm_shuffle_epi32(vec, GET_MASK(X, Y, Z, W));
+    }
+
+    template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
+    {
+        return _mm_shuffle_ps(lhs, rhs, GET_MASK(X, Y, Z, W));
+    }
+
+    template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
+    {
+        return _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(lhs), _mm_castsi128_ps(rhs), GET_MASK(X, Y, Z, W)));
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle0101(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
+    {
+        return _mm_movelh_ps(lhs, rhs);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle0101(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
+    {
+        return _mm_castps_si128(_mm_movelh_ps(_mm_castsi128_ps(lhs), _mm_castsi128_ps(rhs)));
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle2323(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
+    {
+        return _mm_movehl_ps(rhs, lhs);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle2323(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
+    {
+        return _mm_castps_si128(_mm_movehl_ps(_mm_castsi128_ps(rhs), _mm_castsi128_ps(lhs)));
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorAnd(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
@@ -264,7 +316,7 @@ namespace BSMath::SIMD
     {
         const VectorRegister<int> tmp1 = _mm_mul_epu32(lhs, rhs);
         const VectorRegister<int> tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs, 4), _mm_srli_si128(rhs, 4));
-        return _mm_unpacklo_epi32(_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(3, 1, 2, 0)), tmp2);
+        return _mm_unpacklo_epi32(VectorSwizzle<Swizzle::Z, Swizzle::Y, Swizzle::Z, Swizzle::X>(tmp1), tmp2);
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorDivide(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
@@ -278,6 +330,28 @@ namespace BSMath::SIMD
         const __m128 lhsReal = _mm_cvtepi32_ps(lhs);
         const __m128 rhsReal = _mm_cvtepi32_ps(rhs);
         return _mm_cvtps_epi32(_mm_div_ps(lhsReal, rhsReal));
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorHadd(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
+    {
+        const auto swi0 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(lhs);
+        const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(rhs);
+        const auto swi2 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(lhs);
+        const auto swi3 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(rhs);
+        lhs = VectorShuffle<Swizzle::X, Swizzle::Y, Swizzle::X, Swizzle::Y>(swi0, swi1);
+        rhs = VectorShuffle<Swizzle::X, Swizzle::Y, Swizzle::X, Swizzle::Y>(swi2, swi3);
+        return VectorAdd(lhs, rhs);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorHadd(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
+    {
+        const auto swi0 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(lhs);
+        const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(rhs);
+        const auto swi2 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(lhs);
+        const auto swi3 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(rhs);
+        lhs = VectorShuffle<Swizzle::X, Swizzle::Y, Swizzle::X, Swizzle::Y>(swi0, swi1);
+        rhs = VectorShuffle<Swizzle::X, Swizzle::Y, Swizzle::X, Swizzle::Y>(swi2, swi3);
+        return VectorAdd(lhs, rhs);
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorMin(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
