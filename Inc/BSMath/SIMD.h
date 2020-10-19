@@ -25,11 +25,6 @@ namespace BSMath::SIMD
         X, Y, Z, W
     };
 
-    enum class Shuffle : uint32
-    {
-        X0, Y0, X1, Y1
-    };
-
     template <class T>
     using VectorRegister = std::conditional_t<std::is_integral_v<T>, __m128i, __m128>;
 
@@ -135,7 +130,7 @@ namespace BSMath::SIMD
         return _mm_shuffle_epi32(vec, mask);
     }
 
-    template <Shuffle X, Shuffle Y, Shuffle Z, Shuffle W>
+    template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
     {
         constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
@@ -143,7 +138,7 @@ namespace BSMath::SIMD
         return _mm_shuffle_ps(lhs, rhs, mask);
     }
 
-    template <Shuffle X, Shuffle Y, Shuffle Z, Shuffle W>
+    template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
     {
         constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
@@ -163,12 +158,12 @@ namespace BSMath::SIMD
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle2323(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
     {
-        return _mm_movehl_ps(lhs, rhs);
+        return _mm_movehl_ps(rhs, lhs);
     }
 
     [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle2323(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
     {
-        return _mm_castps_si128(_mm_movehl_ps(_mm_castsi128_ps(lhs), _mm_castsi128_ps(rhs)));
+        return _mm_castps_si128(_mm_movehl_ps(_mm_castsi128_ps(rhs), _mm_castsi128_ps(lhs)));
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorAnd(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
@@ -348,8 +343,8 @@ namespace BSMath::SIMD
         const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(rhs);
         const auto swi2 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(lhs);
         const auto swi3 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(rhs);
-        lhs = VectorShuffle<Shuffle::X0, Shuffle::X1, Shuffle::Y0, Shuffle::Y1>(swi0, swi1);
-        rhs = VectorShuffle<Shuffle::X0, Shuffle::X1, Shuffle::Y0, Shuffle::Y1>(swi2, swi3);
+        lhs = VectorShuffle<Swizzle::X, Swizzle::Y, Swizzle::X, Swizzle::Y>(swi0, swi1);
+        rhs = VectorShuffle<Swizzle::X, Swizzle::Y, Swizzle::X, Swizzle::Y>(swi2, swi3);
         return VectorAdd(lhs, rhs);
     }
 
@@ -359,8 +354,8 @@ namespace BSMath::SIMD
         const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(rhs);
         const auto swi2 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(lhs);
         const auto swi3 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(rhs);
-        lhs = VectorShuffle<Shuffle::X0, Shuffle::X1, Shuffle::Y0, Shuffle::Y1>(swi0, swi1);
-        rhs = VectorShuffle<Shuffle::X0, Shuffle::X1, Shuffle::Y0, Shuffle::Y1>(swi2, swi3);
+        lhs = VectorShuffle<Swizzle::X, Swizzle::Y, Swizzle::X, Swizzle::Y>(swi0, swi1);
+        rhs = VectorShuffle<Swizzle::X, Swizzle::Y, Swizzle::X, Swizzle::Y>(swi2, swi3);
         return VectorAdd(lhs, rhs);
     }
 
