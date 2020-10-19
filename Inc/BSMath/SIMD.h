@@ -25,6 +25,11 @@ namespace BSMath::SIMD
         X, Y, Z, W
     };
 
+    enum class Shuffle : uint32
+    {
+        X0, Y0, X1, Y1
+    };
+
     template <class T>
     using VectorRegister = std::conditional_t<std::is_integral_v<T>, __m128i, __m128>;
 
@@ -128,6 +133,42 @@ namespace BSMath::SIMD
         constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
             static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X));
         return _mm_shuffle_epi32(vec, mask);
+    }
+
+    template <Shuffle X, Shuffle Y, Shuffle Z, Shuffle W>
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
+    {
+        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
+            static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X));
+        return _mm_shuffle_ps(lhs, rhs, mask);
+    }
+
+    template <Shuffle X, Shuffle Y, Shuffle Z, Shuffle W>
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
+    {
+        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
+            static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X));
+        return _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(lhs), _mm_castsi128_ps(rhs), mask));
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle0101(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
+    {
+        return _mm_movelh_ps(lhs, rhs);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle0101(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
+    {
+        return _mm_castps_si128(_mm_movelh_ps(_mm_castsi128_ps(lhs), _mm_castsi128_ps(rhs)));
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle2323(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
+    {
+        return _mm_movehl_ps(lhs, rhs);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle2323(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
+    {
+        return _mm_castps_si128(_mm_movehl_ps(_mm_castsi128_ps(lhs), _mm_castsi128_ps(rhs)));
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorAnd(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
