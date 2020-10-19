@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "MatrixBase0.h"
 #include "Utility.h"
 
@@ -97,42 +98,49 @@ namespace BSMath
 
 			return VectorSubtract(VectorMultiply(v0, v1), VectorMultiply(v2, v3));
 		}
+
+		template <size_t L>
+		decltype(auto) LoadMatrix(const Matrix<L>& mat)
+		{
+			using namespace SIMD;
+			std::array<VectorRegister<float>, 4> ret;
+			ret[0] = VectorLoad(mat.data[0]);
+
+			if constexpr (L > 1)
+				ret[1] = VectorLoad(mat.data[1]);
+			else
+				ret[1] = SIMD::Zero<float>;
+
+			if constexpr (L > 2)
+				ret[2] = VectorLoad(mat.data[2]);
+			else
+				ret[2] = SIMD::Zero<float>;
+
+			if constexpr (L > 3)
+				ret[3] = VectorLoad(mat.data[3]);
+			else
+				ret[3] = SIMD::Zero<float>;
+
+			return ret;
+		}
 	}
 
 	template <size_t L>
 	float Matrix<L>::Determinant() const noexcept
 	{
 		using namespace SIMD;
-		const auto self = GetTranspose();
+		const auto mat = Detail::LoadMatrix(GetTranspose());
 
-		VectorRegister<float> r0 = VectorLoad(self.data[0]);
-		VectorRegister<float> r1, r2, r3;
-
-		if constexpr (L > 1)
-			r1 = VectorLoad(self.data[1]);
-		else
-			r1 = SIMD::Zero<float>;
-
-		if constexpr (L > 2)
-			r2 = VectorLoad(self.data[2]);
-		else
-			r2 = SIMD::Zero<float>;
-
-		if constexpr (L > 3)
-			r3 = VectorLoad(self.data[3]);
-		else
-			r3 = SIMD::Zero<float>;
-
-		auto e0 = Detail::GetExpression<0>(r2, r3);
-		auto e1 = Detail::GetExpression<1>(r2, r3);
-		auto e2 = Detail::GetExpression<2>(r2, r3);
+		auto e0 = Detail::GetExpression<0>(mat[2], mat[3]);
+		auto e1 = Detail::GetExpression<1>(mat[2], mat[3]);
+		auto e2 = Detail::GetExpression<2>(mat[2], mat[3]);
 		
-		e0 = VectorMultiply(e0, VectorSwizzle<Swizzle::Y, Swizzle::X, Swizzle::X, Swizzle::X>(r1));
-		e1 = VectorMultiply(e1, VectorSwizzle<Swizzle::Z, Swizzle::Z, Swizzle::Y, Swizzle::Y>(r1));
-		e2 = VectorMultiply(e2, VectorSwizzle<Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::Z>(r1));
+		e0 = VectorMultiply(e0, VectorSwizzle<Swizzle::Y, Swizzle::X, Swizzle::X, Swizzle::X>(mat[1]));
+		e1 = VectorMultiply(e1, VectorSwizzle<Swizzle::Z, Swizzle::Z, Swizzle::Y, Swizzle::Y>(mat[1]));
+		e2 = VectorMultiply(e2, VectorSwizzle<Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::Z>(mat[1]));
 
 		const auto cofactor = VectorAdd(VectorSubtract(e0, e1), e2);
-		const auto det = VectorMultiply(cofactor, r0);
+		const auto det = VectorMultiply(cofactor, mat[0]);
 		
 		float ret[4];
 		VectorStore(det, ret);
@@ -191,64 +199,55 @@ namespace BSMath
 		using namespace SIMD;
 		using namespace Detail;
 
-		auto A = VecShuffle_	0101(inM.mVec[0], inM.mVec[1]);
-		auto B = VecShuffle_2323(inM.mVec[0], inM.mVec[1]);
-		auto C = VecShuffle_0101(inM.mVec[2], inM.mVec[3]);
-		auto D = VecShuffle_2323(inM.mVec[2], inM.mVec[3]);
+		if (Determinant() == 0.0f)
+			return false;
 
-		auto detSub = _mm_sub_ps(
-			_mm_mul_ps(VecShuffle(inM.mVec[0], inM.mVec[2], 0, 2, 0, 2), VecShuffle(inM.mVec[1], inM.mVec[3], 1, 3, 1, 3)),
-			_mm_mul_ps(VecShuffle(inM.mVec[0], inM.mVec[2], 1, 3, 1, 3), VecShuffle(inM.mVec[1], inM.mVec[3], 0, 2, 0, 2))
-		);
-		auto detA = VecSwizzle1(detSub, 0);
-		auto detB = VecSwizzle1(detSub, 1);
-		auto detC = VecSwizzle1(detSub, 2);
-		auto detD = VecSwizzle1(detSub, 3);
+		const auto mat = LoadMatrix(*this);
 
-		auto D_C = Mat2AdjMul(D, C);
-		// A#B
-		auto A_B = Mat2AdjMul(A, B);
-		// X# = |D|A - B(D#C)
-		auto X_ = _mm_sub_ps(_mm_mul_ps(detD, A), Mat2Mul(B, D_C));
-		// W# = |A|D - C(A#B)
-		auto W_ = _mm_sub_ps(_mm_mul_ps(detA, D), Mat2Mul(C, A_B));
+		const auto a = VectorShuffle0101(mat[0], mat[1]);
+		const auto b = VectorShuffle2323(mat[0], mat[1]);
+		const auto c = VectorShuffle0101(mat[2], mat[3]);
+		const auto d = VectorShuffle2323(mat[2], mat[3]);
 
-		// |M| = |A|*|D| + ... (continue later)
-		auto detM = _mm_mul_ps(detA, detD);
+		const auto shuffle0 = VectorShuffle<Swizzle::X, Swizzle::Z, Swizzle::X, Swizzle::Z>(mat[0], mat[2]);
+		const auto shuffle1 = VectorShuffle<Swizzle::Y, Swizzle::W, Swizzle::Y, Swizzle::W>(mat[1], mat[3]);
+		const auto shuffle2 = VectorShuffle<Swizzle::Y, Swizzle::W, Swizzle::Y, Swizzle::W>(mat[0], mat[2]);
+		const auto shuffle3 = VectorShuffle<Swizzle::X, Swizzle::Z, Swizzle::X, Swizzle::Z>(mat[1], mat[3]);
+		const auto detSub = VectorSubtract(VectorMultiply(shuffle0, shuffle1), VectorMultiply(shuffle2, shuffle3));
 
-		// Y# = |B|C - D(A#B)#
-		auto Y_ = _mm_sub_ps(_mm_mul_ps(detB, C), Mat2MulAdj(D, A_B));
-		// Z# = |C|B - A(D#C)#
-		auto Z_ = _mm_sub_ps(_mm_mul_ps(detC, B), Mat2MulAdj(A, D_C));
+		const auto detA = VectorSwizzle<Swizzle::X, Swizzle::X, Swizzle::X, Swizzle::X>(detSub);
+		const auto detB = VectorSwizzle<Swizzle::Y, Swizzle::Y, Swizzle::Y, Swizzle::Y>(detSub);
+		const auto detC = VectorSwizzle<Swizzle::Z, Swizzle::Z, Swizzle::Z, Swizzle::Z>(detSub);
+		const auto detD = VectorSwizzle<Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::W>(detSub);
 
-		// |M| = |A|*|D| + |B|*|C| ... (continue later)
-		detM = _mm_add_ps(detM, _mm_mul_ps(detB, detC));
+		const auto ab = Mat2AdjMul(a, b);
+		const auto dc = Mat2AdjMul(d, c);
+		
+		auto x = VectorSubtract(VectorMultiply(detD, a), Mat2Mul(b, dc));
+		auto w = VectorSubtract(VectorMultiply(detA, d), Mat2Mul(c, ab));
+		auto y = VectorSubtract(VectorMultiply(detB, c), Mat2MulAdj(d, ab));
+		auto z = VectorSubtract(VectorMultiply(detC, b), Mat2MulAdj(a, dc));
 
-		// tr((A#B)(D#C))
-		auto tr = _mm_mul_ps(A_B, VecSwizzle(D_C, 0, 2, 1, 3));
-		tr = _mm_hadd_ps(tr, tr);
-		tr = _mm_hadd_ps(tr, tr);
-		// |M| = |A|*|D| + |B|*|C| - tr((A#B)(D#C)
-		detM = _mm_sub_ps(detM, tr);
+		auto tr = VectorMultiply(ab, VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Y, Swizzle::W>(dc));
+		tr = VectorHadd(tr, tr);
+		tr = VectorHadd(tr, tr);
 
-		const auto adjSignMask = _mm_setr_ps(1.f, -1.f, -1.f, 1.f);
-		// (1/|M|, -1/|M|, -1/|M|, 1/|M|)
-		auto rDetM = _mm_div_ps(adjSignMask, detM);
+		const auto detM = VectorSubtract(VectorAdd(VectorMultiply(detA, detD), VectorMultiply(detB, detC)), tr);
+		const auto adjSignMask = VectorLoad(1.0f, -1.0f, -1.0f, 1.0f);
+		const auto rDetM = VectorDivide(adjSignMask, detM);
 
-		X_ = _mm_mul_ps(X_, rDetM);
-		Y_ = _mm_mul_ps(Y_, rDetM);
-		Z_ = _mm_mul_ps(Z_, rDetM);
-		W_ = _mm_mul_ps(W_, rDetM);
+		x = VectorMultiply(x, rDetM);
+		y = VectorMultiply(y, rDetM);
+		z = VectorMultiply(z, rDetM);
+		w = VectorMultiply(w, rDetM);
 
-		Matrix<L> ret;
-
-		// apply adjugate and store, here we combine adjugate shuffle and store shuffle
-		ret.mVec[0] = VecShuffle(X_, Y_, 3, 1, 3, 1);
-		ret.mVec[1] = VecShuffle(X_, Y_, 2, 0, 2, 0);
-		ret.mVec[2] = VecShuffle(Z_, W_, 3, 1, 3, 1);
-		ret.mVec[3] = VecShuffle(Z_, W_, 2, 0, 2, 0);
-
-		return r;
+		Matrix<4> ret;
+		VectorStore(VectorShuffle<Swizzle::W, Swizzle::Y, Swizzle::W, Swizzle::Y>(x, y), ret.data[0]);
+		VectorStore(VectorShuffle<Swizzle::Z, Swizzle::X, Swizzle::Z, Swizzle::X>(x, y), ret.data[1]);
+		VectorStore(VectorShuffle<Swizzle::W, Swizzle::Y, Swizzle::W, Swizzle::Y>(z, w), ret.data[2]);
+		VectorStore(VectorShuffle<Swizzle::Z, Swizzle::X, Swizzle::Z, Swizzle::X>(z, w), ret.data[3]);
+		*this = Matrix<L>(ret);
+		return true;
 	}
 
 	template <size_t L>
