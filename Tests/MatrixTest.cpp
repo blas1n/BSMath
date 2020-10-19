@@ -41,7 +41,23 @@ namespace BSMath
 
 	TEST(MatrixTest, Inverse)
 	{
+		Matrix<4> lhs
+		{
+			 1.0f,  2.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f, -1.0f, -2.0f,
+			 1.0f, -1.0f, -1.0f,  2.0f,
+			 1.0f, -2.0f,  1.0f, -1.0f
+		};
 
+		Matrix<4> rhs
+		{
+			 0.25f,  0.25f,  0.25f,  0.25f,
+			  0.2f,   0.1f,  -0.1f,  -0.2f,
+			 0.25f, -0.25f, -0.25f,  0.25f,
+			  0.1f,  -0.2f,   0.2f,  -0.1f
+		};
+
+		EXPECT_EQ(lhs.GetInvert(), rhs);
 	}
 
 	TEST(MatrixTest, Transpose)
