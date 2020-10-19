@@ -125,16 +125,16 @@ namespace BSMath::SIMD
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorSwizzle(VectorRegister<int> vec) noexcept
     {
-        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
-            static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X));
+        constexpr static auto mask = static_cast<uint8>(_MM_SHUFFLE(static_cast<uint32>(W),
+            static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X)));
         return _mm_shuffle_epi32(vec, mask);
     }
 
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
     {
-        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint32>(W),
-            static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X));
+        constexpr static auto mask = static_cast<uint8>(_MM_SHUFFLE(static_cast<uint32>(W),
+            static_cast<uint32>(Z), static_cast<uint32>(Y), static_cast<uint32>(X)));
         return _mm_shuffle_ps(lhs, rhs, mask);
     }
 
