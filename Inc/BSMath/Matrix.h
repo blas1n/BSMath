@@ -308,8 +308,13 @@ namespace BSMath
 	{
 		using namespace SIMD;
 		const auto epsilon = VectorLoad1(tolerance);
-		const auto vec = VectorSubtract(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0]));
-		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
+		for (size_t i = 0; i < L; ++i)
+		{
+			const auto vec = VectorSubtract(VectorLoad(lhs.data[i]), VectorLoad(rhs.data[i]));
+			if (VectorMoveMask(VectorLessEqual(vec, epsilon)) != 0xF)
+				return false;
+		}
+		return true;
 	}
 
 	template <size_t L>
@@ -317,7 +322,12 @@ namespace BSMath
 	{
 		using namespace SIMD;
 		const auto epsilon = VectorLoad1(tolerance);
-		const auto vecSimd = VectorLoad(vec.data[0]);
-		return VectorMoveMask(VectorLessEqual(vecSimd, epsilon)) == 0xF;
+		for (size_t i = 0; i < L; ++i)
+		{
+			const auto vecSimd = VectorLoad(mat.data[0]);
+			if (VectorMoveMask(VectorLessEqual(vecSimd, epsilon)) != 0xF)
+				return false;
+		}
+		return true;
 	}
 }
