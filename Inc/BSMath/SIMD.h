@@ -342,6 +342,28 @@ namespace BSMath::SIMD
         return _mm_cvtps_epi32(_mm_div_ps(lhsReal, rhsReal));
     }
 
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorHadd(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
+    {
+        const auto swi0 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(lhs);
+        const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(rhs);
+        const auto swi2 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(lhs);
+        const auto swi3 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(rhs);
+        lhs = VectorShuffle<Shuffle::X0, Shuffle::X1, Shuffle::Y0, Shuffle::Y1>(swi0, swi1);
+        rhs = VectorShuffle<Shuffle::X0, Shuffle::X1, Shuffle::Y0, Shuffle::Y1>(swi2, swi3);
+        return VectorAdd(lhs, rhs);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorHadd(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
+    {
+        const auto swi0 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(lhs);
+        const auto swi1 = VectorSwizzle<Swizzle::Y, Swizzle::W, Swizzle::Z, Swizzle::W>(rhs);
+        const auto swi2 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(lhs);
+        const auto swi3 = VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Z, Swizzle::W>(rhs);
+        lhs = VectorShuffle<Shuffle::X0, Shuffle::X1, Shuffle::Y0, Shuffle::Y1>(swi0, swi1);
+        rhs = VectorShuffle<Shuffle::X0, Shuffle::X1, Shuffle::Y0, Shuffle::Y1>(swi2, swi3);
+        return VectorAdd(lhs, rhs);
+    }
+
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorMin(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
     {
         return _mm_min_ps(lhs, rhs);
