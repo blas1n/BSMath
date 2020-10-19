@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <type_traits>
 #include "Random.h"
-#include "SIMD.h"
+#include "Utility.h"
 
 namespace BSMath::Detail
 {
