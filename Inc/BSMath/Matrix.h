@@ -10,7 +10,7 @@ namespace BSMath
 	struct Matrix final : public Detail::MatrixBase0<float, L, L>
 	{
 	public:
-		using Super = MatrixBase0<float, L, L>;
+		using Super = Detail::MatrixBase0<float, L, L>;
 		using Super::Super;
 		using Super::data;
 
