@@ -18,6 +18,9 @@
 #define VECTOR_CALL __fastcall
 #endif
 
+#define GET_MASK(X, Y, Z, W) \
+_MM_SHUFFLE(static_cast<uint8>(W), static_cast<uint8>(Z), static_cast<uint8>(Y), static_cast<uint8>(X))
+
 namespace BSMath::SIMD
 {
     enum class Swizzle : uint8
@@ -117,33 +120,25 @@ namespace BSMath::SIMD
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorSwizzle(VectorRegister<float> vec) noexcept
     {
-        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint8>(W),
-            static_cast<uint8>(Z), static_cast<uint8>(Y), static_cast<uint8>(X));
-        return _mm_shuffle_ps(vec, vec, mask);
+        return _mm_shuffle_ps(vec, vec, GET_MASK(X, Y, Z, W));
     }
 
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorSwizzle(VectorRegister<int> vec) noexcept
     {
-        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint8>(W),
-            static_cast<uint8>(Z), static_cast<uint8>(Y), static_cast<uint8>(X));
-        return _mm_shuffle_epi32(vec, mask);
+        return _mm_shuffle_epi32(vec, GET_MASK(X, Y, Z, W));
     }
 
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
     {
-        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint8>(W),
-            static_cast<uint8>(Z), static_cast<uint8>(Y), static_cast<uint8>(X));
-        return _mm_shuffle_ps(lhs, rhs, mask);
+        return _mm_shuffle_ps(lhs, rhs, GET_MASK(X, Y, Z, W));
     }
 
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorShuffle(VectorRegister<int> lhs, VectorRegister<int> rhs) noexcept
     {
-        constexpr static auto mask = _MM_SHUFFLE(static_cast<uint8>(W),
-            static_cast<uint8>(Z), static_cast<uint8>(Y), static_cast<uint8>(X));
-        return _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(lhs), _mm_castsi128_ps(rhs), mask));
+        return _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(lhs), _mm_castsi128_ps(rhs), GET_MASK(X, Y, Z, W)));
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle0101(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
