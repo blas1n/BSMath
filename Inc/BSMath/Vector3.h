@@ -23,9 +23,18 @@ namespace BSMath
 			const static Vector3Base Backward;
 
 		public:
+			float& X() noexcept { return data[0][0]; }
+			const float& X() const noexcept { return data[0][0]; }
+
+			float& Y() noexcept { return data[0][1]; }
+			const float& Y() const noexcept { return data[0][1]; }
+
+			float& Z() noexcept { return data[0][2]; }
+			const float& Z() const noexcept { return data[0][2]; }
+
 			void Set(T inX, T inY, T inZ) noexcept
 			{
-				x = inX; y = inY; z = inZ;
+				X() = inX; Y() = inY; Z() = inZ;
 			}
 
 			Vector3Base& operator^=(const Vector3Base& other) noexcept;
@@ -54,8 +63,8 @@ namespace BSMath
 		template <class T>
 		Vector3Base<T>& Vector3Base<T>::operator^=(const Vector3Base<T>& other) noexcept
 		{
-			const auto ret1 = Vector3Base<T>{ y, z, x } * Vector3Base<T>{ other.z, other.x, other.y };
-			const auto ret2 = Vector3Base<T>{ z, x, y } * Vector3Base<T>{ other.y, other.z, other.x };
+			const auto ret1 = Vector3Base<T>{ Y(), Z(), X() } * Vector3Base<T>{ other.Z(), other.X(), other.Y() };
+			const auto ret2 = Vector3Base<T>{ Z(), X(), Y() } * Vector3Base<T>{ other.Y(), other.Z(), other.X() };
 			return *this = ret1 - ret2;
 		}
 
