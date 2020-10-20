@@ -37,8 +37,8 @@ namespace BSMath
 		EXPECT_EQ(vec0, vec10);
 		EXPECT_EQ(vec0, vec11);
 
-		EXPECT_NEAR(vec0.x, vec6.x, Epsilon);
-		EXPECT_NEAR(vec0.y, vec6.y, Epsilon);
+		EXPECT_NEAR(vec0.X(), vec6.X(), Epsilon);
+		EXPECT_NEAR(vec0.Y(), vec6.Y(), Epsilon);
 	}
 
 	TEST(VectorTest, Size)
@@ -53,8 +53,8 @@ namespace BSMath
 		EXPECT_NEAR(Vector2::DistanceSquared(vec, target), 13.0f, Epsilon);
 
 		vec.Normalize();
-		EXPECT_NEAR(vec.x, 3.0f / 5.0f, Epsilon);
-		EXPECT_NEAR(vec.y, 4.0f / 5.0f, Epsilon);
+		EXPECT_NEAR(vec.X(), 3.0f / 5.0f, Epsilon);
+		EXPECT_NEAR(vec.Y(), 4.0f / 5.0f, Epsilon);
 	}
 
 	TEST(VectorTest, Operator)
@@ -91,7 +91,7 @@ namespace BSMath
 		EXPECT_NEAR(lhs[0], 1.0f, Epsilon);
 		EXPECT_NEAR(lhs[1], 2.0f, Epsilon);
 
-		Vector2 result{ lhs.x + rhs.y, lhs.y + rhs.x };
+		Vector2 result{ lhs.X() + rhs.Y(), lhs.Y() + rhs.X() };
 		target.Set(2.0f, 4.0f);
 		EXPECT_EQ(result, target);
 

@@ -16,9 +16,21 @@ namespace BSMath
 			using Super::data;
 
 		public:
+			float& X() noexcept { return data[0][0]; }
+			const float& X() const noexcept { return data[0][0]; }
+
+			float& Y() noexcept { return data[0][1]; }
+			const float& Y() const noexcept { return data[0][1]; }
+
+			float& Z() noexcept { return data[0][2]; }
+			const float& Z() const noexcept { return data[0][2]; }
+
+			float& W() noexcept { return data[0][3]; }
+			const float& W() const noexcept { return data[0][3]; }
+
 			void Set(T inX, T inY, T inZ, T inW) noexcept
 			{
-				x = inX; y = inY; z = inZ; w = inW;
+				X() = inX; Y() = inY; Z() = inZ; W() = inW;
 			}
 		};
 	}

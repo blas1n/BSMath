@@ -21,9 +21,15 @@ namespace BSMath
 			const static Vector2Base Down;
 
 		public:
+			float& X() noexcept { return data[0][0]; }
+			const float& X() const noexcept { return data[0][0]; }
+
+			float& Y() noexcept { return data[0][1]; }
+			const float& Y() const noexcept { return data[0][1]; }
+
 			void Set(T inX, T inY) noexcept
 			{
-				x = inX; y = inY;
+				X() = inX; Y() = inY;
 			}
 		};
 
