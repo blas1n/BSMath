@@ -139,6 +139,18 @@ namespace BSMath::SIMD
         return _mm_shuffle_epi32(vec, GET_MASK(X, Y, Z, W));
     }
 
+    template <Swizzle Elem>
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorReplicate(VectorRegister<float> vec) noexcept
+    {
+        return VectorSwizzle<Elem, Elem, Elem, Elem>(vec);
+    }
+
+    template <Swizzle Elem>
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorReplicate(VectorRegister<int> vec) noexcept
+    {
+        return VectorSwizzle<Elem, Elem, Elem, Elem>(vec);
+    }
+
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>
     [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorShuffle(VectorRegister<float> lhs, VectorRegister<float> rhs) noexcept
     {
