@@ -105,14 +105,40 @@ namespace BSMath::SIMD
         return _mm_set1_epi32(n);
     }
 
-    NO_ODR void VECTOR_CALL VectorStore(VectorRegister<float> vec, float* ptr) noexcept
+    NO_ODR void VECTOR_CALL VectorStorePtr(VectorRegister<float> vec, float* ptr) noexcept
     {
         _mm_store_ps(ptr, vec);
     }
 
-    NO_ODR void VECTOR_CALL VectorStore(VectorRegister<int> vec, int* ptr) noexcept
+    NO_ODR void VECTOR_CALL VectorStorePtr(VectorRegister<int> vec, int* ptr) noexcept
     {
         _mm_store_si128(reinterpret_cast<VectorRegister<int>*>(ptr), vec);
+    }
+
+    template <size_t L>
+    NO_ODR void VECTOR_CALL VectorStore(VectorRegister<float> vec, float(&out)[L]) noexcept
+    {
+        if constexpr (L < 4)
+        {
+            float arr[4];
+            VectorStorePtr(vec, arr);
+            std::copy_n(arr, L, out);
+        }
+        else
+            VectorStorePtr(vec, out);
+    }
+
+    template <size_t L>
+    NO_ODR void VECTOR_CALL VectorStore(VectorRegister<float> vec, int(&out)[L]) noexcept
+    {
+        if constexpr (L < 4)
+        {
+            int arr[4];
+            VectorStorePtr(vec, arr);
+            std::copy_n(arr, L, out);
+        }
+        else
+            VectorStorePtr(vec, out);
     }
 
     [[nodiscard]] NO_ODR float VECTOR_CALL VectorStore1(VectorRegister<float> vec) noexcept
