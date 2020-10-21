@@ -118,7 +118,7 @@ namespace BSMath::SIMD
     [[nodiscard]] NO_ODR float VECTOR_CALL VectorStore1(VectorRegister<float> vec) noexcept
     {
         float ret;
-        _mm_store_ps1(&ret, vec);
+        _mm_store_ss(&ret, vec);
         return ret;
     }
 
@@ -396,26 +396,27 @@ namespace BSMath::SIMD
         return VectorSelect(lhs, rhs, _mm_cmpgt_epi32(lhs, rhs));
     }
 
-    [[nodiscard]] NO_ODR float InvSqrt(float n, size_t iterationNum) noexcept
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorInvSqrt(VectorRegister<float> vec, size_t iterationNum = 2) noexcept
     {
-        const auto oneHalf = _mm_set_ss(0.5f);
+        const auto oneHalf = VectorLoad1(0.5f);
+        const auto halfN = VectorMultiply(vec, oneHalf);
 
-        const auto num = _mm_set_ss(n);
-        const auto halfN = _mm_mul_ss(num, oneHalf);
-
-        auto y = _mm_rsqrt_ss(num);
+        auto y = _mm_rsqrt_ps(vec);
         auto beforeY = y;
 
         for (size_t i = 0; i < iterationNum; ++i)
         {
             beforeY = y;
-            y = _mm_mul_ss(y, y);
-            y = _mm_sub_ss(oneHalf, _mm_mul_ss(halfN, y));
-            y = _mm_add_ss(beforeY, _mm_mul_ss(beforeY, y));
+            y = VectorMultiply(y, y);
+            y = VectorSubtract(oneHalf, VectorMultiply(halfN, y));
+            y = VectorAdd(beforeY, VectorMultiply(beforeY, y));
         }
 
-        float ret;
-        _mm_store_ss(&ret, y);
-        return ret;
+        return y;
+    }
+
+    [[nodiscard]] NO_ODR float InvSqrt(float n, size_t iterationNum = 2) noexcept
+    {
+        return VectorStore1(VectorInvSqrt(VectorLoad1(n), iterationNum));
     }
 }

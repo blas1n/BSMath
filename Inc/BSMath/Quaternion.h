@@ -116,4 +116,64 @@ namespace BSMath
 		const auto vec = VectorSubtract(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x));
 		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
 	}
+
+	[[nodiscard]] NO_ODR Quaternion Lerp(const Quaternion& a, const Quaternion& b, float t) noexcept
+	{
+		using namespace SIMD;
+		const auto ratio = VectorLoad1(1.0f - t);
+		const auto lhs = VectorLoadPtr(&a.x);
+		const auto rhs = VectorLoadPtr(&b.x);
+		
+		auto result = VectorAdd(VectorMultiply(ratio, lhs), rhs);
+
+		auto size = VectorMultiply(result, result);
+		size = VectorHadd(size, size);
+		size = VectorHadd(size, size);
+
+		result = VectorMultiply(result, VectorInvSqrt(size));
+
+		Quaternion ret;
+		VectorStore(result, &ret.x);
+		return ret;
+	}
+
+	[[nodiscard]] NO_ODR Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t) noexcept
+	{
+		using namespace SIMD;
+		
+		const float rawCosm = a | b;
+		const float cosm = Sign(rawCosm);
+
+		float scale0, scale1;
+		if (cosm < 0.9999f)
+		{
+			const float omega = ACos(cosm);
+			const float invSin = 1.f / Sin(omega);
+			scale0 = Sin((1.f - t) * omega) * invSin;
+			scale1 = Sin(t * omega) * invSin;
+		}
+		else
+		{
+			// Use linear interpolation.
+			scale0 = 1.0f - t;
+			scale1 = t;
+		}
+
+		const auto lhs = VectorLoadPtr(&a.x);
+		const auto rhs = VectorLoadPtr(&b.x);
+		const auto scaleLhs = VectorLoad1(scale0);
+		const auto scaleRhs = VectorLoad1(rawCosm >= 0.0f ? scale1 : -scale1);
+
+		auto result = VectorAdd(VectorMultiply(lhs, scaleLhs), VectorMultiply(rhs, scaleRhs));
+
+		auto size = VectorMultiply(result, result);
+		size = VectorHadd(size, size);
+		size = VectorHadd(size, size);
+
+		result = VectorMultiply(result, VectorInvSqrt(size));
+
+		Quaternion ret;
+		VectorStore(result, &ret.x);
+		return ret;
+	}
 }

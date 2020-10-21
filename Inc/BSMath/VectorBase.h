@@ -69,14 +69,12 @@ namespace BSMath
 		template <class T, size_t L>
 		bool VectorBase<T, L>::Normalize() noexcept
 		{
-			const float lengthSquared = LengthSquared();
-			if (IsNearlyZero(lengthSquared))
-				return false;
-
 			using namespace SIMD;
-			const auto vec = VectorLoad(data[0]);
-			const auto size = VectorLoad1(InvSqrt(lengthSquared));
-			VectorStore(VectorMultiply(vec, size), data[0]);
+			auto vec = VectorLoad(data[0]);
+			auto size = VectorMultiply(vec, vec);
+			size = VectorHadd(VectorHadd(size, size), size);
+			vec = VectorMultiply(vec, VectorInvSqrt(size));
+			VectorStore(vec, data[0]);
 			return true;
 		}
 
@@ -113,12 +111,9 @@ namespace BSMath
 		template <class T, size_t L>
 		T VectorBase<T, L>::Dot(const VectorBase<T, L>& lhs, const VectorBase<T, L>& rhs) noexcept
 		{
-			auto mul = lhs; mul *= rhs;
-
-			T ret{ 0 };
-			for (size_t i = 0; i < L; ++i)
-				ret += mul.data[0][i];
-			return ret;
+			using namespace SIMD;
+			const auto size = VectorMultiply(VectorLoad(lhs.data[0]), VectorLoad(rhs.data[0]));
+			return VectorStore1(VectorHadd(VectorHadd(size, size), size));
 		}
 
 		// Global Operator
