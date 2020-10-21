@@ -17,7 +17,7 @@ namespace BSMath
 		EXPECT_EQ(quat0, quat3);
 	}
 
-	TEST(QuaternionTest, Operator)
+	TEST(QuaternionTest, Multiply)
 	{
 		
 	}
