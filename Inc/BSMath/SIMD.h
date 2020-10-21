@@ -59,6 +59,16 @@ namespace BSMath::SIMD
         return _mm_setr_epi32(x, y, z, w);
     }
 
+    [[nodiscard]] NO_ODR VectorRegister<float> VectorLoadPtr(const float* vec) noexcept
+    {
+        return _mm_load_ps(vec);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VectorLoadPtr(const int* vec) noexcept
+    {
+        return _mm_load_si128(reinterpret_cast<const __m128i*>(vec));
+    }
+
     template <size_t L>
     [[nodiscard]] NO_ODR VectorRegister<float> VectorLoad(const float(&vec)[L]) noexcept
     {
@@ -69,7 +79,7 @@ namespace BSMath::SIMD
         else if (L == 3)
             return VectorLoad(vec[0], vec[1], vec[2]);
         else
-            return VectorLoad(vec[0], vec[1], vec[2], vec[3]);
+            return VectorLoadPtr(vec);
     }
 
     template <size_t L>
@@ -82,7 +92,7 @@ namespace BSMath::SIMD
         else if (L == 3)
             return VectorLoad(vec[0], vec[1], vec[2]);
         else
-            return VectorLoad(vec[0], vec[1], vec[2], vec[3]);
+            return VectorLoadPtr(vec);
     }
 
     [[nodiscard]] NO_ODR VectorRegister<float> VectorLoad1(float n) noexcept
@@ -127,6 +137,18 @@ namespace BSMath::SIMD
     [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorSwizzle(VectorRegister<int> vec) noexcept
     {
         return _mm_shuffle_epi32(vec, GET_MASK(X, Y, Z, W));
+    }
+
+    template <Swizzle Elem>
+    [[nodiscard]] NO_ODR VectorRegister<float> VECTOR_CALL VectorReplicate(VectorRegister<float> vec) noexcept
+    {
+        return VectorSwizzle<Elem, Elem, Elem, Elem>(vec);
+    }
+
+    template <Swizzle Elem>
+    [[nodiscard]] NO_ODR VectorRegister<int> VECTOR_CALL VectorReplicate(VectorRegister<int> vec) noexcept
+    {
+        return VectorSwizzle<Elem, Elem, Elem, Elem>(vec);
     }
 
     template <Swizzle X, Swizzle Y, Swizzle Z, Swizzle W>

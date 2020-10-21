@@ -215,10 +215,10 @@ namespace BSMath
 		const auto shuffle3 = VectorShuffle<Swizzle::X, Swizzle::Z, Swizzle::X, Swizzle::Z>(mat[1], mat[3]);
 		const auto detSub = VectorSubtract(VectorMultiply(shuffle0, shuffle1), VectorMultiply(shuffle2, shuffle3));
 
-		const auto detA = VectorSwizzle<Swizzle::X, Swizzle::X, Swizzle::X, Swizzle::X>(detSub);
-		const auto detB = VectorSwizzle<Swizzle::Y, Swizzle::Y, Swizzle::Y, Swizzle::Y>(detSub);
-		const auto detC = VectorSwizzle<Swizzle::Z, Swizzle::Z, Swizzle::Z, Swizzle::Z>(detSub);
-		const auto detD = VectorSwizzle<Swizzle::W, Swizzle::W, Swizzle::W, Swizzle::W>(detSub);
+		const auto detA = VectorReplicate<Swizzle::X>(detSub);
+		const auto detB = VectorReplicate<Swizzle::Y>(detSub);
+		const auto detC = VectorReplicate<Swizzle::Z>(detSub);
+		const auto detD = VectorReplicate<Swizzle::W>(detSub);
 
 		const auto ab = Mat2AdjMul(a, b);
 		const auto dc = Mat2AdjMul(d, c);

@@ -1,4 +1,3 @@
-#include <cmath>
 #include <gtest/gtest.h>
 #include "BSMath/Matrix.h"
 
