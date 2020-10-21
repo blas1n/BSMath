@@ -105,4 +105,15 @@ namespace BSMath
 	{
 		return Quaternion::Dot(lhs, rhs);
 	}
+
+	// Global
+
+	[[nodiscard]] NO_ODR bool IsNearlyEqual(const Quaternion& lhs,
+		const Quaternion& rhs, float tolerance = Epsilon) noexcept
+	{
+		using namespace SIMD;
+		const auto epsilon = VectorLoad1(tolerance);
+		const auto vec = VectorSubtract(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x));
+		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
+	}
 }
