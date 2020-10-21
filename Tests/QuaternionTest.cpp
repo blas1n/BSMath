@@ -21,11 +21,9 @@ namespace BSMath
 
 	TEST(QuaternionTest, Multiply)
 	{
-		
-	}
-
-	TEST(QuaternionTest, Global)
-	{
-		
+		Quaternion lhs{ 0.0f, 1.0f, 0.0f, 1.0f };
+		Quaternion rhs{ 0.5f, 0.5f, 0.75f, 1.0f };
+		Quaternion ret{ 1.25f, 1.5f, 0.25f, 0.5f };
+		EXPECT_EQ(lhs * rhs, ret);
 	}
 }
