@@ -118,7 +118,7 @@ namespace BSMath::SIMD
     [[nodiscard]] NO_ODR float VECTOR_CALL VectorStore1(VectorRegister<float> vec) noexcept
     {
         float ret;
-        _mm_store_ps1(&ret, vec);
+        _mm_store_ss(&ret, vec);
         return ret;
     }
 
