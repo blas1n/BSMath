@@ -100,7 +100,7 @@ namespace BSMath
     }
 
     template <class T>
-    [[nodiscard]] T Lerp(const T& a, const T& b, float t) noexcept
+    [[nodiscard]] constexpr T Lerp(const T& a, const T& b, float t) noexcept
     {
         return a + t * (b - a);
     }
