@@ -116,4 +116,23 @@ namespace BSMath
 		const auto vec = VectorSubtract(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x));
 		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
 	}
+
+	[[nodiscard]] NO_ODR Quaternion Lerp(const Quaternion& a, const Quaternion& b, float t) noexcept
+	{
+		using namespace SIMD;
+		const auto ratio = VectorLoad1(1.0f - t);
+		const auto lhs = VectorLoadPtr(&a.x);
+		const auto rhs = VectorLoadPtr(&b.x);
+		
+		auto result = VectorAdd(VectorMultiply(ratio, lhs), rhs);
+
+		auto size = VectorMultiply(result, result);
+		size = VectorHadd(size, size);
+		size = VectorHadd(size, size);
+
+		result = VectorMultiply(result, VectorInvSqrt(size));
+
+		Quaternion ret;
+		VectorStore(result, &ret.x);
+		return ret;
 }
