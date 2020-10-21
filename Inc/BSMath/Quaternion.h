@@ -142,7 +142,7 @@ namespace BSMath
 		using namespace SIMD;
 		
 		const float rawCosm = a | b;
-		const float cosm = Sign(rawCosm);
+		const float cosm = Abs(rawCosm);
 
 		float scale0, scale1;
 		if (cosm < 0.9999f)
