@@ -32,10 +32,10 @@ namespace BSMath
 		Quaternion lhs{ 0.0f, 1.0f, 0.0f, 1.0f };
 		Quaternion rhs{ 0.5f, 0.5f, 0.75f, 1.0f };
 
-		Quaternion ret{ 0.13333333f, 0.26666667f, 0.2f, 0.4f };
-		EXPECT_EQ(Lerp(lhs, rhs, 0.5f), ret);
+		Quaternion ret{ 0.24806947f, 0.49613894f, 0.3721042f , 0.74420841f };
+		EXPECT_TRUE(IsNearlyEqual(Lerp(lhs, rhs, 0.5f), ret));
 
-		ret.Set(0.13333333f, 0.26666667f, 0.2f, 0.4f);
-		EXPECT_EQ(Slerp(lhs, rhs, 0.5f), ret);
+		ret.Set(0.18814417f, 0.56443252f, 0.28221626f, 0.75257669f);
+		EXPECT_TRUE(IsNearlyEqual(Slerp(lhs, rhs, 0.5f), ret));
 	}
 }
