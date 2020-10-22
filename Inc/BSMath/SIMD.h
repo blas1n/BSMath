@@ -73,14 +73,14 @@ namespace BSMath::SIMD
     {
         float arr[4]{};
         std::copy_n(vec, size, arr);
-        return VectorLoadPtr(vec);
+        return VectorLoadPtr(arr);
     }
 
     [[nodiscard]] NO_ODR VectorRegister<int> VectorLoadPtr(const int* vec, size_t size) noexcept
     {
         int arr[4]{};
         std::copy_n(vec, size, arr);
-        return VectorLoadPtr(vec);
+        return VectorLoadPtr(arr);
     }
 
     template <size_t L>
