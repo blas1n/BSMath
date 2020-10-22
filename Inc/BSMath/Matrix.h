@@ -1,24 +1,39 @@
 #pragma once
 
 #include <array>
-#include "MatrixBase0.h"
 #include "Utility.h"
 
 namespace BSMath
 {
-	template <size_t L>
-	struct Matrix final : public Detail::MatrixBase0<float, L, L>
+	template <class T, size_t L>
+	struct Matrix final
 	{
 	public:
-		using Super = Detail::MatrixBase0<float, L, L>;
-		using Super::Super;
-		using Super::data;
-
-		const static Matrix Zero;
-		const static Matrix One;
-		const static Matrix Identity;
+		static const Matrix Zero;
+		static const Matrix One;
+		static const Matrix Identity;
 
 	public:
+		constexpr Matrix() noexcept : data() {}
+
+		explicit Matrix(T n) noexcept : data()
+		{
+			std::fill_n(*data, Row * Column, n);
+		}
+
+		explicit Matrix(const T* ptr) noexcept : data()
+		{
+			std::copy_n(ptr, Row * Column, *data);
+		}
+
+		template <class... Args>
+		explicit Matrix(T x, T y, Args ... args) noexcept : data()
+		{
+			static_assert(sizeof...(Args) + 2 == L * L, "Too many arguments");
+			const std::initializer_list<T> list{ x, y, static_cast<T>(args)... };
+			std::copy(list.begin(), list.end(), *data);
+		}
+
 		[[nodiscard]] float Determinant() const noexcept;
 
 		[[nodiscard]] Matrix GetInvert() const noexcept;
@@ -29,36 +44,39 @@ namespace BSMath
 
 		Matrix& operator*=(const Matrix& other) noexcept;
 
-		[[nodiscard]] float* operator[](size_t idx) noexcept { return data[idx]; }
-		[[nodiscard]] const float* operator[](size_t idx) const noexcept { return data[idx]; }
+		[[nodiscard]] constexpr T* operator[](size_t idx) noexcept { return data[idx]; }
+		[[nodiscard]] constexpr const T* operator[](size_t idx) const noexcept { return data[idx]; }
+
+	public:
+		T data[L][L];
 	};
 
 	namespace Detail
 	{
-		template <size_t L>
-		static Matrix<L> GetIdentity() noexcept
+		template <class T, size_t L>
+		static Matrix<T, L> GetIdentity() noexcept
 		{
-			Matrix<L> ret;
+			Matrix<T, L> ret;
 			for (size_t i = 0; i < L; ++i)
-				ret.data[i][i] = 1.0f;
+				ret.data[i][i] = static_cast<T>(1);
 			return ret;
 		}
 	}
 
-	template <size_t L>
-	const Matrix<L> Matrix<L>::Zero;
+	template <class T, size_t L>
+	const Matrix<T, L> Matrix<T, L>::Zero;
 
-	template <size_t L>
-	const Matrix<L> Matrix<L>::One(1.0f);
+	template <class T, size_t L>
+	const Matrix<T, L> Matrix<T, L>::One(1.0f);
 
-	template <size_t L>
-	const Matrix<L> Matrix<L>::Identity = Detail::GetIdentity<L>();
+	template <class T, size_t L>
+	const Matrix<T, L> Matrix<T, L>::Identity = Detail::GetIdentity<T, L>();
 
 	namespace Detail
 	{
-		template <size_t Idx>
+		template <class T, size_t Idx>
 		[[nodiscard]] NO_ODR decltype(auto) GetExpression
-			(SIMD::VectorRegister<float> r2, SIMD::VectorRegister<float> r3) noexcept
+			(SIMD::VectorRegister<T> r2, SIMD::VectorRegister<T> r3) noexcept
 		{
 			using namespace SIMD;
 
@@ -99,41 +117,41 @@ namespace BSMath
 			return VectorSubtract(VectorMultiply(v0, v1), VectorMultiply(v2, v3));
 		}
 
-		template <size_t L>
-		decltype(auto) LoadMatrix(const Matrix<L>& mat)
+		template <class T, size_t L>
+		decltype(auto) LoadMatrix(const Matrix<T, L>& mat)
 		{
 			using namespace SIMD;
-			std::array<VectorRegister<float>, 4> ret;
+			std::array<VectorRegister<T>, 4> ret;
 			ret[0] = VectorLoad(mat.data[0]);
 
 			if constexpr (L > 1)
 				ret[1] = VectorLoad(mat.data[1]);
 			else
-				ret[1] = SIMD::Zero<float>;
+				ret[1] = SIMD::Zero<T>;
 
 			if constexpr (L > 2)
 				ret[2] = VectorLoad(mat.data[2]);
 			else
-				ret[2] = SIMD::Zero<float>;
+				ret[2] = SIMD::Zero<T>;
 
 			if constexpr (L > 3)
 				ret[3] = VectorLoad(mat.data[3]);
 			else
-				ret[3] = SIMD::Zero<float>;
+				ret[3] = SIMD::Zero<T>;
 
 			return ret;
 		}
 	}
 
-	template <size_t L>
-	float Matrix<L>::Determinant() const noexcept
+	template <class T, size_t L>
+	float Matrix<T, L>::Determinant() const noexcept
 	{
 		using namespace SIMD;
 		const auto mat = Detail::LoadMatrix(GetTranspose());
 
-		auto e0 = Detail::GetExpression<0>(mat[2], mat[3]);
-		auto e1 = Detail::GetExpression<1>(mat[2], mat[3]);
-		auto e2 = Detail::GetExpression<2>(mat[2], mat[3]);
+		auto e0 = Detail::GetExpression<T, 0>(mat[2], mat[3]);
+		auto e1 = Detail::GetExpression<T, 1>(mat[2], mat[3]);
+		auto e2 = Detail::GetExpression<T, 2>(mat[2], mat[3]);
 		
 		e0 = VectorMultiply(e0, VectorSwizzle<Swizzle::Y, Swizzle::X, Swizzle::X, Swizzle::X>(mat[1]));
 		e1 = VectorMultiply(e1, VectorSwizzle<Swizzle::Z, Swizzle::Z, Swizzle::Y, Swizzle::Y>(mat[1]));
@@ -142,13 +160,13 @@ namespace BSMath
 		const auto cofactor = VectorAdd(VectorSubtract(e0, e1), e2);
 		const auto det = VectorMultiply(cofactor, mat[0]);
 		
-		float ret[4];
+		T ret[4];
 		VectorStore(det, ret);
 		return ret[0] - ret[1] + ret[2] - ret[3];
 	}
 
-	template <size_t L>
-	Matrix<L> Matrix<L>::GetInvert() const noexcept
+	template <class T, size_t L>
+	Matrix<T, L> Matrix<T, L>::GetInvert() const noexcept
 	{
 		if (auto ret = *this; ret.Invert())
 			return ret;
@@ -157,7 +175,8 @@ namespace BSMath
 	
 	namespace Detail
 	{
-		decltype(auto) Mat2Mul(SIMD::VectorRegister<float> lhs, SIMD::VectorRegister<float> rhs) noexcept
+		template <class T>
+		[[nodiscard]] NO_ODR decltype(auto) VECTOR_CALL Mat2Mul(SIMD::VectorRegister<T> lhs, SIMD::VectorRegister<T> rhs) noexcept
 		{
 			using namespace SIMD;
 			const auto swi0 = VectorSwizzle<Swizzle::X, Swizzle::W, Swizzle::X, Swizzle::W>(rhs);
@@ -168,7 +187,8 @@ namespace BSMath
 			return VectorAdd(vec0, vec1);
 		};
 
-		decltype(auto) Mat2AdjMul(SIMD::VectorRegister<float> lhs, SIMD::VectorRegister<float> rhs) noexcept
+		template <class T>
+		[[nodiscard]] NO_ODR decltype(auto) VECTOR_CALL Mat2AdjMul(SIMD::VectorRegister<T> lhs, SIMD::VectorRegister<T> rhs) noexcept
 		{
 			using namespace SIMD;
 			const auto swi0 = VectorSwizzle<Swizzle::W, Swizzle::W, Swizzle::X, Swizzle::X>(lhs);
@@ -179,7 +199,8 @@ namespace BSMath
 			return VectorSubtract(vec0, vec1);
 		};
 
-		decltype(auto) Mat2MulAdj(SIMD::VectorRegister<float> lhs, SIMD::VectorRegister<float> rhs) noexcept
+		template <class T>
+		[[nodiscard]] NO_ODR decltype(auto) VECTOR_CALL Mat2MulAdj(SIMD::VectorRegister<T> lhs, SIMD::VectorRegister<T> rhs) noexcept
 		{
 			using namespace SIMD;
 			const auto swi0 = VectorSwizzle<Swizzle::W, Swizzle::X, Swizzle::W, Swizzle::X>(rhs);
@@ -191,8 +212,8 @@ namespace BSMath
 		};
 	}
 
-	template <size_t L>
-	bool Matrix<L>::Invert() noexcept
+	template <class T, size_t L>
+	bool Matrix<T, L>::Invert() noexcept
 	{
 		// Source: https://lxjk.github.io/2017/09/03/Fast-4x4-Matrix-Inverse-with-SSE-SIMD-Explained.html
 
@@ -220,13 +241,13 @@ namespace BSMath
 		const auto detC = VectorReplicate<Swizzle::Z>(detSub);
 		const auto detD = VectorReplicate<Swizzle::W>(detSub);
 
-		const auto ab = Mat2AdjMul(a, b);
-		const auto dc = Mat2AdjMul(d, c);
+		const auto ab = Mat2AdjMul<T>(a, b);
+		const auto dc = Mat2AdjMul<T>(d, c);
 		
-		auto x = VectorSubtract(VectorMultiply(detD, a), Mat2Mul(b, dc));
-		auto w = VectorSubtract(VectorMultiply(detA, d), Mat2Mul(c, ab));
-		auto y = VectorSubtract(VectorMultiply(detB, c), Mat2MulAdj(d, ab));
-		auto z = VectorSubtract(VectorMultiply(detC, b), Mat2MulAdj(a, dc));
+		auto x = VectorSubtract(VectorMultiply(detD, a), Mat2Mul<T>(b, dc));
+		auto w = VectorSubtract(VectorMultiply(detA, d), Mat2Mul<T>(c, ab));
+		auto y = VectorSubtract(VectorMultiply(detB, c), Mat2MulAdj<T>(d, ab));
+		auto z = VectorSubtract(VectorMultiply(detC, b), Mat2MulAdj<T>(a, dc));
 
 		auto tr = VectorMultiply(ab, VectorSwizzle<Swizzle::X, Swizzle::Z, Swizzle::Y, Swizzle::W>(dc));
 		tr = VectorHadd(tr, tr);
@@ -241,35 +262,35 @@ namespace BSMath
 		z = VectorMultiply(z, rDetM);
 		w = VectorMultiply(w, rDetM);
 
-		Matrix<4> ret;
+		Matrix<T, 4> ret;
 		VectorStore(VectorShuffle<Swizzle::W, Swizzle::Y, Swizzle::W, Swizzle::Y>(x, y), ret.data[0]);
 		VectorStore(VectorShuffle<Swizzle::Z, Swizzle::X, Swizzle::Z, Swizzle::X>(x, y), ret.data[1]);
 		VectorStore(VectorShuffle<Swizzle::W, Swizzle::Y, Swizzle::W, Swizzle::Y>(z, w), ret.data[2]);
 		VectorStore(VectorShuffle<Swizzle::Z, Swizzle::X, Swizzle::Z, Swizzle::X>(z, w), ret.data[3]);
-		*this = Matrix<L>(ret);
+		*this = Matrix<T, L>(ret);
 		return true;
 	}
 
-	template <size_t L>
-	Matrix<L> Matrix<L>::GetTranspose() const noexcept
+	template <class T, size_t L>
+	Matrix<T, L> Matrix<T, L>::GetTranspose() const noexcept
 	{
-		Matrix<L> ret;
+		Matrix<T, L> ret;
 		for (size_t i = 0; i < L; ++i)
 			for (size_t j = 0; j < L; ++j)
 				ret[j][i] = data[i][j];
 		return ret;
 	}
 	
-	template <size_t L>
-	void Matrix<L>::Transpose() noexcept
+	template <class T, size_t L>
+	void Matrix<T, L>::Transpose() noexcept
 	{
 		for (size_t i = 1; i < L; ++i)
 			for (size_t j = 0; j < i; ++j)
 				std::swap(data[i][j], data[j][i]);
 	}
 
-	template <size_t L>
-	Matrix<L>& Matrix<L>::operator*=(const Matrix<L>& other) noexcept
+	template <class T, size_t L>
+	Matrix<T, L>& Matrix<T, L>::operator*=(const Matrix<T, L>& other) noexcept
 	{
 		using namespace SIMD;
 		const auto operand = other.GetTranspose();
@@ -279,14 +300,10 @@ namespace BSMath
 			for (size_t j = 0; j < L; ++j)
 			{
 				const auto rhs = VectorLoad(operand.data[j]);
-
-				alignas(16) float tmp[L];
-				VectorStore(VectorMultiply(lhs, rhs), tmp);
-
-				float sum = 0.0f;
-				for (const auto elem : tmp)
-					sum += elem;
-				data[i][j] = sum;
+				auto result = VectorMultiply(lhs, rhs);
+				result = VectorHadd(result, result);
+				result = VectorHadd(result, result);
+				data[i][j] = VectorStore1(result);
 			}
 		}
 		return *this;
@@ -294,17 +311,34 @@ namespace BSMath
 
 	// Global Operator
 
-	template <size_t L>
-	[[nodiscard]] NO_ODR Matrix<L> operator*(const Matrix<L>& lhs, const Matrix<L>& rhs) noexcept
+	template <class T, size_t L>
+	[[nodiscard]] bool operator==(const Matrix<T, L>& lhs, const Matrix<T, L>& rhs) noexcept
 	{
-		return Matrix<L>{ lhs } *= rhs;
+		using namespace SIMD;
+		const auto lhsMat = Detail::LoadMatrix(lhs);
+		const auto rhsMat = Detail::LoadMatrix(rhs);
+
+		for (size_t i = 0; i < L; ++i)
+			if (VectorMoveMask(VectorEqual(lhsMat[i], rhsMat[i])) != 0xF)
+				return false;
+
+		return true;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR bool operator!=(const Matrix<T, L>& lhs, const Matrix<T, L>& rhs) noexcept { return !(lhs == rhs); }
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR Matrix<T, L> operator*(const Matrix<T, L>& lhs, const Matrix<T, L>& rhs) noexcept
+	{
+		return Matrix<T, L>{ lhs } *= rhs;
 	}
 
 	// Global Function
 
-	template <size_t L>
-	[[nodiscard]] NO_ODR bool IsNearlyEqual(const Matrix<L>& lhs,
-		const Matrix<L>& rhs, float tolerance = Epsilon) noexcept
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR bool IsNearlyEqual(const Matrix<T, L>& lhs,
+		const Matrix<T, L>& rhs, float tolerance = Epsilon) noexcept
 	{
 		using namespace SIMD;
 		const auto epsilon = VectorLoad1(tolerance);
@@ -317,8 +351,8 @@ namespace BSMath
 		return true;
 	}
 
-	template <size_t L>
-	[[nodiscard]] NO_ODR bool IsNearlyZero(const Matrix<L>& mat, float tolerance = Epsilon) noexcept
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR bool IsNearlyZero(const Matrix<T, L>& mat, float tolerance = Epsilon) noexcept
 	{
 		using namespace SIMD;
 		const auto epsilon = VectorLoad1(tolerance);

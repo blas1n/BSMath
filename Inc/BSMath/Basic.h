@@ -24,12 +24,12 @@ namespace BSMath
 	using Vector4 = Vector<float, 4>;
 	using IntVector4 = Vector<int, 4>;
 
-	template <size_t L>
+	template <class T, size_t L>
 	struct Matrix;
 
-	using Matrix2 = Matrix<2>;
-	using Matrix3 = Matrix<3>;
-	using Matrix4 = Matrix<4>;
+	using Matrix2 = Matrix<float, 2>;
+	using Matrix3 = Matrix<float, 3>;
+	using Matrix4 = Matrix<float, 4>;
 
 	struct Quaternion;
 }
