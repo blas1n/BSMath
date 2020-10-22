@@ -211,18 +211,19 @@ namespace BSMath
 			return Vector(lhs - rhs).LengthSquared();
 		}
 
+		[[nodiscard]] Vector operator-() const noexcept;
+
 		Vector& operator+=(const Vector& other) noexcept;
 		Vector& operator-=(const Vector& other) noexcept;
 
+		Vector& operator*=(const Vector& other) noexcept;
 		Vector& operator*=(T scaler) noexcept;
+
+		Vector& operator/=(const Vector& other) noexcept;
 		Vector& operator/=(T divisor) noexcept;
 
 		[[nodiscard]] constexpr T& operator[](size_t idx) noexcept { return data[idx]; }
 		[[nodiscard]] constexpr T operator[](size_t idx) const noexcept { return data[idx]; }
-
-		[[nodiscard]] Vector operator-() const noexcept;
-		Vector& operator*=(const Vector& other) noexcept;
-		Vector& operator/=(const Vector& other) noexcept;
 	};
 
 	template <class T, size_t L>
