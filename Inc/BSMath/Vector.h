@@ -385,7 +385,8 @@ namespace BSMath
 	template <class T>
 	[[nodiscard]] NO_ODR Vector<T, 3> operator^(const Vector<T, 3>& lhs, const Vector<T, 3>& rhs) noexcept
 	{
-		return Vector<T, 3>{ lhs } ^= rhs;
+		Vector<T, 3> ret{ lhs };
+		return ret ^= rhs;
 	}
 
 	// Global Functions
