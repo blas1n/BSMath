@@ -18,12 +18,12 @@ namespace BSMath
 
 		explicit Matrix(T n) noexcept : data()
 		{
-			std::fill_n(*data, Row * Column, n);
+			std::fill_n(*data, L * L, n);
 		}
 
 		explicit Matrix(const T* ptr) noexcept : data()
 		{
-			std::copy_n(ptr, Row * Column, *data);
+			std::copy_n(ptr, L * L, *data);
 		}
 
 		template <class... Args>

@@ -129,7 +129,7 @@ namespace BSMath::SIMD
     }
 
     template <size_t L>
-    NO_ODR void VECTOR_CALL VectorStore(VectorRegister<float> vec, int(&out)[L]) noexcept
+    NO_ODR void VECTOR_CALL VectorStore(VectorRegister<int> vec, int(&out)[L]) noexcept
     {
         if constexpr (L < 4)
         {
