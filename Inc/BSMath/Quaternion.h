@@ -43,8 +43,6 @@ namespace BSMath
 		[[nodiscard]] constexpr float& operator[](size_t i) noexcept { return (&x)[i]; }
 		[[nodiscard]] constexpr float operator[](size_t i) const noexcept { return (&x)[i]; }
 
-		[[nodiscard]] static float Dot(const Quaternion& lhs, const Quaternion& rhs) noexcept;
-
 	public:
 		float x;
 		float y;
@@ -77,14 +75,6 @@ namespace BSMath
 
 		VectorStorePtr(result, &x);
 		return *this;
-	}
-
-	float Quaternion::Dot(const Quaternion& lhs, const Quaternion& rhs) noexcept
-	{
-		using namespace SIMD;
-		float ret[4];
-		VectorStorePtr(VectorMultiply(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x)), ret);
-		return ret[0] + ret[1] + ret[2] + ret[3];
 	}
 
 	[[nodiscard]] NO_ODR bool operator==(const Quaternion& lhs, const Quaternion& rhs) noexcept
