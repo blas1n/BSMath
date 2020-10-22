@@ -10,16 +10,13 @@ namespace BSMath
 		const static Quaternion Identity;
 
 	public:
-		Quaternion() noexcept : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
+		constexpr Quaternion() noexcept : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
 
-		explicit Quaternion(float inX, float inY, float inZ, float inW) noexcept
+		explicit constexpr Quaternion(float inX, float inY, float inZ, float inW) noexcept
 			: x(inX), y(inY), z(inZ), w(inW) {}
 
-		explicit Quaternion(const float* ptr) noexcept
-			: x(0.0f), y(0.0f), z(0.0f), w(0.0f)
-		{
-			std::copy_n(ptr, 4, &x);
-		}
+		explicit constexpr Quaternion(const float* ptr) noexcept
+			: x(ptr[0]), y(ptr[1]), z(ptr[2]), w(ptr[3]) {}
 
 		explicit Quaternion(const Vector3& axis, float angle) noexcept
 		{
@@ -31,17 +28,20 @@ namespace BSMath
 			w = Cos(half);
 		}
 
-		void Set(float inX, float inY, float inZ, float inW) noexcept
+		constexpr void Set(float inX, float inY, float inZ, float inW) noexcept
 		{
 			x = inX; y = inY; z = inZ;	w = inW;
 		}
 
+		[[nodiscard]] constexpr Quaternion operator-() const noexcept
+		{
+			return Quaternion{ -x, -y, -z, w };
+		}
+
 		Quaternion& operator*=(const Quaternion& other) noexcept;
 
-		[[nodiscard]] float& operator[](size_t i) noexcept { return (&x)[i]; }
-		[[nodiscard]] float operator[](size_t i) const noexcept { return (&x)[i]; }
-
-		[[nodiscard]] static float Dot(const Quaternion& lhs, const Quaternion& rhs) noexcept;
+		[[nodiscard]] constexpr float& operator[](size_t i) noexcept { return (&x)[i]; }
+		[[nodiscard]] constexpr float operator[](size_t i) const noexcept { return (&x)[i]; }
 
 	public:
 		float x;
@@ -77,14 +77,6 @@ namespace BSMath
 		return *this;
 	}
 
-	float Quaternion::Dot(const Quaternion& lhs, const Quaternion& rhs) noexcept
-	{
-		using namespace SIMD;
-		float ret[4];
-		VectorStorePtr(VectorMultiply(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x)), ret);
-		return ret[0] + ret[1] + ret[2] + ret[3];
-	}
-
 	[[nodiscard]] NO_ODR bool operator==(const Quaternion& lhs, const Quaternion& rhs) noexcept
 	{
 		using namespace SIMD;
@@ -103,7 +95,10 @@ namespace BSMath
 
 	[[nodiscard]] NO_ODR float operator|(const Quaternion& lhs, const Quaternion& rhs) noexcept
 	{
-		return Quaternion::Dot(lhs, rhs);
+		using namespace SIMD;
+		float ret[4];
+		VectorStorePtr(VectorMultiply(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x)), ret);
+		return ret[0] + ret[1] + ret[2] + ret[3];
 	}
 
 	// Global

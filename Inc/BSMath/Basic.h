@@ -32,4 +32,5 @@ namespace BSMath
 	using Matrix4 = Matrix<float, 4>;
 
 	struct Quaternion;
+	struct Rotator;
 }

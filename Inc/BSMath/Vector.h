@@ -211,109 +211,25 @@ namespace BSMath
 			return Vector(lhs - rhs).LengthSquared();
 		}
 
+		[[nodiscard]] Vector operator-() const noexcept;
+
 		Vector& operator+=(const Vector& other) noexcept;
 		Vector& operator-=(const Vector& other) noexcept;
 
+		Vector& operator*=(const Vector& other) noexcept;
 		Vector& operator*=(T scaler) noexcept;
+
+		Vector& operator/=(const Vector& other) noexcept;
 		Vector& operator/=(T divisor) noexcept;
 
 		[[nodiscard]] constexpr T& operator[](size_t idx) noexcept { return data[idx]; }
 		[[nodiscard]] constexpr T operator[](size_t idx) const noexcept { return data[idx]; }
-
-		[[nodiscard]] Vector operator-() const noexcept;
-		Vector& operator*=(const Vector& other) noexcept;
-		Vector& operator/=(const Vector& other) noexcept;
 	};
-
-	template <class T, size_t L>
-	bool Vector<T, L>::Normalize() noexcept
-	{
-		using namespace SIMD;
-		auto vec = VectorLoad(data);
-		auto size = VectorMultiply(vec, vec);
-		size = VectorHadd(VectorHadd(size, size), size);
-		vec = VectorMultiply(vec, VectorInvSqrt(size));
-		VectorStore(vec, data);
-		return true;
-	}
-
-	template <class T, size_t L>
-	Vector<T, L> Vector<T, L>::operator-() const noexcept
-	{
-		return Vector<T, L>::Zero - *this;
-	}
-
-	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>::operator+=(const Vector<T, L>& other) noexcept
-	{
-		using namespace SIMD;
-		const auto lhs = VectorLoad(data);
-		const auto rhs = VectorLoad(other.data);
-		VectorStore(VectorAdd(lhs, rhs), data);
-		return *this;
-	}
-
-	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>::operator-=(const Vector<T, L>& other) noexcept
-	{
-		using namespace SIMD;
-		const auto lhs = VectorLoad(data);
-		const auto rhs = VectorLoad(other.data);
-		VectorStore(VectorSubtract(lhs, rhs), data);
-		return *this;
-	}
-
-	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>:: operator*=(const Vector<T, L>& other) noexcept
-	{
-		using namespace SIMD;
-		const auto lhs = VectorLoad(data);
-		const auto rhs = VectorLoad(other.data);
-		VectorStore(VectorMultiply(lhs, rhs), data);
-		return *this;
-	}
-
-	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>::operator*=(T scaler) noexcept
-	{
-		using namespace SIMD;
-		const auto lhs = VectorLoad(data);
-		const auto rhs = VectorLoad1(scaler);
-		VectorStore(VectorMultiply(lhs, rhs), data);
-		return *this;
-	}
-
-	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>:: operator/=(const Vector<T, L>& other) noexcept
-	{
-		for (size_t i = 0; i < L; ++i)
-			if (IsNearlyZero(other.data[i]))
-				return *this;
-	
-		using namespace SIMD;
-		const auto lhs = VectorLoad(data);
-		const auto rhs = VectorLoad(other.data);
-		VectorStore(VectorDivide(lhs, rhs), data);
-		return *this;
-	}
-
-	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>::operator/=(T divisor) noexcept
-	{
-		if (divisor == 0.0f)
-			return *this;
-
-		using namespace SIMD;
-		const auto lhs = VectorLoad(data);
-		const auto rhs = VectorLoad1(divisor);
-		VectorStore(VectorDivide(lhs, rhs), data);
-		return *this;
-	}
 
 	// Global Operators
 
 	template <class T, size_t L>
-	[[nodiscard]] bool operator==(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
+	[[nodiscard]] NO_ODR bool operator==(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
 	{
 		using namespace SIMD;
 		const auto lhsVec = VectorLoad(lhs.data);
@@ -387,6 +303,88 @@ namespace BSMath
 	{
 		Vector<T, 3> ret{ lhs };
 		return ret ^= rhs;
+	}
+
+	template <class T, size_t L>
+	bool Vector<T, L>::Normalize() noexcept
+	{
+		using namespace SIMD;
+		auto vec = VectorLoad(data);
+		auto size = VectorMultiply(vec, vec);
+		size = VectorHadd(VectorHadd(size, size), size);
+		vec = VectorMultiply(vec, VectorInvSqrt(size));
+		VectorStore(vec, data);
+		return true;
+	}
+
+	template <class T, size_t L>
+	Vector<T, L> Vector<T, L>::operator-() const noexcept
+	{
+		return Vector<T, L>::Zero - *this;
+	}
+
+	template <class T, size_t L>
+	Vector<T, L>& Vector<T, L>::operator+=(const Vector<T, L>& other) noexcept
+	{
+		using namespace SIMD;
+		const auto lhs = VectorLoad(data);
+		const auto rhs = VectorLoad(other.data);
+		VectorStore(VectorAdd(lhs, rhs), data);
+		return *this;
+	}
+
+	template <class T, size_t L>
+	Vector<T, L>& Vector<T, L>::operator-=(const Vector<T, L>& other) noexcept
+	{
+		using namespace SIMD;
+		const auto lhs = VectorLoad(data);
+		const auto rhs = VectorLoad(other.data);
+		VectorStore(VectorSubtract(lhs, rhs), data);
+		return *this;
+	}
+
+	template <class T, size_t L>
+	Vector<T, L>& Vector<T, L>:: operator*=(const Vector<T, L>& other) noexcept
+	{
+		using namespace SIMD;
+		const auto lhs = VectorLoad(data);
+		const auto rhs = VectorLoad(other.data);
+		VectorStore(VectorMultiply(lhs, rhs), data);
+		return *this;
+	}
+
+	template <class T, size_t L>
+	Vector<T, L>& Vector<T, L>::operator*=(T scaler) noexcept
+	{
+		using namespace SIMD;
+		const auto lhs = VectorLoad(data);
+		const auto rhs = VectorLoad1(scaler);
+		VectorStore(VectorMultiply(lhs, rhs), data);
+		return *this;
+	}
+
+	template <class T, size_t L>
+	Vector<T, L>& Vector<T, L>:: operator/=(const Vector<T, L>& other) noexcept
+	{
+		if (other == this->Zero) return *this;
+
+		using namespace SIMD;
+		const auto lhs = VectorLoad(data);
+		const auto rhs = VectorLoad(other.data);
+		VectorStore(VectorDivide(lhs, rhs), data);
+		return *this;
+	}
+
+	template <class T, size_t L>
+	Vector<T, L>& Vector<T, L>::operator/=(T divisor) noexcept
+	{
+		if (divisor == 0.0f) return *this;
+
+		using namespace SIMD;
+		const auto lhs = VectorLoad(data);
+		const auto rhs = VectorLoad1(divisor);
+		VectorStore(VectorDivide(lhs, rhs), data);
+		return *this;
 	}
 
 	// Global Functions
