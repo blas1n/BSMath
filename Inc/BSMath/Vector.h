@@ -196,7 +196,7 @@ namespace BSMath
 		[[nodiscard]] Vector GetNormal() const noexcept
 		{
 			Vector ret = *this;
-			return ret.Normalize() ? ret : Zero;
+			return ret.Normalize() ? ret : this->Zero;
 		}
 
 		bool Normalize() noexcept;
