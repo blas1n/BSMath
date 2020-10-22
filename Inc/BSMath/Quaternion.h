@@ -33,6 +33,11 @@ namespace BSMath
 			x = inX; y = inY; z = inZ;	w = inW;
 		}
 
+		[[nodiscard]] constexpr Quaternion operator-() const noexcept
+		{
+			return Quaternion{ -x, -y, -z, w };
+		}
+
 		Quaternion& operator*=(const Quaternion& other) noexcept;
 
 		[[nodiscard]] constexpr float& operator[](size_t i) noexcept { return (&x)[i]; }
@@ -100,7 +105,10 @@ namespace BSMath
 
 	[[nodiscard]] NO_ODR float operator|(const Quaternion& lhs, const Quaternion& rhs) noexcept
 	{
-		return Quaternion::Dot(lhs, rhs);
+		using namespace SIMD;
+		float ret[4];
+		VectorStorePtr(VectorMultiply(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x)), ret);
+		return ret[0] + ret[1] + ret[2] + ret[3];
 	}
 
 	// Global
