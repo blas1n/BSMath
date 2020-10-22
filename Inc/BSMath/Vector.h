@@ -287,10 +287,8 @@ namespace BSMath
 	template <class T, size_t L>
 	Vector<T, L>& Vector<T, L>:: operator/=(const Vector<T, L>& other) noexcept
 	{
-		for (size_t i = 0; i < L; ++i)
-			if (IsNearlyZero(other.data[i]))
-				return *this;
-	
+		if (other == this->Zero) return *this;
+
 		using namespace SIMD;
 		const auto lhs = VectorLoad(data);
 		const auto rhs = VectorLoad(other.data);
@@ -301,8 +299,7 @@ namespace BSMath
 	template <class T, size_t L>
 	Vector<T, L>& Vector<T, L>::operator/=(T divisor) noexcept
 	{
-		if (divisor == 0.0f)
-			return *this;
+		if (divisor == 0.0f) return *this;
 
 		using namespace SIMD;
 		const auto lhs = VectorLoad(data);
