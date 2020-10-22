@@ -51,5 +51,7 @@ namespace BSMath
 
 		EXPECT_TRUE(IsNearlyEqual(lhs, rhs, 1.0f));
 		EXPECT_TRUE(IsNearlyZero(lhs, 1.0f));
+
+		EXPECT_EQ(Lerp(lhs, rhs, 0.5f), Rotator{ 1.5f });
 	}
 }
