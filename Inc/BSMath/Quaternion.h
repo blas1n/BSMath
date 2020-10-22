@@ -10,9 +10,9 @@ namespace BSMath
 		const static Quaternion Identity;
 
 	public:
-		Quaternion() noexcept : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
+		constexpr Quaternion() noexcept : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
 
-		explicit Quaternion(float inX, float inY, float inZ, float inW) noexcept
+		explicit constexpr Quaternion(float inX, float inY, float inZ, float inW) noexcept
 			: x(inX), y(inY), z(inZ), w(inW) {}
 
 		explicit Quaternion(const float* ptr) noexcept
@@ -31,15 +31,15 @@ namespace BSMath
 			w = Cos(half);
 		}
 
-		void Set(float inX, float inY, float inZ, float inW) noexcept
+		constexpr void Set(float inX, float inY, float inZ, float inW) noexcept
 		{
 			x = inX; y = inY; z = inZ;	w = inW;
 		}
 
 		Quaternion& operator*=(const Quaternion& other) noexcept;
 
-		[[nodiscard]] float& operator[](size_t i) noexcept { return (&x)[i]; }
-		[[nodiscard]] float operator[](size_t i) const noexcept { return (&x)[i]; }
+		[[nodiscard]] constexpr float& operator[](size_t i) noexcept { return (&x)[i]; }
+		[[nodiscard]] constexpr float operator[](size_t i) const noexcept { return (&x)[i]; }
 
 		[[nodiscard]] static float Dot(const Quaternion& lhs, const Quaternion& rhs) noexcept;
 
