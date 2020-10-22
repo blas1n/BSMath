@@ -226,6 +226,85 @@ namespace BSMath
 		[[nodiscard]] constexpr T operator[](size_t idx) const noexcept { return data[idx]; }
 	};
 
+	// Global Operators
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR bool operator==(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
+	{
+		using namespace SIMD;
+		const auto lhsVec = VectorLoad(lhs.data);
+		const auto rhsVec = VectorLoad(rhs.data);
+		return VectorMoveMask(VectorEqual(lhsVec, rhsVec)) == 0xF;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR bool operator!=(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept { return !(lhs == rhs); }
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR Vector<T, L> operator+(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
+	{
+		return Vector<T, L>{ lhs } += rhs;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR Vector<T, L> operator-(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
+	{
+		return Vector<T, L>{ lhs } -= rhs;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR Vector<T, L> operator*(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
+	{
+		return Vector<T, L>{ lhs } *= rhs;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR Vector<T, L> operator*(const Vector<T, L>& vec, T scaler) noexcept
+	{
+		return Vector<T, L>{ vec } *= scaler;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR Vector<T, L> operator*(T scaler, const Vector<T, L>& vec) noexcept
+	{
+		return Vector<T, L>{ vec } *= scaler;
+	}
+	
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR Vector<T, L> operator/(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
+	{
+		return Vector<T, L>{ lhs } /= rhs;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR Vector<T, L> operator/(const Vector<T, L>& vec, T divisor) noexcept
+	{
+		return Vector<T, L>{ vec } /= divisor;
+	}
+
+	template <class T>
+	Vector<T, 3>& operator^=(Vector<T, 3>& lhs,  const Vector<T, 3>& rhs) noexcept
+	{
+		const auto ret1 = Vector<T, 3>{ lhs.y, lhs.z, lhs.x } *Vector<T, 3>{ rhs.z, rhs.x, rhs.y };
+		const auto ret2 = Vector<T, 3>{ lhs.z, lhs.x, lhs.y } *Vector<T, 3>{ rhs.y, rhs.z, rhs.x };
+		return lhs = ret1 - ret2;
+	}
+
+	template <class T, size_t L>
+	[[nodiscard]] NO_ODR T operator|(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
+	{
+		using namespace SIMD;
+		const auto size = VectorMultiply(VectorLoad(lhs.data), VectorLoad(rhs.data));
+		return VectorStore1(VectorHadd(VectorHadd(size, size), size));
+	}
+
+	template <class T>
+	[[nodiscard]] NO_ODR Vector<T, 3> operator^(const Vector<T, 3>& lhs, const Vector<T, 3>& rhs) noexcept
+	{
+		Vector<T, 3> ret{ lhs };
+		return ret ^= rhs;
+	}
+
 	template <class T, size_t L>
 	bool Vector<T, L>::Normalize() noexcept
 	{
@@ -306,85 +385,6 @@ namespace BSMath
 		const auto rhs = VectorLoad1(divisor);
 		VectorStore(VectorDivide(lhs, rhs), data);
 		return *this;
-	}
-
-	// Global Operators
-
-	template <class T, size_t L>
-	[[nodiscard]] bool operator==(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
-	{
-		using namespace SIMD;
-		const auto lhsVec = VectorLoad(lhs.data);
-		const auto rhsVec = VectorLoad(rhs.data);
-		return VectorMoveMask(VectorEqual(lhsVec, rhsVec)) == 0xF;
-	}
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR bool operator!=(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept { return !(lhs == rhs); }
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR Vector<T, L> operator+(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
-	{
-		return Vector<T, L>{ lhs } += rhs;
-	}
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR Vector<T, L> operator-(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
-	{
-		return Vector<T, L>{ lhs } -= rhs;
-	}
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR Vector<T, L> operator*(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
-	{
-		return Vector<T, L>{ lhs } *= rhs;
-	}
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR Vector<T, L> operator*(const Vector<T, L>& vec, T scaler) noexcept
-	{
-		return Vector<T, L>{ vec } *= scaler;
-	}
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR Vector<T, L> operator*(T scaler, const Vector<T, L>& vec) noexcept
-	{
-		return Vector<T, L>{ vec } *= scaler;
-	}
-	
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR Vector<T, L> operator/(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
-	{
-		return Vector<T, L>{ lhs } /= rhs;
-	}
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR Vector<T, L> operator/(const Vector<T, L>& vec, T divisor) noexcept
-	{
-		return Vector<T, L>{ vec } /= divisor;
-	}
-
-	template <class T>
-	Vector<T, 3>& operator^=(Vector<T, 3>& lhs,  const Vector<T, 3>& rhs) noexcept
-	{
-		const auto ret1 = Vector<T, 3>{ lhs.y, lhs.z, lhs.x } *Vector<T, 3>{ rhs.z, rhs.x, rhs.y };
-		const auto ret2 = Vector<T, 3>{ lhs.z, lhs.x, lhs.y } *Vector<T, 3>{ rhs.y, rhs.z, rhs.x };
-		return lhs = ret1 - ret2;
-	}
-
-	template <class T, size_t L>
-	[[nodiscard]] NO_ODR T operator|(const Vector<T, L>& lhs, const Vector<T, L>& rhs) noexcept
-	{
-		using namespace SIMD;
-		const auto size = VectorMultiply(VectorLoad(lhs.data), VectorLoad(rhs.data));
-		return VectorStore1(VectorHadd(VectorHadd(size, size), size));
-	}
-
-	template <class T>
-	[[nodiscard]] NO_ODR Vector<T, 3> operator^(const Vector<T, 3>& lhs, const Vector<T, 3>& rhs) noexcept
-	{
-		Vector<T, 3> ret{ lhs };
-		return ret ^= rhs;
 	}
 
 	// Global Functions
