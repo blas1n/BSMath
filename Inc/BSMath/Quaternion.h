@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector3.h"
+#include "Vector.h"
 
 namespace BSMath
 {
@@ -25,9 +25,9 @@ namespace BSMath
 		{
 			const auto half = angle * 0.5f;
 			const auto vec = axis * Sin(half);
-			x = vec.data[0][0];
-			y = vec.data[0][1];
-			z = vec.data[0][2];
+			x = vec.x;
+			y = vec.y;
+			z = vec.z;
 			w = Cos(half);
 		}
 
@@ -73,7 +73,7 @@ namespace BSMath
 		tmp = VectorMultiply(VectorReplicate<Swizzle::Z>(lhs), VectorSwizzle<Swizzle::Y, Swizzle::X, Swizzle::W, Swizzle::Z>(rhs));
 		result = VectorAdd(VectorMultiply(tmp, SignMask2), result);
 
-		VectorStore(result, &x);
+		VectorStorePtr(result, &x);
 		return *this;
 	}
 
@@ -81,7 +81,7 @@ namespace BSMath
 	{
 		using namespace SIMD;
 		float ret[4];
-		VectorStore(VectorMultiply(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x)), ret);
+		VectorStorePtr(VectorMultiply(VectorLoadPtr(&lhs.x), VectorLoadPtr(&rhs.x)), ret);
 		return ret[0] + ret[1] + ret[2] + ret[3];
 	}
 
@@ -133,7 +133,7 @@ namespace BSMath
 		result = VectorMultiply(result, VectorInvSqrt(size));
 
 		Quaternion ret;
-		VectorStore(result, &ret.x);
+		VectorStorePtr(result, &ret.x);
 		return ret;
 	}
 
@@ -173,7 +173,7 @@ namespace BSMath
 		result = VectorMultiply(result, VectorInvSqrt(size));
 
 		Quaternion ret;
-		VectorStore(result, &ret.x);
+		VectorStorePtr(result, &ret.x);
 		return ret;
 	}
 }
