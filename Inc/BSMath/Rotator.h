@@ -35,10 +35,7 @@ namespace BSMath
 		Rotator& operator+=(const Rotator& other) noexcept;
 		Rotator& operator-=(const Rotator& other) noexcept;
 
-		Rotator& operator*=(const Rotator& other) noexcept;
 		Rotator& operator*=(float scaler) noexcept;
-
-		Rotator& operator/=(const Rotator& other) noexcept;
 		Rotator& operator/=(float divisor) noexcept;
 
 		[[nodiscard]] constexpr float& operator[](size_t idx) noexcept { return (&roll)[idx]; }
@@ -72,11 +69,6 @@ namespace BSMath
 		return Rotator{ lhs } -= rhs;
 	}
 
-	[[nodiscard]] NO_ODR Rotator operator*(const Rotator& lhs, const Rotator& rhs) noexcept
-	{
-		return Rotator{ lhs } *= rhs;
-	}
-
 	[[nodiscard]] NO_ODR Rotator operator*(const Rotator& vec, float scaler) noexcept
 	{
 		return Rotator{ vec } *= scaler;
@@ -85,11 +77,6 @@ namespace BSMath
 	[[nodiscard]] NO_ODR Rotator operator*(float scaler, const Rotator& vec) noexcept
 	{
 		return Rotator{ vec } *= scaler;
-	}
-
-	[[nodiscard]] NO_ODR Rotator operator/(const Rotator& lhs, const Rotator& rhs) noexcept
-	{
-		return Rotator{ lhs } /= rhs;
 	}
 
 	[[nodiscard]] NO_ODR Rotator operator/(const Rotator& vec, float divisor) noexcept
@@ -122,32 +109,12 @@ namespace BSMath
 		return *this;
 	}
 
-	Rotator& Rotator:: operator*=(const Rotator& other) noexcept
-	{
-		using namespace SIMD;
-		const auto lhs = VectorLoadPtr(&roll, 3);
-		const auto rhs = VectorLoadPtr(&other.roll, 3);
-		VectorStorePtr(VectorMultiply(lhs, rhs), &roll, 3);
-		return *this;
-	}
-
 	Rotator& Rotator::operator*=(float scaler) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoadPtr(&roll, 3);
 		const auto rhs = VectorLoad1(scaler);
 		VectorStorePtr(VectorMultiply(lhs, rhs), &roll, 3);
-		return *this;
-	}
-
-	Rotator& Rotator:: operator/=(const Rotator& other) noexcept
-	{
-		if (other == Zero) return *this;
-
-		using namespace SIMD;
-		const auto lhs = VectorLoadPtr(&roll, 3);
-		const auto rhs = VectorLoadPtr(&other.roll, 3);
-		VectorStorePtr(VectorDivide(lhs, rhs), &roll, 3);
 		return *this;
 	}
 
