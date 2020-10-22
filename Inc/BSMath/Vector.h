@@ -35,8 +35,8 @@ namespace BSMath
 				T data[2];
 				struct
 				{
-					float x;
-					float y;
+					T x;
+					T y;
 				};
 			};
 		};
@@ -68,9 +68,9 @@ namespace BSMath
 				T data[3];
 				struct
 				{
-					float x;
-					float y;
-					float z;
+					T x;
+					T y;
+					T z;
 				};
 			};
 		};
@@ -96,10 +96,10 @@ namespace BSMath
 				T data[4];
 				struct
 				{
-					float x;
-					float y;
-					float z;
-					float w;
+					T x;
+					T y;
+					T z;
+					T w;
 				};
 			};
 		};
