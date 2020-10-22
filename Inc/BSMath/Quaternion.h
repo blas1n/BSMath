@@ -15,11 +15,8 @@ namespace BSMath
 		explicit constexpr Quaternion(float inX, float inY, float inZ, float inW) noexcept
 			: x(inX), y(inY), z(inZ), w(inW) {}
 
-		explicit Quaternion(const float* ptr) noexcept
-			: x(0.0f), y(0.0f), z(0.0f), w(0.0f)
-		{
-			std::copy_n(ptr, 4, &x);
-		}
+		explicit constexpr Quaternion(const float* ptr) noexcept
+			: x(ptr[0]), y(ptr[1]), z(ptr[2]), w(ptr[3]) {}
 
 		explicit Quaternion(const Vector3& axis, float angle) noexcept
 		{
