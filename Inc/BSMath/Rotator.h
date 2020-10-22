@@ -128,4 +128,23 @@ namespace BSMath
 		VectorStorePtr(VectorDivide(lhs, rhs), &roll, 3);
 		return *this;
 	}
+
+	// Global
+
+	[[nodiscard]] NO_ODR bool IsNearlyEqual(const Rotator& lhs,
+		const Rotator& rhs, float tolerance = Epsilon) noexcept
+	{
+		using namespace SIMD;
+		const auto epsilon = VectorLoad1(tolerance);
+		const auto vec = VectorSubtract(VectorLoadPtr(&lhs.roll, 3), VectorLoadPtr(&rhs.roll, 3));
+		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
+	}
+
+	[[nodiscard]] NO_ODR bool IsNearlyZero(const Rotator& rot, float tolerance = Epsilon) noexcept
+	{
+		using namespace SIMD;
+		const auto epsilon = VectorLoad1(tolerance);
+		const auto vec = VectorLoadPtr(&rot.roll, 3);
+		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
+	}
 }
