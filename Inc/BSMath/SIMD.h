@@ -69,6 +69,20 @@ namespace BSMath::SIMD
         return _mm_load_si128(reinterpret_cast<const __m128i*>(vec));
     }
 
+    [[nodiscard]] NO_ODR VectorRegister<float> VectorLoadPtr(const float* vec, size_t size) noexcept
+    {
+        float arr[4]{};
+        std::copy_n(vec, size, arr);
+        VectorLoadPtr(vec);
+    }
+
+    [[nodiscard]] NO_ODR VectorRegister<int> VectorLoadPtr(const int* vec, size_t size) noexcept
+    {
+        int arr[4]{};
+        std::copy_n(vec, size, arr);
+        VectorLoadPtr(vec);
+    }
+
     template <size_t L>
     [[nodiscard]] NO_ODR VectorRegister<float> VectorLoad(const float(&vec)[L]) noexcept
     {
@@ -113,6 +127,20 @@ namespace BSMath::SIMD
     NO_ODR void VECTOR_CALL VectorStorePtr(VectorRegister<int> vec, int* ptr) noexcept
     {
         _mm_store_si128(reinterpret_cast<VectorRegister<int>*>(ptr), vec);
+    }
+
+    NO_ODR void VECTOR_CALL VectorStorePtr(VectorRegister<float> vec, float* ptr, size_t size) noexcept
+    {
+        float arr[4];
+        VectorStorePtr(vec, arr);
+        std::copy_n(arr, size, ptr);
+    }
+
+    NO_ODR void VECTOR_CALL VectorStorePtr(VectorRegister<int> vec, int* ptr, size_t size) noexcept
+    {
+        int arr[4];
+        VectorStorePtr(vec, arr);
+        std::copy_n(arr, size, ptr);
     }
 
     template <size_t L>
