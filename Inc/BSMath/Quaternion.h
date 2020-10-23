@@ -40,9 +40,9 @@ namespace BSMath
 		float w;
 	};
 
-	const Quaternion Quaternion::Identity{};
+	inline const Quaternion Quaternion::Identity{};
 
-	Quaternion& Quaternion::operator*=(const Quaternion& other) noexcept
+	NO_ODR Quaternion& Quaternion::operator*=(const Quaternion& other) noexcept
 	{
 		using namespace SIMD;
 		

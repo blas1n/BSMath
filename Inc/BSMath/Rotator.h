@@ -82,14 +82,14 @@ namespace BSMath
 		return Rotator{ vec } /= divisor;
 	}
 
-	const Rotator Rotator::Zero{};
+	inline const Rotator Rotator::Zero{};
 
-	Rotator Rotator::operator-() const noexcept
+	NO_ODR Rotator Rotator::operator-() const noexcept
 	{
 		return Rotator::Zero - *this;
 	}
 
-	Rotator& Rotator::operator+=(const Rotator& other) noexcept
+	NO_ODR Rotator& Rotator::operator+=(const Rotator& other) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoadPtr(&roll, 3);
@@ -98,7 +98,7 @@ namespace BSMath
 		return *this;
 	}
 
-	Rotator& Rotator::operator-=(const Rotator& other) noexcept
+	NO_ODR Rotator& Rotator::operator-=(const Rotator& other) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoadPtr(&roll, 3);
@@ -107,7 +107,7 @@ namespace BSMath
 		return *this;
 	}
 
-	Rotator& Rotator::operator*=(float scaler) noexcept
+	NO_ODR Rotator& Rotator::operator*=(float scaler) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoadPtr(&roll, 3);
@@ -116,7 +116,7 @@ namespace BSMath
 		return *this;
 	}
 
-	Rotator& Rotator::operator/=(float divisor) noexcept
+	NO_ODR Rotator& Rotator::operator/=(float divisor) noexcept
 	{
 		if (divisor == 0.0f) return *this;
 
