@@ -25,7 +25,7 @@ namespace BSMath
 		explicit constexpr Rotator(const float* ptr) noexcept
 			: roll(ptr[0]), pitch(ptr[1]), yaw(ptr[2]) {}
 
-		void Set(float inRoll, float inPitch, float inYaw) noexcept
+		constexpr void Set(float inRoll, float inPitch, float inYaw) noexcept
 		{
 			roll = inRoll; pitch = inPitch; yaw = inYaw;
 		}
