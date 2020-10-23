@@ -29,7 +29,7 @@ namespace BSMath
 		template <class... Args>
 		explicit Matrix(T x, T y, Args ... args) noexcept : data()
 		{
-			static_assert(sizeof...(Args) + 2 == L * L, "Too many arguments");
+			static_assert(sizeof...(Args) + 2 == L * L, "The number of arguments is not correct");
 			const std::initializer_list<T> list{ x, y, static_cast<T>(args)... };
 			std::copy(list.begin(), list.end(), *data);
 		}
