@@ -18,16 +18,6 @@ namespace BSMath
 		explicit constexpr Quaternion(const float* ptr) noexcept
 			: x(ptr[0]), y(ptr[1]), z(ptr[2]), w(ptr[3]) {}
 
-		explicit Quaternion(const Vector3& axis, float angle) noexcept
-		{
-			const auto half = angle * 0.5f;
-			const auto vec = axis * Sin(half);
-			x = vec.x;
-			y = vec.y;
-			z = vec.z;
-			w = Cos(half);
-		}
-
 		constexpr void Set(float inX, float inY, float inZ, float inW) noexcept
 		{
 			x = inX; y = inY; z = inZ;	w = inW;
