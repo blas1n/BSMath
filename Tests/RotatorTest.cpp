@@ -12,13 +12,11 @@ namespace BSMath
 		Rotator quat2{ 0.0f, 0.0f, 0.0f };
 		Rotator quat3{ Zeros };
 		Rotator quat4{ Rotator::Zero };
-		Rotator quat5{ Vector3::Zero };
 
 		EXPECT_EQ(quat0, quat1);
 		EXPECT_EQ(quat0, quat2);
 		EXPECT_EQ(quat0, quat3);
 		EXPECT_EQ(quat0, quat4);
-		EXPECT_EQ(quat0, quat5);
 	}
 
 	TEST(RotatorTest, Operator)
