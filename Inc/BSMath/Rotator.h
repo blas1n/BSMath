@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Vector.h"
+#include "Basic.h"
+#include "Utility.h"
 
 namespace BSMath
 {
@@ -18,9 +19,6 @@ namespace BSMath
 
 		explicit constexpr Rotator(float inRoll, float inPitch, float inYaw) noexcept
 			: roll(inRoll), pitch(inPitch), yaw(inYaw) {}
-
-		explicit constexpr Rotator(const Vector3& vec) noexcept
-			: roll(vec.x), pitch(vec.y), yaw(vec.z) {}
 
 		explicit constexpr Rotator(const float* ptr) noexcept
 			: roll(ptr[0]), pitch(ptr[1]), yaw(ptr[2]) {}
