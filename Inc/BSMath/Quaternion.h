@@ -132,7 +132,7 @@ namespace BSMath
 		float scale0, scale1;
 		if (cosm < 0.9999f)
 		{
-			const float omega = ACos(cosm);
+			const float omega = Acos(cosm);
 			const float invSin = 1.f / Sin(omega);
 			scale0 = Sin((1.f - t) * omega) * invSin;
 			scale1 = Sin(t * omega) * invSin;

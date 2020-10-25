@@ -79,10 +79,10 @@ namespace BSMath
     [[nodiscard]] NO_ODR float Sin(float n) noexcept { return std::sin(n); }
     [[nodiscard]] NO_ODR float Tan(float n) noexcept { return std::tan(n); }
 
-    [[nodiscard]] NO_ODR float ACos(float n) noexcept { return std::acos(n); }
-    [[nodiscard]] NO_ODR float ASin(float n) noexcept { return std::asin(n); }
-    [[nodiscard]] NO_ODR float ATan(float n) noexcept { return std::atan(n); }
-    [[nodiscard]] NO_ODR float ATan2(float y, float n) noexcept { return std::atan2(y, n); }
+    [[nodiscard]] NO_ODR float Acos(float n) noexcept { return std::acos(n); }
+    [[nodiscard]] NO_ODR float Asin(float n) noexcept { return std::asin(n); }
+    [[nodiscard]] NO_ODR float Atan(float n) noexcept { return std::atan(n); }
+    [[nodiscard]] NO_ODR float Atan2(float y, float n) noexcept { return std::atan2(y, n); }
 
     [[nodiscard]] constexpr bool IsNearlyEqual(float lhs, float rhs, float tolerance = Epsilon) noexcept
     {
