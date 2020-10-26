@@ -169,6 +169,39 @@ namespace BSMath::Creator
 			const auto vec = axis * Sin(half);
 			return BSMath::Quaternion{ vec.x, vec.y, vec.z, Cos(half) };
 		}
+
+		[[nodiscard]] NO_ODR BSMath::Quaternion FromMatrix(const BSMath::Matrix3& mat) noexcept
+		{
+			const float trace = mat[0][0] + mat[1][1] + mat[2][2];
+			float temp[4];
+
+			if (trace > 0.0f)
+			{
+				float s = BSMath::Sqrt(trace + 1.0f);
+				temp[3] = s * 0.5f;
+				
+				s = 0.5f / s;
+				temp[0] = (mat[2][1] - mat[1][2]) * s;
+				temp[1] = (mat[0][2] - mat[2][0]) * s;
+				temp[2] = (mat[1][0] - mat[0][1]) * s;
+			}
+			else
+			{
+				const int i = mat[0][0] < mat[1][1] ? (mat[1][1] < mat[2][2] ? 2 : 1) : (mat[0][0] < mat[2][2] ? 2 : 0);
+				const int j = (i + 1) % 3;
+				const int k = (i + 2) % 3;
+
+				float s = BSMath::Sqrt(mat[i][i] - mat[j][j] - mat[k][k] + 1.0f);
+				temp[i] = s * 0.5f;
+				
+				s = 0.5f / s;
+				temp[3] = (mat[k][j] - mat[j][k]) * s;
+				temp[j] = (mat[j][i] + mat[i][j]) * s;
+				temp[k] = (mat[k][i] + mat[i][k]) * s;
+			}
+
+			return BSMath::Quaternion{ temp };
+		}
 	}
 
 	namespace Rotator

@@ -49,6 +49,14 @@ namespace BSMath
 
 		target.Set(0.0f, 0.0f, 0.0f, 1.0f);
 		EXPECT_EQ(FromAngleAxis(Vector3::Zero, 0.0f), target);
+
+		Matrix3 mat = Matrix3::Zero;
+		mat[0][2] = 1.0f;
+		mat[1][0] = 1.0f;
+		mat[2][1] = 1.0f;
+
+		target.Set(0.5f, 0.5f, 0.5f, 0.5f);
+		EXPECT_EQ(FromMatrix(mat), target);
 	}
 
 	TEST(CreatorTest, Rotator)
