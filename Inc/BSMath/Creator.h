@@ -58,8 +58,8 @@ namespace BSMath::Creator
 
 			constexpr static float Threshold = 0.99999f;
 			const float test = -2.0f * (quat.x * quat.z - quat.w * quat.y);
-
 			BSMath::Rotator ret;
+
 			// If the pitch angle is PI/2 or -PI/2, we can only compute
 			// the sum roll + yaw.  However, any combination that gives
 			// the right sum will produce the correct orientation, so we
