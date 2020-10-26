@@ -255,5 +255,37 @@ namespace BSMath::Creator
 		{
 			return BSMath::Rotator{ euler.x, euler.y, euler.z };
 		}
+
+		[[nodiscard]] NO_ODR BSMath::Rotator FromMatrix(const BSMath::Matrix3& mat) noexcept
+		{
+			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btMatrix3x3.h
+
+			BSMath::Rotator ret;
+
+			// Check that pitch is not at a singularity
+			if (BSMath::Abs(mat[2][0]) >= 1.0f)
+			{
+				ret.yaw = 0.0f;
+
+				// From difference of angles formula
+				const float delta = BSMath::Atan2(mat[0][0], mat[0][2]);
+				const float sign = BSMath::Sign(mat[2][0]);
+
+				ret.pitch = BSMath::Rad2Deg(BSMath::Pi * sign * 0.5f);
+				ret.roll = BSMath::Rad2Deg((ret.pitch * sign) + delta);
+			}
+			else
+			{
+				ret.pitch = -BSMath::Rad2Deg(BSMath::Asin(mat[2][0]));
+
+				ret.roll = BSMath::Rad2Deg(BSMath::Atan2(mat[2][1] / BSMath::Cos(ret.pitch),
+					mat[2][2] / BSMath::Cos(ret.pitch)));
+
+				ret.yaw = BSMath::Rad2Deg(BSMath::Atan2(mat[1][0] / BSMath::Cos(ret.pitch),
+					mat[0][0] / BSMath::Cos(ret.pitch)));
+			}
+
+			return ret;
+		}
 	}
 }

@@ -69,5 +69,12 @@ namespace BSMath
 
 		target.Set(90.0f, 0.0f, 90.0f);
 		EXPECT_TRUE(IsNearlyEqual(FromQuaternion(Quaternion{ 0.5f, 0.5f, 0.5f, 0.5f }), target));
+
+		Matrix3 mat = Matrix3::Zero;
+		mat[0][2] = 1.0f;
+		mat[1][0] = 1.0f;
+		mat[2][1] = 1.0f;
+
+		EXPECT_EQ(FromMatrix(mat), target);
 	}
 }
