@@ -10,7 +10,13 @@ namespace BSMath
 
 	TEST(CreatorTest, Quaternion)
 	{
+		using namespace Creator::Quaternion;
 
+		Quaternion target{ 0.5f, 0.5f, 0.5f, 0.5f };
+		EXPECT_TRUE(IsNearlyEqual(FromEuler(90.0f, 0.0f, 90.0f), target));
+
+		target.Set(0.0f, 0.0f, 0.0f, 1.0f);
+		EXPECT_EQ(FromAngleAxis(Vector3::Zero, 0.0f), target);
 	}
 
 	TEST(CreatorTest, Rotator)
