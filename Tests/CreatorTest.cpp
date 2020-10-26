@@ -10,16 +10,18 @@ namespace BSMath
 		Vector3 vecs[3]{ Vector3::Right, Vector3::Up, Vector3::Forward };
 		EXPECT_EQ(FromVectors(vecs), Matrix3::Identity);
 
-		Matrix4 target
 		{
-			 1.0f,  0.0f,  0.0f, 0.0f,
-			 0.0f,  1.0f,  0.0f, 0.0f,
-			 0.0f,  0.0f,  1.0f, 0.0f,
-			10.0f, 10.0f, 10.0f, 1.0f
-		};
-		EXPECT_EQ(FromTranslation(Vector3::One * 10.0f), target);
+			Matrix4 target
+			{
+				 1.0f,  0.0f,  0.0f, 0.0f,
+				 0.0f,  1.0f,  0.0f, 0.0f,
+				 0.0f,  0.0f,  1.0f, 0.0f,
+				10.0f, 10.0f, 10.0f, 1.0f
+			};
+			EXPECT_EQ(FromTranslation(Vector3::One * 10.0f), target);
+		}
 
-		target = Matrix4::Identity;
+		Matrix3 target;
 		target[0][0] = 10.0f;
 		target[1][1] = 10.0f;
 		target[2][2] = 10.0f;
