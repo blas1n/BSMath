@@ -18,16 +18,6 @@ namespace BSMath
 		explicit constexpr Quaternion(const float* ptr) noexcept
 			: x(ptr[0]), y(ptr[1]), z(ptr[2]), w(ptr[3]) {}
 
-		explicit Quaternion(const Vector3& axis, float angle) noexcept
-		{
-			const auto half = angle * 0.5f;
-			const auto vec = axis * Sin(half);
-			x = vec.x;
-			y = vec.y;
-			z = vec.z;
-			w = Cos(half);
-		}
-
 		constexpr void Set(float inX, float inY, float inZ, float inW) noexcept
 		{
 			x = inX; y = inY; z = inZ;	w = inW;
@@ -50,9 +40,9 @@ namespace BSMath
 		float w;
 	};
 
-	const Quaternion Quaternion::Identity{};
+	inline const Quaternion Quaternion::Identity{};
 
-	Quaternion& Quaternion::operator*=(const Quaternion& other) noexcept
+	NO_ODR Quaternion& Quaternion::operator*=(const Quaternion& other) noexcept
 	{
 		using namespace SIMD;
 		
@@ -142,7 +132,7 @@ namespace BSMath
 		float scale0, scale1;
 		if (cosm < 0.9999f)
 		{
-			const float omega = ACos(cosm);
+			const float omega = Acos(cosm);
 			const float invSin = 1.f / Sin(omega);
 			scale0 = Sin((1.f - t) * omega) * invSin;
 			scale1 = Sin(t * omega) * invSin;

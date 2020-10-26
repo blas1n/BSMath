@@ -105,52 +105,52 @@ namespace BSMath
 		};
 
 		template <class T>
-		const Vector<T, 2> VectorBase<T, 2>::    Zero{  static_cast<T>(0),  static_cast<T>(0) };
+		inline const Vector<T, 2> VectorBase<T, 2>::    Zero{  static_cast<T>(0),  static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 2> VectorBase<T, 2>::     One{  static_cast<T>(1),  static_cast<T>(1) };
+		inline const Vector<T, 2> VectorBase<T, 2>::     One{  static_cast<T>(1),  static_cast<T>(1) };
 
 		template <class T>
-		const Vector<T, 2> VectorBase<T, 2>::   Right{  static_cast<T>(1),  static_cast<T>(0) };
+		inline const Vector<T, 2> VectorBase<T, 2>::   Right{  static_cast<T>(1),  static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 2> VectorBase<T, 2>::    Left{ static_cast<T>(-1),  static_cast<T>(0) };
+		inline const Vector<T, 2> VectorBase<T, 2>::    Left{ static_cast<T>(-1),  static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 2> VectorBase<T, 2>::      Up{  static_cast<T>(0),  static_cast<T>(1) };
+		inline const Vector<T, 2> VectorBase<T, 2>::      Up{  static_cast<T>(0),  static_cast<T>(1) };
 
 		template <class T>
-		const Vector<T, 2> VectorBase<T, 2>::    Down{  static_cast<T>(0), static_cast<T>(-1) };
+		inline const Vector<T, 2> VectorBase<T, 2>::    Down{  static_cast<T>(0), static_cast<T>(-1) };
 
 		template <class T>
-		const Vector<T, 3> VectorBase<T, 3>::    Zero{  static_cast<T>(0),  static_cast<T>(0),  static_cast<T>(0) };
+		inline const Vector<T, 3> VectorBase<T, 3>::    Zero{  static_cast<T>(0),  static_cast<T>(0),  static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 3> VectorBase<T, 3>::     One{  static_cast<T>(1),  static_cast<T>(1),  static_cast<T>(1) };
+		inline const Vector<T, 3> VectorBase<T, 3>::     One{  static_cast<T>(1),  static_cast<T>(1),  static_cast<T>(1) };
 
 		template <class T>
-		const Vector<T, 3> VectorBase<T, 3>::   Right{  static_cast<T>(1),  static_cast<T>(0),  static_cast<T>(0) };
+		inline const Vector<T, 3> VectorBase<T, 3>::   Right{  static_cast<T>(1),  static_cast<T>(0),  static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 3> VectorBase<T, 3>::    Left{ static_cast<T>(-1),  static_cast<T>(0),  static_cast<T>(0) };
+		inline const Vector<T, 3> VectorBase<T, 3>::    Left{ static_cast<T>(-1),  static_cast<T>(0),  static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 3> VectorBase<T, 3>::      Up{  static_cast<T>(0),  static_cast<T>(1),  static_cast<T>(0) };
+		inline const Vector<T, 3> VectorBase<T, 3>::      Up{  static_cast<T>(0),  static_cast<T>(1),  static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 3> VectorBase<T, 3>::    Down{  static_cast<T>(0), static_cast<T>(-1),  static_cast<T>(0) };
+		inline const Vector<T, 3> VectorBase<T, 3>::    Down{  static_cast<T>(0), static_cast<T>(-1),  static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 3> VectorBase<T, 3>:: Forward{  static_cast<T>(0),  static_cast<T>(0),  static_cast<T>(1) };
+		inline const Vector<T, 3> VectorBase<T, 3>:: Forward{  static_cast<T>(0),  static_cast<T>(0),  static_cast<T>(1) };
 
 		template <class T>
-		const Vector<T, 3> VectorBase<T, 3>::Backward{  static_cast<T>(0),  static_cast<T>(0), static_cast<T>(-1) };
+		inline const Vector<T, 3> VectorBase<T, 3>::Backward{  static_cast<T>(0),  static_cast<T>(0), static_cast<T>(-1) };
 
 		template <class T>
-		const Vector<T, 4> VectorBase<T, 4>::    Zero{ static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0) };
+		inline const Vector<T, 4> VectorBase<T, 4>::    Zero{ static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0) };
 
 		template <class T>
-		const Vector<T, 4> VectorBase<T, 4>::     One{ static_cast<T>(1), static_cast<T>(1), static_cast<T>(1), static_cast<T>(1) };
+		inline const Vector<T, 4> VectorBase<T, 4>::     One{ static_cast<T>(1), static_cast<T>(1), static_cast<T>(1), static_cast<T>(1) };
 	}
 
 	template <class T, size_t L>
@@ -173,7 +173,7 @@ namespace BSMath
 		}
 
 		template <class U, size_t L2>
-		explicit Vector(const Vector<U, L2>& other) noexcept : Vector()
+		Vector(const Vector<U, L2>& other) noexcept : Vector()
 		{
 #pragma warning(disable:4244)
 			std::copy_n(other.data, Min(L, L2), data);
@@ -283,7 +283,7 @@ namespace BSMath
 	}
 
 	template <class T>
-	Vector<T, 3>& operator^=(Vector<T, 3>& lhs,  const Vector<T, 3>& rhs) noexcept
+	NO_ODR Vector<T, 3>& operator^=(Vector<T, 3>& lhs,  const Vector<T, 3>& rhs) noexcept
 	{
 		const auto ret1 = Vector<T, 3>{ lhs.y, lhs.z, lhs.x } *Vector<T, 3>{ rhs.z, rhs.x, rhs.y };
 		const auto ret2 = Vector<T, 3>{ lhs.z, lhs.x, lhs.y } *Vector<T, 3>{ rhs.y, rhs.z, rhs.x };
@@ -306,7 +306,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	bool Vector<T, L>::Normalize() noexcept
+	NO_ODR bool Vector<T, L>::Normalize() noexcept
 	{
 		using namespace SIMD;
 		auto vec = VectorLoad(data);
@@ -318,13 +318,13 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Vector<T, L> Vector<T, L>::operator-() const noexcept
+	NO_ODR Vector<T, L> Vector<T, L>::operator-() const noexcept
 	{
 		return Vector<T, L>::Zero - *this;
 	}
 
 	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>::operator+=(const Vector<T, L>& other) noexcept
+	NO_ODR Vector<T, L>& Vector<T, L>::operator+=(const Vector<T, L>& other) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoad(data);
@@ -334,7 +334,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>::operator-=(const Vector<T, L>& other) noexcept
+	NO_ODR Vector<T, L>& Vector<T, L>::operator-=(const Vector<T, L>& other) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoad(data);
@@ -344,7 +344,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>:: operator*=(const Vector<T, L>& other) noexcept
+	NO_ODR Vector<T, L>& Vector<T, L>:: operator*=(const Vector<T, L>& other) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoad(data);
@@ -354,7 +354,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>::operator*=(T scaler) noexcept
+	NO_ODR Vector<T, L>& Vector<T, L>::operator*=(T scaler) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoad(data);
@@ -364,7 +364,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>:: operator/=(const Vector<T, L>& other) noexcept
+	NO_ODR Vector<T, L>& Vector<T, L>:: operator/=(const Vector<T, L>& other) noexcept
 	{
 		if (other == this->Zero) return *this;
 
@@ -376,7 +376,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Vector<T, L>& Vector<T, L>::operator/=(T divisor) noexcept
+	NO_ODR Vector<T, L>& Vector<T, L>::operator/=(T divisor) noexcept
 	{
 		if (divisor == 0.0f) return *this;
 

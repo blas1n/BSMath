@@ -29,9 +29,19 @@ namespace BSMath
 		template <class... Args>
 		explicit Matrix(T x, T y, Args ... args) noexcept : data()
 		{
-			static_assert(sizeof...(Args) + 2 == L * L, "Too many arguments");
+			static_assert(sizeof...(Args) + 2 == L * L, "The number of arguments is not correct");
 			const std::initializer_list<T> list{ x, y, static_cast<T>(args)... };
 			std::copy(list.begin(), list.end(), *data);
+		}
+
+		template <class U, size_t L2>
+		Matrix(const Matrix<U, L2>& other) noexcept : Matrix()
+		{
+#pragma warning(disable:4244)
+			constexpr static auto MinL = Min(L, L2);
+			for (size_t i = 0; i < MinL; ++i)
+				std::copy_n(other.data[i], MinL, data[i]);
+#pragma warning(default:4244)
 		}
 
 		[[nodiscard]] float Determinant() const noexcept;
@@ -54,7 +64,7 @@ namespace BSMath
 	namespace Detail
 	{
 		template <class T, size_t L>
-		static Matrix<T, L> GetIdentity() noexcept
+		[[nodiscard]] NO_ODR Matrix<T, L> GetIdentity() noexcept
 		{
 			Matrix<T, L> ret;
 			for (size_t i = 0; i < L; ++i)
@@ -64,13 +74,13 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	const Matrix<T, L> Matrix<T, L>::Zero;
+	inline const Matrix<T, L> Matrix<T, L>::Zero;
 
 	template <class T, size_t L>
-	const Matrix<T, L> Matrix<T, L>::One(1.0f);
+	inline const Matrix<T, L> Matrix<T, L>::One(1.0f);
 
 	template <class T, size_t L>
-	const Matrix<T, L> Matrix<T, L>::Identity = Detail::GetIdentity<T, L>();
+	inline const Matrix<T, L> Matrix<T, L>::Identity = Detail::GetIdentity<T, L>();
 
 	namespace Detail
 	{
@@ -118,7 +128,7 @@ namespace BSMath
 		}
 
 		template <class T, size_t L>
-		decltype(auto) LoadMatrix(const Matrix<T, L>& mat)
+		[[nodiscard]] NO_ODR decltype(auto) LoadMatrix(const Matrix<T, L>& mat)
 		{
 			using namespace SIMD;
 			std::array<VectorRegister<T>, 4> ret;
@@ -144,7 +154,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	float Matrix<T, L>::Determinant() const noexcept
+	NO_ODR float Matrix<T, L>::Determinant() const noexcept
 	{
 		using namespace SIMD;
 		const auto mat = Detail::LoadMatrix(GetTranspose());
@@ -166,7 +176,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Matrix<T, L> Matrix<T, L>::GetInvert() const noexcept
+	NO_ODR Matrix<T, L> Matrix<T, L>::GetInvert() const noexcept
 	{
 		if (auto ret = *this; ret.Invert())
 			return ret;
@@ -213,7 +223,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	bool Matrix<T, L>::Invert() noexcept
+	NO_ODR bool Matrix<T, L>::Invert() noexcept
 	{
 		// Source: https://lxjk.github.io/2017/09/03/Fast-4x4-Matrix-Inverse-with-SSE-SIMD-Explained.html
 
@@ -272,7 +282,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Matrix<T, L> Matrix<T, L>::GetTranspose() const noexcept
+	NO_ODR Matrix<T, L> Matrix<T, L>::GetTranspose() const noexcept
 	{
 		Matrix<T, L> ret;
 		for (size_t i = 0; i < L; ++i)
@@ -282,7 +292,7 @@ namespace BSMath
 	}
 	
 	template <class T, size_t L>
-	void Matrix<T, L>::Transpose() noexcept
+	NO_ODR void Matrix<T, L>::Transpose() noexcept
 	{
 		for (size_t i = 1; i < L; ++i)
 			for (size_t j = 0; j < i; ++j)
@@ -290,7 +300,7 @@ namespace BSMath
 	}
 
 	template <class T, size_t L>
-	Matrix<T, L>& Matrix<T, L>::operator*=(const Matrix<T, L>& other) noexcept
+	NO_ODR Matrix<T, L>& Matrix<T, L>::operator*=(const Matrix<T, L>& other) noexcept
 	{
 		using namespace SIMD;
 		const auto operand = other.GetTranspose();
@@ -312,7 +322,7 @@ namespace BSMath
 	// Global Operator
 
 	template <class T, size_t L>
-	[[nodiscard]] bool operator==(const Matrix<T, L>& lhs, const Matrix<T, L>& rhs) noexcept
+	[[nodiscard]] NO_ODR bool operator==(const Matrix<T, L>& lhs, const Matrix<T, L>& rhs) noexcept
 	{
 		using namespace SIMD;
 		const auto lhsMat = Detail::LoadMatrix(lhs);

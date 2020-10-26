@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Vector.h"
+#include "Basic.h"
+#include "Utility.h"
 
 namespace BSMath
 {
@@ -19,13 +20,10 @@ namespace BSMath
 		explicit constexpr Rotator(float inRoll, float inPitch, float inYaw) noexcept
 			: roll(inRoll), pitch(inPitch), yaw(inYaw) {}
 
-		explicit constexpr Rotator(const Vector3& vec) noexcept
-			: roll(vec.x), pitch(vec.y), yaw(vec.z) {}
-
 		explicit constexpr Rotator(const float* ptr) noexcept
 			: roll(ptr[0]), pitch(ptr[1]), yaw(ptr[2]) {}
 
-		void Set(float inRoll, float inPitch, float inYaw) noexcept
+		constexpr void Set(float inRoll, float inPitch, float inYaw) noexcept
 		{
 			roll = inRoll; pitch = inPitch; yaw = inYaw;
 		}
@@ -84,14 +82,14 @@ namespace BSMath
 		return Rotator{ vec } /= divisor;
 	}
 
-	const Rotator Rotator::Zero{};
+	inline const Rotator Rotator::Zero{};
 
-	Rotator Rotator::operator-() const noexcept
+	NO_ODR Rotator Rotator::operator-() const noexcept
 	{
 		return Rotator::Zero - *this;
 	}
 
-	Rotator& Rotator::operator+=(const Rotator& other) noexcept
+	NO_ODR Rotator& Rotator::operator+=(const Rotator& other) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoadPtr(&roll, 3);
@@ -100,7 +98,7 @@ namespace BSMath
 		return *this;
 	}
 
-	Rotator& Rotator::operator-=(const Rotator& other) noexcept
+	NO_ODR Rotator& Rotator::operator-=(const Rotator& other) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoadPtr(&roll, 3);
@@ -109,7 +107,7 @@ namespace BSMath
 		return *this;
 	}
 
-	Rotator& Rotator::operator*=(float scaler) noexcept
+	NO_ODR Rotator& Rotator::operator*=(float scaler) noexcept
 	{
 		using namespace SIMD;
 		const auto lhs = VectorLoadPtr(&roll, 3);
@@ -118,7 +116,7 @@ namespace BSMath
 		return *this;
 	}
 
-	Rotator& Rotator::operator/=(float divisor) noexcept
+	NO_ODR Rotator& Rotator::operator/=(float divisor) noexcept
 	{
 		if (divisor == 0.0f) return *this;
 
