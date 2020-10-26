@@ -123,6 +123,8 @@ namespace BSMath::Creator
 		[[nodiscard]] NO_ODR BSMath::Matrix4 FromTRS(const BSMath::Vector3& pos,
 			const BSMath::Rotator& rot, const BSMath::Vector3& scale) noexcept
 		{
+			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btMatrix3x3.h
+
 			float cy, sy, cp, sp, cr, sr;
 			Detail::GetSinCos(rot, cy, sy, cp, sp, cr, sr);
 
