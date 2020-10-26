@@ -69,18 +69,17 @@ namespace BSMath::Creator
 			};
 		}
 
-		[[nodiscard]] NO_ODR BSMath::Matrix4 FromScale(const BSMath::Vector3& scale) noexcept
+		[[nodiscard]] NO_ODR BSMath::Matrix3 FromScale(const BSMath::Vector3& scale) noexcept
 		{
-			return BSMath::Matrix4
+			return BSMath::Matrix3
 			{
-				scale.x,    0.0f,    0.0f, 0.0f,
-				   0.0f, scale.y,    0.0f, 0.0f,
-				   0.0f,    0.0f, scale.z, 0.0f,
-				   0.0f,    0.0f,    0.0f, 1.0f
+				scale.x,    0.0f,    0.0f,
+				   0.0f, scale.y,    0.0f,
+				   0.0f,    0.0f, scale.z
 			};
 		}
 
-		[[nodiscard]] NO_ODR BSMath::Matrix4 FromQuaternion(const BSMath::Quaternion& quat) noexcept
+		[[nodiscard]] NO_ODR BSMath::Matrix3 FromQuaternion(const BSMath::Quaternion& quat) noexcept
 		{
 			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btMatrix3x3.h
 
@@ -90,16 +89,15 @@ namespace BSMath::Creator
 			const float xx = quat.x * xs, xy = quat.x * ys, xz = quat.x * zs;
 			const float yy = quat.y * ys, yz = quat.y * zs, zz = quat.z * zs;
 
-			return BSMath::Matrix4
+			return BSMath::Matrix3
 			{
-				1.0f - (yy + zz),         xy - wz,         xz + wy, 0.0f,
-						 xy + xz, 1.0f - (xx + zz),        yz - wx, 0.0f,
-						 xz - wy,         yz + wx, 1.0f - (xx + yy), 0.0f,
-							0.0f,            0.0f,             0.0f, 1.0f
+				1.0f - (yy + zz),         xy - wz,         xz + wy,
+						 xy + xz, 1.0f - (xx + zz),        yz - wx,
+						 xz - wy,         yz + wx, 1.0f - (xx + yy)
 			};
 		}
 
-		[[nodiscard]] NO_ODR BSMath::Matrix4 FromRotator(const BSMath::Rotator& rot) noexcept
+		[[nodiscard]] NO_ODR BSMath::Matrix3 FromRotator(const BSMath::Rotator& rot) noexcept
 		{
 			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btMatrix3x3.h
 
@@ -111,12 +109,11 @@ namespace BSMath::Creator
 			const float sc = sr * cy;
 			const float ss = sr * sy;
 
-			return BSMath::Matrix4
+			return BSMath::Matrix3
 			{
-				cp * cy, sp * sc - cs, sp * cc + ss, 0.0f,
-				cp * sy, sp * ss + cc, sp * cs - sc, 0.0f,
-					-sp,      cp * sr,      cp * cr, 0.0f,
-					0.0f,        0.0f,         0.0f, 1.0f
+				cp * cy, sp * sc - cs, sp * cc + ss,
+				cp * sy, sp * ss + cc, sp * cs - sc,
+					-sp,      cp * sr,      cp * cr
 			};
 		}
 
