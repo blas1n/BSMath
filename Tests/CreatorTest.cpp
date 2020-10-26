@@ -22,6 +22,6 @@ namespace BSMath
 		EXPECT_EQ(FromEuler(Vector3::One), target);
 
 		target.Set(90.0f, 0.0f, 90.0f);
-		EXPECT_EQ(FromQuaternion(Quaternion{ 0.5f, 0.5f, 0.5f,  0.5f }), target);
+		EXPECT_TRUE(IsNearlyEqual(FromQuaternion(Quaternion{ 0.5f, 0.5f, 0.5f, 0.5f }), target));
 	}
 }
