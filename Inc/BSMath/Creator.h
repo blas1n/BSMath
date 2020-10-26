@@ -15,21 +15,28 @@ namespace BSMath::Creator
 	{
 		[[nodiscard]] NO_ODR BSMath::Quaternion FromRotator(const BSMath::Rotator& rot) noexcept
 		{
-			return BSMath::Quaternion::Identity;
-			/*float cy = cos(yaw * 0.5);
-			float sy = sin(yaw * 0.5);
-			float cp = cos(pitch * 0.5);
-			float sp = sin(pitch * 0.5);
-			float cr = cos(roll * 0.5);
-			float sr = sin(roll * 0.5);
+			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btQuaternion.h
 
-			Quaternion q;
-			q.w = cr * cp * cy + sr * sp * sy;
-			q.x = sr * cp * cy - cr * sp * sy;
-			q.y = cr * sp * cy + sr * cp * sy;
-			q.z = cr * cp * sy - sr * sp * cy;
+			const float halfYaw = BSMath::Deg2Rad(rot.yaw * 0.5f);
+			const float halfPitch = BSMath::Deg2Rad(rot.pitch * 0.5f);
+			const float halfRoll = BSMath::Deg2Rad(rot.roll * 0.5f);
 
-			return q;*/
+			const float cosYaw = BSMath::Cos(halfYaw);
+			const float sinYaw = BSMath::Sin(halfYaw);
+
+			const float cosPitch = BSMath::Cos(halfPitch);
+			const float sinPitch = BSMath::Sin(halfPitch);
+
+			const float cosRoll = BSMath::Cos(halfRoll);
+			const float sinRoll = BSMath::Sin(halfRoll);
+
+			return BSMath::Quaternion
+			{
+				sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw,
+				cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw,
+				cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw,
+				cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw
+			};
 		}
 
 		[[nodiscard]] NO_ODR BSMath::Quaternion FromEuler(float roll, float pitch, float yaw) noexcept
