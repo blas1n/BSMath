@@ -172,6 +172,8 @@ namespace BSMath::Creator
 
 		[[nodiscard]] NO_ODR BSMath::Quaternion FromMatrix(const BSMath::Matrix3& mat) noexcept
 		{
+			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btMatrix3x3.h
+
 			const float trace = mat[0][0] + mat[1][1] + mat[2][2];
 			float temp[4];
 
