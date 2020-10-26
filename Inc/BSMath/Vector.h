@@ -173,7 +173,7 @@ namespace BSMath
 		}
 
 		template <class U, size_t L2>
-		explicit Vector(const Vector<U, L2>& other) noexcept : Vector()
+		Vector(const Vector<U, L2>& other) noexcept : Vector()
 		{
 #pragma warning(disable:4244)
 			std::copy_n(other.data, Min(L, L2), data);
