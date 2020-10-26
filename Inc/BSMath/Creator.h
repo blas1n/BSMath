@@ -6,9 +6,134 @@
 
 namespace BSMath::Creator
 {
+	namespace Detail
+	{
+		NO_ODR void GetSinCosOnce(float angle, float& c, float& s)
+		{
+			if (BSMath::IsNearlyEqual(angle, 0.0f))
+			{
+				c = 1.0f;
+				s = 0.0f;
+			}
+			else if (BSMath::IsNearlyEqual(angle, 90.0f))
+			{
+				c = 0.0f;
+				s = 1.0f;
+			}
+			else if (BSMath::IsNearlyEqual(angle, 180.0f))
+			{
+				c = -1.0f;
+				s = 0.0f;
+			}
+			else if (BSMath::IsNearlyEqual(angle, 270.0f))
+			{
+				c = 0.0f;
+				s = -1.0f;
+			}
+			else
+			{
+				const float rad = BSMath::Deg2Rad(angle);
+				c = BSMath::Cos(rad);
+				s = BSMath::Sin(rad);
+			}
+		}
+
+		NO_ODR void GetSinCos(const BSMath::Rotator& rot, float& cy, float& sy, float& cp, float& sp, float& cr, float& sr)
+		{
+			GetSinCosOnce(rot.yaw, cy, sy);
+			GetSinCosOnce(rot.pitch, cp, sp);
+			GetSinCosOnce(rot.roll, cr, sr);
+		}
+	}
+
+	// Todo: Add ortho, perspective, lookat
 	namespace Matrix
 	{
+		template <size_t L>
+		[[nodiscard]] NO_ODR BSMath::Matrix<float, L> FromVectors(const BSMath::Vector<float, L>(&vecs)[L]) noexcept
+		{
+			BSMath::Matrix<float, L> ret;
+			for (size_t i = 0; i < L; ++i)
+				std::copy_n(&(vecs[i].x), L, ret[i]);
+			return ret;
+		}
 
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromTranslation(const BSMath::Vector3& pos) noexcept
+		{
+			return BSMath::Matrix4
+			{
+				 1.0f,  0.0f,  0.0f, 0.0f,
+				 0.0f,  1.0f,  0.0f, 0.0f,
+				 0.0f,  0.0f,  1.0f, 0.0f,
+				pos.x, pos.y, pos.z, 1.0f
+			};
+		}
+
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromScale(const BSMath::Vector3& scale) noexcept
+		{
+			return BSMath::Matrix4
+			{
+				scale.x,    0.0f,    0.0f, 0.0f,
+				   0.0f, scale.y,    0.0f, 0.0f,
+				   0.0f,    0.0f, scale.z, 0.0f,
+				   0.0f,    0.0f,    0.0f, 1.0f
+			};
+		}
+
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromQuaternion(const BSMath::Quaternion& quat) noexcept
+		{
+			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btMatrix3x3.h
+
+			const float s = 2.0f / (quat | quat);
+			const float xs = quat.x *  s, ys = quat.y *  s, zs = quat.z *  s;
+			const float wx = quat.w * xs, wy = quat.w * ys, wz = quat.w * zs;
+			const float xx = quat.x * xs, xy = quat.x * ys, xz = quat.x * zs;
+			const float yy = quat.y * ys, yz = quat.y * zs, zz = quat.z * zs;
+
+			return BSMath::Matrix4
+			{
+				1.0f - (yy + zz),         xy - wz,         xz + wy, 0.0f,
+						 xy + xz, 1.0f - (xx + zz),        yz - wx, 0.0f,
+						 xz - wy,         yz + wx, 1.0f - (xx + yy), 0.0f,
+							0.0f,            0.0f,             0.0f, 1.0f
+			};
+		}
+
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromRotator(const BSMath::Rotator& rot) noexcept
+		{
+			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btMatrix3x3.h
+
+			float cy, sy, cp, sp, cr, sr;
+			Detail::GetSinCos(rot, cy, sy, cp, sp, cr, sr);
+
+			const float cc = cr * cy;
+			const float cs = cr * sy;
+			const float sc = sr * cy;
+			const float ss = sr * sy;
+
+			return BSMath::Matrix4
+			{
+				cp * cy, sp * sc - cs, sp * cc + ss, 0.0f,
+				cp * sy, sp * ss + cc, sp * cs - sc, 0.0f,
+					-sp,      cp * sr,      cp * cr, 0.0f,
+					0.0f,        0.0f,         0.0f, 1.0f
+			};
+		}
+
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromTRS(const BSMath::Vector3& pos,
+			const BSMath::Rotator& rot, const BSMath::Vector3& scale) noexcept
+		{
+			float cy, sy, cp, sp, cr, sr;
+			Detail::GetSinCos(rot, cy, sy, cp, sp, cr, sr);
+
+			return BSMath::Matrix4
+			{
+				                (cp * cy) * scale.x,                (cp * sy) * scale.x,         sp * scale.x, 0.0f,
+				 (sr * sp * cy - cr * sy) * scale.y, (sr * sp * sy + cr * cy) * scale.y, (-sr * cp) * scale.y, 0.0f,
+				-(cr * sp * cy + sr * sy) * scale.z, (cy * sr - cr * sp * sy) * scale.z,  (cr * cp) * scale.z, 0.0f,
+				                              pos.x,                              pos.y,                pos.z, 1.0f
+			};
+		}
 	}
 
 	namespace Quaternion
@@ -17,25 +142,15 @@ namespace BSMath::Creator
 		{
 			// Ref: https://github.com/bulletphysics/bullet3/blob/master/src/LinearMath/btQuaternion.h
 
-			const float halfYaw = BSMath::Deg2Rad(rot.yaw * 0.5f);
-			const float halfPitch = BSMath::Deg2Rad(rot.pitch * 0.5f);
-			const float halfRoll = BSMath::Deg2Rad(rot.roll * 0.5f);
-
-			const float cosYaw = BSMath::Cos(halfYaw);
-			const float sinYaw = BSMath::Sin(halfYaw);
-
-			const float cosPitch = BSMath::Cos(halfPitch);
-			const float sinPitch = BSMath::Sin(halfPitch);
-
-			const float cosRoll = BSMath::Cos(halfRoll);
-			const float sinRoll = BSMath::Sin(halfRoll);
+			float cy, sy, cp, sp, cr, sr;
+			Detail::GetSinCos(rot * 0.5f, cy, sy, cp, sp, cr, sr);
 
 			return BSMath::Quaternion
 			{
-				sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw,
-				cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw,
-				cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw,
-				cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw
+				sr * cp * cy - cr * sp * sy,
+				cr * sp * cy + sr * cp * sy,
+				cr * cp * sy - sr * sp * cy,
+				cr * cp * cy + sr * sp * sy
 			};
 		}
 
