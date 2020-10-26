@@ -34,6 +34,16 @@ namespace BSMath
 			std::copy(list.begin(), list.end(), *data);
 		}
 
+		template <class U, size_t L2>
+		Matrix(const Matrix<U, L2>& other) noexcept : Matrix()
+		{
+#pragma warning(disable:4244)
+			constexpr static auto MinL = Min(L, L2);
+			for (size_t i = 0; i < MinL; ++i)
+				std::copy_n(other.data[i], MinL, data[i]);
+#pragma warning(default:4244)
+		}
+
 		[[nodiscard]] float Determinant() const noexcept;
 
 		[[nodiscard]] Matrix GetInvert() const noexcept;
