@@ -9,6 +9,9 @@ namespace BSMath
     constexpr float Pi = 3.141592654f;
     constexpr float Epsilon = 1.192092896e-07F;
 
+    template <class T>
+    class Hash final : public std::hash<T> {};
+
     template <class T1, class T2, std::enable_if_t<std::is_arithmetic_v<std::common_type_t<T1, T2>>, int> = 0>
     [[nodiscard]] constexpr decltype(auto) Min(const T1& lhs, const T2& rhs) noexcept
     {
