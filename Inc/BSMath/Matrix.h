@@ -1,12 +1,13 @@
 #pragma once
 
 #include <array>
+#include "Hash.h"
 #include "Utility.h"
 
 namespace BSMath
 {
 	template <class T, size_t L>
-	struct Matrix final
+	struct alignas(16) Matrix final
 	{
 	public:
 		static const Matrix Zero;
@@ -374,4 +375,8 @@ namespace BSMath
 		}
 		return true;
 	}
+
+	// Matrix's Hash
+	template <class T, size_t L>
+	struct Hash<Matrix<T, L>> final : public HashRange<Matrix<T, L>, sizeof(T) * L * L> {};
 }

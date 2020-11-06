@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Hash.h"
 #include "Utility.h"
 
 namespace BSMath
@@ -33,6 +34,7 @@ namespace BSMath
 			: a(inA), r(inR), g(inG), b(inB) {}
 
 		explicit Color(uint32 color) noexcept
+			: Color()
 		{
 			*((uint32*)this) = color;
 		}

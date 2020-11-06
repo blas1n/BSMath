@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Basic.h"
+#include "Hash.h"
 #include "Utility.h"
 
 namespace BSMath
@@ -145,4 +145,8 @@ namespace BSMath
 		const auto vec = VectorLoadPtr(&rot.roll, 3);
 		return VectorMoveMask(VectorLessEqual(vec, epsilon)) == 0xF;
 	}
+
+	// Rotator's Hash
+	template <>
+	struct Hash<Rotator> final : public HashRange<Rotator, sizeof(float) * 3> {};
 }
