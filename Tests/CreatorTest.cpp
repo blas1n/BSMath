@@ -28,11 +28,10 @@ namespace BSMath
 
 		EXPECT_EQ(FromScale(Vector3::One * 10.0f), target);
 
-		target = Matrix4::Zero;
+		target = Matrix3::Zero;
 		target[0][2] = 1.0f;
 		target[1][0] = 1.0f;
 		target[2][1] = 1.0f;
-		target[3][3] = 1.0f;
 
 		EXPECT_EQ(FromQuaternion(Quaternion{ 0.5f, 0.5f, 0.5f, 0.5f }), target);
 		EXPECT_EQ(FromRotator(Rotator{ 90.0f, 0.0f, 90.0f }), target);
