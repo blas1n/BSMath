@@ -33,6 +33,7 @@ namespace BSMath
 			: a(inA), r(inR), g(inG), b(inB) {}
 
 		explicit Color(uint32 color) noexcept
+			: Color()
 		{
 			*((uint32*)this) = color;
 		}
