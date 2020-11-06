@@ -194,10 +194,10 @@ namespace BSMath
 			return *this | *this;
 		}
 
-		[[nodiscard]] Vector GetNormal() const noexcept
+		[[nodiscard]] static Vector GetNormal(const Vector& vec) noexcept
 		{
-			Vector ret = *this;
-			return ret.Normalize() ? ret : this->Zero;
+			Vector ret = vec;
+			return ret.Normalize() ? ret : Vector::Zero;
 		}
 
 		bool Normalize() noexcept;
