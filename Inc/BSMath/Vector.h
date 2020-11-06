@@ -194,10 +194,10 @@ namespace BSMath
 			return *this | *this;
 		}
 
-		[[nodiscard]] Vector GetNormal() const noexcept
+		[[nodiscard]] static Vector GetNormal(const Vector& vec) noexcept
 		{
-			Vector ret = *this;
-			return ret.Normalize() ? ret : this->Zero;
+			Vector ret = vec;
+			return ret.Normalize() ? ret : Vector::Zero;
 		}
 
 		bool Normalize() noexcept;
@@ -312,7 +312,8 @@ namespace BSMath
 		using namespace SIMD;
 		auto vec = VectorLoad(data);
 		auto size = VectorMultiply(vec, vec);
-		size = VectorHadd(VectorHadd(size, size), size);
+		size = VectorHadd(size, size);
+		size = VectorHadd(size, size);
 		vec = VectorMultiply(vec, VectorInvSqrt(size));
 		VectorStore(vec, data);
 		return true;
