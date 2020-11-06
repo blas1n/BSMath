@@ -133,6 +133,58 @@ namespace BSMath::Creator
 				                              pos.x,                              pos.y,                pos.z, 1.0f
 			};
 		}
+
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromLookAt(const Vector3& eye, const Vector3& target, const Vector3& up)
+		{
+			const auto zaxis = Vector3::GetNormal(target - eye);
+			const auto xaxis = Vector3::GetNormal(up ^ zaxis);
+			const auto yaxis = Vector3::GetNormal(zaxis ^ xaxis);
+
+			const Vector3 trans{ -(xaxis | eye), -(yaxis | eye), -(zaxis | eye)	};
+			return Matrix4
+			{
+				xaxis.x, yaxis.x, zaxis.x, 0.0f,
+				xaxis.y, yaxis.y, zaxis.y, 0.0f,
+				xaxis.z, yaxis.z, zaxis.z, 0.0f,
+				trans.x, trans.y, trans.z, 1.0f
+			};
+		}
+
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromOrtho(const Vector2& screen, float near, float far)
+		{
+			return Matrix4
+			{
+				2.0f / screen.x,            0.0f,                0.0f, 0.0f,
+						   0.0f, 2.0f / screen.y,                0.0f, 0.0f,
+						   0.0f,            0.0f, 1.0f / (far - near), 0.0f,
+						   0.0f,            0.0f, near / (near - far), 1.0f
+			};
+		}
+
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromPerspective(const Vector2& screen, float near, float far, float fov)
+		{
+			const auto yScale = 1.0f / Tan(fov * 0.5f);
+			const auto xScale = yScale * screen.y / screen.x;
+
+			return Matrix4
+			{
+				xScale,   0.0f,                       0.0f, 0.0f,
+				  0.0f, yScale,                       0.0f, 0.0f,
+				  0.0f,   0.0f,         far / (far - near), 0.0f,
+				  0.0f,   0.0f, -near * far / (far - near), 1.0f
+			};
+		}
+
+		[[nodiscard]] NO_ODR BSMath::Matrix4 FromViewProjection(const Vector2& screen)
+		{
+			return Matrix4
+			{
+				2.0f / screen.x,            0.0f, 0.0f, 0.0f,
+				           0.0f, 2.0f / screen.y, 0.0f, 0.0f,
+				           0.0f,            0.0f, 1.0f, 0.0f,
+				           0.0f,            0.0f, 1.0f, 1.0f
+			};
+		}
 	}
 
 	namespace Quaternion
