@@ -312,7 +312,8 @@ namespace BSMath
 		using namespace SIMD;
 		auto vec = VectorLoad(data);
 		auto size = VectorMultiply(vec, vec);
-		size = VectorHadd(VectorHadd(size, size), size);
+		size = VectorHadd(size, size);
+		size = VectorHadd(size, size);
 		vec = VectorMultiply(vec, VectorInvSqrt(size));
 		VectorStore(vec, data);
 		return true;
