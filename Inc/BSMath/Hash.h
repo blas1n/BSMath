@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-#include <type_traits>
 #include "Basic.h"
 
 namespace BSMath
@@ -24,38 +22,12 @@ namespace BSMath
 		}
 	};
 
-	namespace Detail
-	{
-		template <class T>
-		struct HasHash final
-		{
-		private:
-			template <typename C>
-			static std::true_type Test(decltype(&(std::hash<C>::operator())));
-
-			template <typename C>
-			static std::false_type Test(...);
-
-		public:
-			constexpr static bool value = decltype(Test<T>(0))::value;
-		};
-
-		template <class T, bool>
-		struct HashImpl;
-
-		template <class T>
-		struct HashImpl<T, true> : public std::hash<T> {};
-
-		template <class T>
-		struct HashImpl<T, false>
-		{
-			[[nodiscard]] size_t operator()(const T& value) const noexcept
-			{
-				return HashRange<T, sizeof(T)>{}(value);
-			}
-		};
-	}
-
 	template <class T>
-	struct Hash final : public Detail::HashImpl<T, Detail::HasHash<T>::value> {};
+	struct Hash
+	{
+		[[nodiscard]] size_t operator()(const T& value) const noexcept
+		{
+			return HashRange<T, sizeof(T)>{}(value);
+		}
+	};
 }
