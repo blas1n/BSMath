@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hash.h"
+#include "Random.h"
 #include "Utility.h"
 
 namespace BSMath
@@ -494,4 +495,44 @@ namespace BSMath
 	// Vector's Hash
 	template <class T, size_t L>
 	struct Hash<Vector<T, L>> final : public HashRange<Vector<T, L>, sizeof(T) * L> {};
+
+	// Vector's Random
+	template <class T, size_t L>
+	class VectorDistribution final
+	{
+	private:
+		using Dist = std::conditional_t<std::is_integral_v<T>,
+			std::uniform_int_distribution<T>, std::uniform_real_distribution<T>>;
+
+	public:
+		using result_type = Vector<T, L>;
+		using param_type = typename Dist::param_type;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			Dist dist;
+			Vector<T, L> ret;
+			for (size_t i = 0; i < L; ++i)
+				ret[i] = dist(engine);
+			return ret;
+		}
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine, const param_type& params)
+		{
+			Dist dist{ params };
+			Vector<T, L> ret;
+			for (size_t i = 0; i < L; ++i)
+				ret[i] = dist(engine);
+			return ret;
+		}
+	};
+
+	using Vector2Random = Random<Vector2, std::mt19937, VectorDistribution<float, 2>>;
+	using IntVector2Random = Random<IntVector2, std::mt19937, VectorDistribution<int, 2>>;
+	using Vector3Random = Random<Vector3, std::mt19937, VectorDistribution<float, 3>>;
+	using IntVector3Random = Random<IntVector3, std::mt19937, VectorDistribution<int, 3>>;
+	using Vector4Random = Random<Vector4, std::mt19937, VectorDistribution<float, 4>>;
+	using IntVector4Random = Random<IntVector4, std::mt19937, VectorDistribution<int, 4>>;
 }

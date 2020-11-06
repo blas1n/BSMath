@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hash.h"
+#include "Random.h"
 #include "Utility.h"
 
 namespace BSMath
@@ -149,4 +150,20 @@ namespace BSMath
 	// Rotator's Hash
 	template <>
 	struct Hash<Rotator> final : public HashRange<Rotator, sizeof(float) * 3> {};
+
+	// Rotator's Random
+	class RotatorDistribution final
+	{
+	public:
+		using result_type = Rotator;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			std::uniform_real_distribution<float> dist{ 0.0f, 360.0f };
+			return Rotator{ dist(engine), dist(engine), dist(engine) };
+		}
+	};
+
+	using RotatorRandom = Random<Rotator, std::mt19937, RotatorDistribution>;
 }

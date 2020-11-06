@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hash.h"
+#include "Random.h"
 #include "Utility.h"
 
 namespace BSMath
@@ -128,4 +129,26 @@ namespace BSMath
 			Max(lhs.r, rhs.r), Max(lhs.g, rhs.g), Max(lhs.b, rhs.b), Max(lhs.a, rhs.a)
 		};
 	}
+
+	// Color's Random
+	class ColorDistribution final
+	{
+	public:
+		using result_type = Color;
+
+		template <class Engine>
+		[[nodiscard]] result_type operator()(Engine& engine)
+		{
+			std::uniform_int_distribution<int> dist{ 0, 255 };
+			return Color
+			{
+				static_cast<uint8>(dist(engine)),
+				static_cast<uint8>(dist(engine)),
+				static_cast<uint8>(dist(engine)),
+				static_cast<uint8>(dist(engine))
+			};
+		}
+	};
+
+	using ColorRandom = Random<Color, std::mt19937, ColorDistribution>;
 }
