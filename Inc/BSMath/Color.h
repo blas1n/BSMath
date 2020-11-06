@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Hash.h"
 #include "Utility.h"
 
 namespace BSMath

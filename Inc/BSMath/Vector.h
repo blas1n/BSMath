@@ -490,4 +490,8 @@ namespace BSMath
 		VectorStore(VectorDivide(numerator, denomirator), ret.data);
 		return ret;
 	}
+
+	// Vector's Hash
+	template <class T, size_t L>
+	struct Hash<Vector<T, L>> final : public HashRange<Vector<T, L>, sizeof(T) * L> {};
 }
