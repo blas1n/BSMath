@@ -17,16 +17,13 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	find_package (Threads REQUIRED)
 endif ()
 
-find_package(GTest)
+enable_testing()
+find_package(GTest REQUIRED)
 
-if (GTest_Found)
-	enable_testing()
+file(GLOB_RECURSE TEST_FILES "Tests/*.cpp")
+add_executable(Tests ${TEST_FILES})
 
-	file(GLOB_RECURSE TEST_FILES "Tests/*.cpp")
-	add_executable(Tests ${TEST_FILES})
+target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIRS})
+target_link_libraries(Tests PRIVATE BSMath GTest::GTest)
 
-	target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIRS})
-	target_link_libraries(Tests PRIVATE BSMath GTest::GTest)
-
-	add_test(AllTests Tests)
-endif ()
+add_test(AllTests Tests)
