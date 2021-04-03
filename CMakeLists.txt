@@ -10,20 +10,23 @@ project (BSMath
 set (CMAKE_CXX_STANDARD 17)
 set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Binaries)
 
-add_library(BSMath INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE "Inc/")
+add_library (BSMath INTERFACE)
+target_include_directories (${PROJECT_NAME} INTERFACE "Inc/")
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	find_package (Threads REQUIRED)
 endif ()
 
-enable_testing()
-find_package(GTest REQUIRED)
+find_package(GTest)
 
-file(GLOB_RECURSE TEST_FILES "Tests/*.cpp")
-add_executable(Tests ${TEST_FILES})
+if (GTest_Found)
+	enable_testing()
 
-target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIRS})
-target_link_libraries(Tests PRIVATE BSMath GTest::GTest)
+	file(GLOB_RECURSE TEST_FILES "Tests/*.cpp")
+	add_executable(Tests ${TEST_FILES})
 
-add_test(AllTests Tests)
+	target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIRS})
+	target_link_libraries(Tests PRIVATE BSMath GTest::GTest)
+
+	add_test(AllTests Tests)
+endif ()
