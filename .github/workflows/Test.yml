@@ -15,11 +15,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Install Google Test
-      run: sudo apt-get install libgtest-dev && cd /usr/src/gtest &&
-        sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib &&
-        sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a &&
-        sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+    - name: Googletest installer
+        # You may pin to the exact commit or the version.
+        # uses: MarkusJx/googletest-installer@2dbed3d0a9dc19bebe3e36773185ab9c17664c8d
     - uses: actions/checkout@v2
     - name: Create Build Environment
       run: cmake -E make_directory Binaries/Tests
