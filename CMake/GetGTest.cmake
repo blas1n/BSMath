@@ -23,9 +23,6 @@ function (download_gtest)
     if (RESULT)
         message (FATAL_ERROR "Build step for GTest failed: ${RESULT}")
     endif ()
-
-    set (GTEST_FORCE_SHARED_CRT ON CACHE BOOL "" FORCE)
-    add_subdirectory (${SRC_DIR} ${BUILD_DIR} EXCLUDE_FROM_ALL)
 endfunction ()
 
 find_package (GTest)
