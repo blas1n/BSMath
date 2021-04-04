@@ -22,6 +22,10 @@ include (CMake/GetGTest.cmake)
 file(GLOB_RECURSE TEST_FILES "Tests/*.cpp")
 add_executable(Tests ${TEST_FILES})
 
+message ("Include : ${GTEST_INCLUDE_DIR}")
+message ("Main : ${GTEST_MAIN_LIBRARY}")
+message ("Lib : ${GTEST_LIBRARY}")
+
 target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIR})
 target_link_libraries(Tests PRIVATE BSMath GTest::GTest ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY})
 
