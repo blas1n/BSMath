@@ -28,7 +28,7 @@ function (download_gtest)
     add_subdirectory (${SRC_DIR} ${BUILD_DIR} EXCLUDE_FROM_ALL)
 endfunction ()
 
-find_package (GTest REQUIRED)
+find_package (GTest)
 
 if (NOT GTest_FOUND)
     download_gtest ()
