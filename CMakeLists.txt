@@ -22,8 +22,8 @@ include (CMake/GetGTest.cmake)
 file(GLOB_RECURSE TEST_FILES "Tests/*.cpp")
 add_executable(Tests ${TEST_FILES})
 
-target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc)
-target_link_libraries(Tests PRIVATE BSMath GTest::GTest)
+target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIR})
+target_link_libraries(Tests PRIVATE BSMath GTest::GTest ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY})
 
 enable_testing()
 add_test(NAME Test COMMAND Tests)
