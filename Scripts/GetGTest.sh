@@ -7,4 +7,5 @@ sudo cmake CMakeLists.txt
 ls
 sudo make
 ls ./bin
+ls ./lib
 sudo cp --recursive *.a /usr/lib
