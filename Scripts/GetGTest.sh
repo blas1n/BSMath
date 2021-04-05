@@ -5,4 +5,4 @@ cd /usr/src/gtest
 sudo cmake CMakeLists.txt
 sudo make
 ls
-sudo cp *.a /usr/lib
+sudo cp --recursive *.a /usr/lib
