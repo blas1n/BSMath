@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.10)
 
 project (BSMath
 	VERSION 0.0.1
@@ -10,23 +10,24 @@ project (BSMath
 set (CMAKE_CXX_STANDARD 17)
 set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Binaries)
 
-add_library(BSMath INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE "Inc/")
+add_library (BSMath INTERFACE)
+target_include_directories (${PROJECT_NAME} INTERFACE "Inc/")
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	find_package (Threads REQUIRED)
 endif ()
 
-find_package(GTest)
+include (CMake/GetGTest.cmake)
 
 if (GTest_FOUND)
 	enable_testing ()
 
-	file (GLOB_RECURSE TEST_FILES "Tests/*.cpp")
-	add_executable (Tests ${TEST_FILES})
+message ("Include : ${GTEST_INCLUDE_DIR}")
+message ("Main : ${GTEST_MAIN_LIBRARY}")
+message ("Lib : ${GTEST_LIBRARY}")
 
-	target_include_directories (Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIRS})
-	target_link_libraries (Tests PRIVATE BSMath GTest::GTest)
+target_include_directories(Tests PRIVATE ${PROJECT_SOURCE_DIR}/Inc ${GTEST_INCLUDE_DIR})
+target_link_libraries(Tests PRIVATE BSMath GTest::GTest ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY})
 
-	add_test (AllTests Tests)
-endif ()
+enable_testing()
+add_test(NAME Test COMMAND Tests)
