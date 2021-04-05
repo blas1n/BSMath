@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Get GTest
+      run: sh ./Scripts/GetGTest.sh
     - name: Create Build Environment
       run: cmake -E make_directory Binaries/Tests
     - name: Build
