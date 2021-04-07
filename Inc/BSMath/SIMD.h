@@ -7,15 +7,15 @@
 #if defined(_MSC_VER) && !defined(_M_ARM) && !defined(_M_ARM64) \
     && !defined(_M_HYBRID_X86_ARM64) && (!_MANAGED) && (!_M_CEE) \
     && (!defined(_M_IX86_FP) || (_M_IX86_FP > 1)) && !defined(_XM_NO_INTRINSICS_) && !defined(_XM_VECTORCALL_)
-#define HAS_VECTOR_CALL
+#   define HAS_VECTOR_CALL
 #endif
 
 #if defined(HAS_VECTOR_CALL)
-#define VECTOR_CALL __vectorcall
+#   define VECTOR_CALL __vectorcall
 #elif defined(__GNUC__)
-#define VECTOR_CALL
+#   define VECTOR_CALL
 #else
-#define VECTOR_CALL __fastcall
+#   define VECTOR_CALL __fastcall
 #endif
 
 #define GET_MASK(X, Y, Z, W) \
