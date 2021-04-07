@@ -1,0 +1,3 @@
+[submodule "Thirdparty/BSBase"]
+	path = Thirdparty/BSBase
+	url = https://github.com/blAs1N/BSBase

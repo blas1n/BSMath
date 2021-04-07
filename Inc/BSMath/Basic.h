@@ -1,18 +1,11 @@
 #pragma once
 
-#define NO_ODR inline
+#include "BSBase/Base.h"
+#include "BSBase/Type.h"
 
 namespace BSMath
 {
-	using uint8 = unsigned char;
-	using uint16 = unsigned char;
-	using uint32 = unsigned int;
-	using uint64 = unsigned long long;
-
-	using int8 = char;
-	using int16 = short;
-	using int32 = int;
-	using int64 = long long;
+	using namespace BSBase;
 
 	template <class T, size_t L>
 	struct Vector;
