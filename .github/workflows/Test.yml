@@ -26,4 +26,4 @@ jobs:
       run: cmake ../.. && cmake --build . --config $Build_TYPE
     - name: Run Test
       working-directory: ./Binaries/Tests
-      run: ./BS-MathTests
+      run: ./BSMath-Tests
