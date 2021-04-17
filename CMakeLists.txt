@@ -10,7 +10,7 @@ project (BSMath
 set (CMAKE_CXX_STANDARD 17)
 set (RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Binaries)
 
-add_subdirectory (Thirdparty)
+add_subdirectory (ThirdParty)
 
 add_library (BSMath INTERFACE)
 target_link_libraries (BSMath INTERFACE BSBase)
