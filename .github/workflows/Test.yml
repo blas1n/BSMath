@@ -48,7 +48,7 @@ jobs:
       - name: Install dependencies and generate project files
         run: ${{ github.workspace }}/Scripts/Setup.bat ${{ env.BUILD_TYPE }}
       - name: Build
-        run: ${{ github.workspace }}/Scripts/Build.bat
+        run: ${{ github.workspace }}/Scripts/Build.bat ${{ env.BUILD_TYPE }}
       - name: Test
         working-directory: ./Binaries/Tests/${{ env.BUILD_TYPE }}
         run: dir && ./BSMath-Tests
@@ -93,7 +93,7 @@ jobs:
       - name: Install dependencies and generate project files
         run: sh ${{ github.workspace }}/Scripts/Setup.sh ${{ env.BUILD_TYPE }}
       - name: Build
-        run: sh ${{ github.workspace }}/Scripts/Build.sh
+        run: sh ${{ github.workspace }}/Scripts/Build.sh ${{ env.BUILD_TYPE }}
       - name: Test
         working-directory: ./Binaries/Tests/${{ env.BUILD_TYPE }}
         run: ls && ./BSMath-Tests
