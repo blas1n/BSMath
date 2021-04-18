@@ -8,22 +8,43 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  BUILD_TYPE: Release
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  windows-test:
+    runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: snickerbockers/submodules-init@v4
-    - name: Get GTest
-      run: sh ./Scripts/GetGTest.sh
-    - name: Create Build Environment
-      run: cmake -E make_directory Binaries/Tests
-    - name: Build
-      working-directory: ./Binaries/Tests
-      run: cmake ../.. && cmake --build . --config $Build_TYPE
-    - name: Run Test
-      working-directory: ./Binaries/Tests/Tests
-      run: ./BSMath-Tests
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: lukka/get-cmake@latest
+      - name: Generate project files
+        run: ${{ github.workspace }}/Scripts/Setup
+      - name: Build
+        run: ${{ github.workspace }}/Scripts/Build
+      - name: Test
+        working-directory: ./Binaries
+        run: ./BSMath-Tests
+
+  job:
+    name: ${{ matrix.os }}-test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            triplet: x64-linux
+          - os: macos-latest
+            triplet: x64-osx
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: lukka/get-cmake@latest
+      - name: Generate project files
+        run: sh ${{ github.workspace }}/Scripts/Setup.sh
+      - name: Build
+        run: sh ${{ github.workspace }}/Scripts/Build.sh
+      - name: Test
+        working-directory: ./Binaries
+        run: ./BSMath-Tests
