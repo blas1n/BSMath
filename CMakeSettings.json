@@ -5,72 +5,47 @@
       "generator": "Ninja",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
-      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "installRoot": "${projectDir}\\Binaries\\install\\${name}",
+      "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ],
-      "variables": [
-        {
-          "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "${projectDir}\\ThirdParty\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
-          "type": "STRING"
-        }
-      ]
+      "inheritEnvironments": [ "msvc_x86" ]
     },
     {
       "name": "x86-Release",
       "generator": "Ninja",
       "configurationType": "MinSizeRel",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
-      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "installRoot": "${projectDir}\\Binaries\\install\\${name}",
+      "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ],
-      "variables": [
-        {
-          "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "${projectDir}\\ThirdParty\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
-          "type": "STRING"
-        }
-      ]
+      "inheritEnvironments": [ "msvc_x86" ]
     },
     {
       "name": "x64-Debug",
       "generator": "Ninja",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
-      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "installRoot": "${projectDir}\\Binaries\\install\\${name}",
+      "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": [
-        {
-          "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "${projectDir}\\ThirdParty\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
-          "type": "STRING"
-        }
-      ]
+      "inheritEnvironments": [ "msvc_x64_x64" ]
     },
     {
       "name": "x64-Release",
       "generator": "Ninja",
       "configurationType": "MinSizeRel",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
-      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "installRoot": "${projectDir}\\Binaries\\install\\${name}",
+      "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
-      "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": [
-        {
-          "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "${projectDir}\\ThirdParty\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
-          "type": "STRING"
-        }
-      ]
+      "inheritEnvironments": [ "msvc_x64_x64" ]
     }
   ]
 }
