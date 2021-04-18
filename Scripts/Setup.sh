@@ -12,6 +12,7 @@ else
 fi
 
 VCPKG_FEATURE_FLAGS=manifests,registries
+echo "${VCPKG_FEATURE_FLAGS}"
 cmake -S .. -B ../Binaries/ -DCMAKE_TOOLCHAIN_FILE=../ThirdParty/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
 
 cd "${DIR}"
