@@ -22,7 +22,7 @@ jobs:
         run: ${{ github.workspace }}/Scripts/Build
       - name: Test
         working-directory: ./Binaries
-        run: ls && ./BSMath-Tests
+        run: dir && ./BSMath-Tests
 
   job:
     name: ${{ matrix.os }}-test
