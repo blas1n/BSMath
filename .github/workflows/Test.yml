@@ -8,6 +8,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  BUILD_TYPE: Shipping
+
 jobs:
   windows-test:
     runs-on: windows-latest
@@ -37,11 +40,11 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       # Run CMake to generate Ninja project files, using the vcpkg's toolchain file to resolve and install the dependencies as specified in vcpkg.json.
       - name: Install dependencies and generate project files
-        run: ${{ github.workspace }}/Scripts/Setup.bat
+        run: ${{ github.workspace }}/Scripts/Setup.bat ${{ BUILD_TYPE }}
       - name: Build
         run: ${{ github.workspace }}/Scripts/Build.bat
       - name: Test
-        working-directory: ./Binaries
+        working-directory: ./Binaries/Tests/${{ BUILD_TYPE }}
         run: dir && ./BSMath-Tests
 
   job:
@@ -62,9 +65,9 @@ jobs:
           submodules: true
       - uses: lukka/get-cmake@latest
       - name: Generate project files
-        run: sh ${{ github.workspace }}/Scripts/Setup.sh
+        run: sh ${{ github.workspace }}/Scripts/Setup.sh ${{ BUILD_TYPE }}
       - name: Build
         run: sh ${{ github.workspace }}/Scripts/Build.sh
       - name: Test
-        working-directory: ./Binaries
+        working-directory: ./Binaries/Tests/${{ BUILD_TYPE }}
         run: ./BSMath-Tests
