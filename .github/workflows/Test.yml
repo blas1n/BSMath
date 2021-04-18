@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 
 env:
-  BUILD_TYPE: Shipping
+  BUILD_TYPE: Release
 
 jobs:
   windows-test:
