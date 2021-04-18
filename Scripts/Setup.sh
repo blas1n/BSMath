@@ -11,8 +11,9 @@ else
 	BUILD_TYPE=Release
 fi
 
+mkdir ../Binaries/"${BUILD_TYPE}"
+
 export VCPKG_FEATURE_FLAGS=manifests,registries
-echo "${VCPKG_FEATURE_FLAGS}"
-cmake -S .. -B ../Binaries/ -DCMAKE_TOOLCHAIN_FILE=../ThirdParty/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+cmake -S .. -B ../Binaries/"${BUILD_TYPE}" -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
 
 cd "${DIR}"
