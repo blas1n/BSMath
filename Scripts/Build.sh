@@ -11,6 +11,6 @@ else
 	BUILD_TYPE=Release
 fi
 
-cmake --build ../Binaries/${BUILD_TYPE}
+cmake --build ../Binaries/${BUILD_TYPE} --config ${BUILD_TYPE}
 
 cd "${DIR}"
