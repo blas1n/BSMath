@@ -1,11 +1,11 @@
-﻿{
+{
   "configurations": [
     {
       "name": "x86-Debug",
       "generator": "Ninja",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
-      "installRoot": "${projectDir}\\Binaries\\install\\${name}",
+      "installRoot": "${projectDir}\\Binaries\\${name}\\Install",
       "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
@@ -17,7 +17,7 @@
       "generator": "Ninja",
       "configurationType": "MinSizeRel",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
-      "installRoot": "${projectDir}\\Binaries\\install\\${name}",
+      "installRoot": "${projectDir}\\Binaries\\${name}\\Install",
       "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
@@ -29,7 +29,7 @@
       "generator": "Ninja",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
-      "installRoot": "${projectDir}\\Binaries\\install\\${name}",
+      "installRoot": "${projectDir}\\Binaries\\${name}\\Install",
       "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
@@ -41,7 +41,7 @@
       "generator": "Ninja",
       "configurationType": "MinSizeRel",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
-      "installRoot": "${projectDir}\\Binaries\\install\\${name}",
+      "installRoot": "${projectDir}\\Binaries\\${name}\\Install",
       "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
