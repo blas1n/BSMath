@@ -2,12 +2,24 @@
 
 pushd %~dp0
 
+set TOOLCHAIN_FILE=%CD%/../vcpkg/scripts/buildsystems/vcpkg.cmake
+
 if "%1%" == "" (
 	set BUILD_TYPE=Release
 ) else (
 	set BUILD_TYPE=%1
 )
 
-setx VCPKG_FEATURE_FLAGS manifests,registries
-cmake -S .. -B ../Binaries/%BUILD_TYPE% -DCMAKE_TOOLCHAIN_FILE=%CD%/../vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+cd ..
+if not exist Binaries\ (
+	mkdir Binaries
+)
+cd Binaries
+
+if not exist %BUILD_TYPE%\ (
+	mkdir %BUILD_TYPE%
+)
+cd %BUILD_TYPE%
+
+cmake ../.. -DCMAKE_TOOLCHAIN_FILE=%TOOLCHAIN_FILE% -DCMAKE_INSTALL_PREFIX=%CD%/Install -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVCPKG_FEATURE_FLAGS=manifests,registries
 popd
