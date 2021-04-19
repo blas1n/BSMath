@@ -15,7 +15,7 @@
     {
       "name": "x86-Release",
       "generator": "Ninja",
-      "configurationType": "MinSizeRel",
+      "configurationType": "Release",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
       "installRoot": "${projectDir}\\Binaries\\${name}\\Install",
       "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
@@ -39,7 +39,7 @@
     {
       "name": "x64-Release",
       "generator": "Ninja",
-      "configurationType": "MinSizeRel",
+      "configurationType": "Release",
       "buildRoot": "${projectDir}\\Binaries\\${name}",
       "installRoot": "${projectDir}\\Binaries\\${name}\\Install",
       "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
