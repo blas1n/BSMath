@@ -51,7 +51,7 @@ jobs:
         run: ${{ github.workspace }}/Scripts/Build.bat ${{ env.BUILD_TYPE }}
       - name: Test
         working-directory: ./Binaries/${{ env.BUILD_TYPE }}/Tests
-        run: ./BSMath-Tests
+        run: dir && ./BSMath-Tests
 
   job:
     name: ${{ matrix.os }}-test
@@ -96,4 +96,4 @@ jobs:
         run: sh ${{ github.workspace }}/Scripts/Build.sh ${{ env.BUILD_TYPE }}
       - name: Test
         working-directory: ./Binaries/${{ env.BUILD_TYPE }}/Tests
-        run: ./BSMath-Tests
+        run: ls && ./BSMath-Tests
