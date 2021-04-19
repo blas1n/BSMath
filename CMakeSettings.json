@@ -1,4 +1,4 @@
-{
+﻿{
   "configurations": [
     {
       "name": "x86-Debug",
@@ -10,7 +10,14 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "VCPKG_FEATURE_FLAGS",
+          "value": "manifests,registries",
+          "type": "STRING"
+        }
+      ]
     },
     {
       "name": "x86-Release",
@@ -22,7 +29,14 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "VCPKG_FEATURE_FLAGS",
+          "value": "manifests,registries",
+          "type": "STRING"
+        }
+      ]
     },
     {
       "name": "x64-Debug",
@@ -34,7 +48,14 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "VCPKG_FEATURE_FLAGS",
+          "value": "manifests,registries",
+          "type": "STRING"
+        }
+      ]
     },
     {
       "name": "x64-Release",
@@ -45,7 +66,14 @@
       "cmakeToolchain": "${projectDir}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "VCPKG_FEATURE_FLAGS",
+          "value": "manifests,registries",
+          "type": "STRING"
+        }
+      ]
     }
   ]
 }
