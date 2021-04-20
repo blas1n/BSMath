@@ -16,7 +16,6 @@ fi
 cd ..
 mkdir -p Binaries/$BUILD_TYPE
 cd Binaries/$BUILD_TYPE
-echo $BUILD_TYPE
 
 cmake ../.. -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE -DCMAKE_INSTALL_PREFIX="$(pwd)"/Install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DVCPKG_FEATURE_FLAGS=manifests,registries
 
