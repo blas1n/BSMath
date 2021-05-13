@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+#include <type_traits>
 #include "Basic.h"
 
 namespace BSMath
@@ -22,12 +24,21 @@ namespace BSMath
 		}
 	};
 
-	template <class T>
-	struct Hash
+	template <class T, class SFINAE = void>
+	struct Hash final
 	{
 		[[nodiscard]] size_t operator()(const T& value) const noexcept
 		{
 			return HashRange<T, sizeof(T)>{}(value);
+		}
+	};
+
+	template <class T>
+	struct Hash<T, std::enable_if_t<std::is_constructible_v<std::hash<T>>>> final
+	{
+		[[nodiscard]] size_t operator()(const T& value) const noexcept
+		{
+			return std::hash<T>{}(value);
 		}
 	};
 }
